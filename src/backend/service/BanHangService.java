@@ -24,4 +24,8 @@ public class BanHangService {
     public List<BHSPViewModel> getSP() {
         return repo.getSP();
     }
+    
+    public boolean updateSP(int idSPCT, int soLuongCL){
+        return repo.updateSP(idSPCT, soLuongCL);
+    }
 }

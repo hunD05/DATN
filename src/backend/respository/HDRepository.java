@@ -16,7 +16,8 @@ import java.util.List;
  * @author VHC
  */
 public class HDRepository {
-    public boolean addHD(){
+
+    public boolean addHD() {
         int check = 0;
         String sql = """
                      INSERT INTO [dbo].[HoaDon]
@@ -26,11 +27,14 @@ public class HDRepository {
                           VALUES
                                 (current_timestamp,1)
                      """;
-        try(Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
-             check = ps.executeUpdate();
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return check > 0;
     }
+
+    
+
 }

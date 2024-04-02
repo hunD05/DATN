@@ -26,7 +26,7 @@ public class BanHangRepo {
                                  FROM dbo.HoaDon
                                  INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
                                  LEFT JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                                 WHERE dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' 
+                                 WHERE dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' AND dbo.HoaDon.Deleted = 0
                                  GROUP BY dbo.HoaDon.TrangThai, dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.ID
                                  ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
@@ -88,8 +88,8 @@ public class BanHangRepo {
                         WHERE ID = ?
                      """;
         try(Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
-            ps.setObject(1, idSPCT);
-            ps.setObject(2, soLuongConLai);
+            ps.setObject(2, idSPCT);
+            ps.setObject(1, soLuongConLai);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

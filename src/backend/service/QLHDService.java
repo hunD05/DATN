@@ -16,4 +16,8 @@ public class QLHDService {
     public void exportToExcel(){
         repo.xuatHoaDon();
     }
+    
+    public boolean deleteHD(int idHD){
+        return repo.huyHD(idHD);
+    }
 }

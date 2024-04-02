@@ -4,6 +4,7 @@
  */
 package backend.service;
 
+import backend.respository.HDCTRepository;
 import backend.respository.HDCTViewModelRepo;
 import backend.viewmodel.HDCTViewModel;
 import java.util.List;
@@ -15,9 +16,15 @@ import java.util.List;
 public class HDCTService {
 
     private HDCTViewModelRepo repo = new HDCTViewModelRepo();
+    
+    private HDCTRepository repoHDCT = new HDCTRepository();
 
     public List<HDCTViewModel> getAll(int idHD) {
         return repo.getAll(idHD);
+    }
+    
+    public boolean addHDCT(int idHD, int idSPCT, int soLuong, double giaBan){
+        return repoHDCT.addHDCT(idHD, idSPCT, soLuong, giaBan);
     }
 
 //    public void inHDCT(int idHD) {

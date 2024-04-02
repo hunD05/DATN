@@ -175,4 +175,36 @@ public class QLHDRepo {
         }
         return false;
     }
+    
+    public boolean huyHD(int idHD) {
+        int check = 0;
+        String sqlUpdateHD = "UPDATE HoaDon SET Deleted = 1 WHERE ID = ?";
+        String sqlUpdateHDCT = "UPDATE HoaDonChiTiet SET Deleted = 1 WHERE IDHoaDon = ?";
+        String sqlUpdateLSHD = "UPDATE LichSuHoaDon SET Deleted = 1 WHERE IDHoaDon = ?";
+
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement psUpdateHD = con.prepareStatement(sqlUpdateHD);
+                PreparedStatement psUpdateHDCT = con.prepareStatement(sqlUpdateHDCT);
+                PreparedStatement psUpdateLSHD = con.prepareStatement(sqlUpdateLSHD);) {
+
+            con.setAutoCommit(false);
+
+            psUpdateHD.setObject(1, idHD);
+            psUpdateHD.executeUpdate();
+
+            psUpdateHDCT.setObject(1, idHD);
+            psUpdateHDCT.executeUpdate();
+            
+            psUpdateLSHD.setObject(1, idHD);
+            psUpdateLSHD.executeUpdate();
+
+            // Commit các thay đổi
+            con.commit();
+
+            check = 1; // Đánh dấu thành công
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
 }

@@ -17,6 +17,7 @@ import backend.service.HoaDonService;
 import backend.service.LSHDService;
 import backend.service.NSXService;
 import backend.service.PhieuGiamGiaService;
+import backend.service.QLHDService;
 import backend.service.XuatXuService;
 import backend.viewmodel.BHHDViewModel;
 import backend.viewmodel.BHSPViewModel;
@@ -32,6 +33,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import raven.application.Application;
@@ -77,6 +80,7 @@ public class BanHang extends javax.swing.JPanel {
     private List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
 
     private LSHDService srLSHD = new LSHDService();
+    private QLHDService srQLHD = new QLHDService();
 
     private List<HoaDonViewModel> listHDVM = new ArrayList<>();
 
@@ -116,6 +120,23 @@ public class BanHang extends javax.swing.JPanel {
         dcbmPGG = (DefaultComboBoxModel) cbbPGG.getModel();
         listPGG = srPGG.getAll();
         showcbbPGG(listPGG);
+
+        txtTienDua.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                tinhTienThua();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                tinhTienThua();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                tinhTienThua();
+            }
+        });
     }
 
     public void showDataHD(List<BHHDViewModel> listHD) {
@@ -240,6 +261,29 @@ public class BanHang extends javax.swing.JPanel {
         txtMaNV.setText(hd1.getMaNV());
         txtTongTien.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
 
+        lbTong.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
+
+    }
+
+    //TinhTienThua
+    public void tinhTienThua() {
+        try {
+            String tongText = txtTongTien.getText().trim().replaceAll("[^\\d.]", "");
+            String tienDuaText = txtTienDua.getText().trim().replaceAll("[^\\d.]", "");
+
+            if (!tongText.isEmpty() && !tienDuaText.isEmpty()) {
+                double tongTien = Double.parseDouble(tongText);
+                double tienKhachDua = Double.parseDouble(tienDuaText);
+
+                double tienThua = tienKhachDua - tongTien;
+                txtTienThua.setText(currencyFormat.format(tienThua));
+            }
+
+        } catch (NumberFormatException ex) {
+            // Xử lý ngoại lệ, ví dụ: hiển thị thông báo lỗi cho người dùng
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá trị số hợp lệ.");
+        }
     }
 
     /**
@@ -672,9 +716,9 @@ public class BanHang extends javax.swing.JPanel {
                                 .addComponent(jLabel22)
                                 .addGroup(roundPanel6Layout.createSequentialGroup()
                                     .addComponent(jLabel20)
-                                    .addGap(18, 18, 18)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(lbTong)
-                                    .addGap(1, 1, 1)))
+                                    .addGap(13, 13, 13)))
                             .addGroup(roundPanel6Layout.createSequentialGroup()
                                 .addGroup(roundPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel16)
@@ -846,7 +890,20 @@ public class BanHang extends javax.swing.JPanel {
     }//GEN-LAST:event_tblHDMouseClicked
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-        // TODO add your handling code here:
+        int index = tblHD.getSelectedRow();
+        if (index >= 0) {
+            BHHDViewModel hd = listHD.get(index);
+            srQLHD.deleteHD(hd.getId());
+            listHD = srBH.getHD();
+            showDataHD(listHD);
+
+            dtmHDCT = (DefaultTableModel) tblGH.getModel();
+            dtmHDCT.setRowCount(0);
+
+            showDetailHD();
+
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã hủy thành công");
+        }
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnTToanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTToanActionPerformed
@@ -854,29 +911,67 @@ public class BanHang extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTToanActionPerformed
 
     private void tblSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSPMouseClicked
-        // Lấy chỉ mục của hàng được chọn
-        int rowIndex = tblSP.getSelectedRow();
+// Lấy chỉ mục của hàng được chọn trong bảng hóa đơn
+        int rowIndexHD = tblHD.getSelectedRow();
+        // Kiểm tra xem có hàng nào được chọn trong bảng hóa đơn không
+        if (rowIndexHD >= 0) {
+            BHHDViewModel hd = listHD.get(rowIndexHD);
+            int idHD = hd.getId();
+            System.out.println(idHD);
 
-        // Kiểm tra xem hàng được chọn có hợp lệ không
-        if (rowIndex >= 0) {
-            // Lấy số lượng hiện có từ bảng
-            int soLuongHienCo = (int) tblSP.getValueAt(rowIndex, 7); // Giả sử số lượng hiện có ở cột thứ 2
+            // Lấy chỉ mục của hàng được chọn trong bảng sản phẩm
+            int rowIndexSP = tblSP.getSelectedRow();
+            // Kiểm tra xem có hàng nào được chọn trong bảng sản phẩm không
+            if (rowIndexSP >= 0) {
+                BHSPViewModel sp = listSP.get(rowIndexSP);
+                int idSPCT = sp.getMaSPCT();
+                double giaBan = sp.getGiaBan();
 
-            // Hiển thị hộp thoại để yêu cầu nhập số lượng mới
-            String input = JOptionPane.showInputDialog(this, "Nhập số lượng muốn mua:");
+                // Lấy số lượng hiện có từ bảng
+                int soLuongHienCo = (int) tblSP.getValueAt(rowIndexSP, 7); // Giả sử số lượng hiện có ở cột thứ 8 (index 7)
 
-            // Kiểm tra xem người dùng đã nhập hay chưa
-            if (input != null && !input.isEmpty()) {
-                // Chuyển đổi chuỗi nhập vào thành số nguyên
-                int soLuongMoi = Integer.parseInt(input);
+                // Hiển thị hộp thoại để yêu cầu nhập số lượng mới
+                String input = JOptionPane.showInputDialog(this, "Nhập số lượng muốn mua:");
 
-                // Trừ đi số lượng mới từ số lượng hiện có
-                int soLuongConLai = soLuongHienCo - soLuongMoi;
+                // Kiểm tra xem người dùng đã nhập hay chưa
+                if (input != null && !input.isEmpty()) {
+                    // Chuyển đổi chuỗi nhập vào thành số nguyên
+                    int soLuongMua = Integer.parseInt(input);
 
-                // Hiển thị kết quả hoặc thực hiện các hành động khác với kết quả này
-                System.out.println("Số lượng còn lại:" + soLuongConLai);
+                    // Kiểm tra xem số lượng mua có lớn hơn số lượng hiện có không
+                    if (soLuongMua > soLuongHienCo) {
+                        JOptionPane.showMessageDialog(this, "Số lượng mua vượt quá số lượng hiện có!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Trừ đi số lượng mới từ số lượng hiện có để cập nhật số lượng còn lại
+                        int soLuongConLai = soLuongHienCo - soLuongMua;
+
+                        // Cập nhật số lượng còn lại vào cơ sở dữ liệu
+                        srBH.updateSP(sp.getMaSPCT(), soLuongConLai);
+
+                        // Lấy lại danh sách sản phẩm sau khi cập nhật
+                        listSP = srBH.getSP();
+                        showDataSP(listSP);
+
+                        // Thêm hóa đơn chi tiết với số lượng mua vào cơ sở dữ liệu
+                        srHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
+
+                        // Lấy lại danh sách hóa đơn chi tiết sau khi thêm mới
+                        dtmHDCT = (DefaultTableModel) tblGH.getModel();
+                        listHDCT = srHDCT.getAll(idHD);
+                        showDataHDCT(listHDCT);
+
+                        listHD = srBH.getHD();
+                        showDataHD(listHD);
+
+                        showDetailHD();
+
+                        // Hiển thị kết quả hoặc thực hiện các hành động khác với kết quả này
+                        System.out.println("Số lượng còn lại:" + soLuongConLai);
+                    }
+                }
             }
         }
+
     }//GEN-LAST:event_tblSPMouseClicked
 
 
