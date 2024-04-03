@@ -35,8 +35,8 @@ public class MauSac {
     public MauSac() {
     }
 
-    public MauSac(String maMauSac, String tenMauSac) {
-        this.maMauSac = maMauSac;
+    public MauSac( String tenMauSac) {
+
         this.tenMauSac = tenMauSac;
     }
 

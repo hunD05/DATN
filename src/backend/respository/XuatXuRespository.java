@@ -24,7 +24,7 @@ public class XuatXuRespository {
                  SELECT ROW_NUMBER() OVER (ORDER BY [ID]) AS STT, [ID]
                        ,[MaXuatXu]
                        ,[TenXuatXu]
-                   FROM [dbo].[XuatXu]where deleted = 0
+                   FROM [dbo].[XuatXu]where deleted = 0 ORder by Created_at desc
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
@@ -48,16 +48,16 @@ public class XuatXuRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[XuatXu]
-                            ([MaXuatXu]
-                            ,[TenXuatXu])
+                            (
+                            [TenXuatXu])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaXuatXu());
-                ps.setObject(2, chiTietSanPham.getTenXuatXu());
+
+                ps.setObject(1, chiTietSanPham.getTenXuatXu());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -71,16 +71,16 @@ public class XuatXuRespository {
         int check = 0;
         String sql = """
                  UPDATE [dbo].[XuatXu]
-                    SET [MaXuatXu] = ?
-                       ,[TenXuatXu] = ?
+                    SET 
+                       [TenXuatXu] = ?
                   WHERE ID = ?
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (xuatXu != null) {
-                ps.setObject(1, xuatXu.getMaXuatXu());
-                ps.setObject(2, xuatXu.getTenXuatXu());
-                ps.setObject(3, id);
+                
+                ps.setObject(1, xuatXu.getTenXuatXu());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

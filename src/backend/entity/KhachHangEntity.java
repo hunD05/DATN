@@ -11,18 +11,14 @@ import java.sql.Date;
  * @author HOME
  */
 public class KhachHangEntity {
-    private Long stt;
+
+    private long stt;
     private String id;
     private String maKhachHang;
     private String tenKhachHang;
-    private Boolean gioiTinh;
+    private boolean gioiTinh;
     private String soDienThoai;
-    private Date ngaySinh;
-    private Boolean deleted;
-    private Date createdAt;
-    private Date updatedAt;
-    private String createdBy;
-    private String updatedBy;
+    private String diaChi;
 
     public KhachHangEntity() {
     }
@@ -41,21 +37,18 @@ public class KhachHangEntity {
 //        this.createdBy = createdBy;
 //        this.updatedBy = updatedBy;
 //    }
-
-    public KhachHangEntity(String maKhachHang, String tenKhachHang, Boolean gioiTinh, String soDienThoai, Date ngaySinh) {
-        this.maKhachHang = maKhachHang;
+    public KhachHangEntity(String tenKhachHang, boolean gioiTinh, String soDienThoai, String diaChi) {
         this.tenKhachHang = tenKhachHang;
         this.gioiTinh = gioiTinh;
         this.soDienThoai = soDienThoai;
-        this.ngaySinh = ngaySinh;
+        this.diaChi = diaChi;
     }
-    
-    
-    public Long getStt() {
+
+    public long getStt() {
         return stt;
     }
 
-    public void setStt(Long stt) {
+    public void setStt(long stt) {
         this.stt = stt;
     }
 
@@ -83,11 +76,11 @@ public class KhachHangEntity {
         this.tenKhachHang = tenKhachHang;
     }
 
-    public Boolean getGioiTinh() {
+    public boolean isGioiTinh() {
         return gioiTinh;
     }
 
-    public void setGioiTinh(Boolean gioiTinh) {
+    public void setGioiTinh(boolean gioiTinh) {
         this.gioiTinh = gioiTinh;
     }
 
@@ -99,54 +92,14 @@ public class KhachHangEntity {
         this.soDienThoai = soDienThoai;
     }
 
-    public Date getNgaySinh() {
-        return ngaySinh;
+    public String getDiaChi() {
+        return diaChi;
     }
 
-    public void setNgaySinh(Date ngaySinh) {
-        this.ngaySinh = ngaySinh;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
     
-
+    
 }

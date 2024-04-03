@@ -26,8 +26,7 @@ public class PhieuGiamGia {
     public PhieuGiamGia() {
     }
 
-    public PhieuGiamGia(String maGiamGia, String tenGiamGia, Date ngayBatDau, Date ngayKetThuc, int soLuong, Float hoaDonToiThieu, Float soPhanTramGiam, Float giamToiDa, String trangThai, int idNV) {
-        this.maGiamGia = maGiamGia;
+    public PhieuGiamGia(String tenGiamGia, Date ngayBatDau, Date ngayKetThuc, int soLuong, Float hoaDonToiThieu, Float soPhanTramGiam, Float giamToiDa, String trangThai, int idNV) {
         this.tenGiamGia = tenGiamGia;
         this.ngayBatDau = ngayBatDau;
         this.ngayKetThuc = ngayKetThuc;

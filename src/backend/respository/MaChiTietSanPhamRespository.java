@@ -29,7 +29,7 @@ public class MaChiTietSanPhamRespository {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ChiTietSanPham chiTietSanPham = new ChiTietSanPham();
-                chiTietSanPham.setId(rs.getLong(1));
+                chiTietSanPham.setId(rs.getString(1));
                 ctspList.add(chiTietSanPham);
             }
         } catch (Exception e) {

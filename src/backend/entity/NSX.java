@@ -34,8 +34,8 @@ public class NSX {
     public NSX() {
     }
 
-    public NSX(String maNSX, String tenNSX) {
-        this.maNSX = maNSX;
+    public NSX(String tenNSX) {
+
         this.tenNSX = tenNSX;
     }
 

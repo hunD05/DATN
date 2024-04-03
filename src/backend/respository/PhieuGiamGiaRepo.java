@@ -21,10 +21,10 @@ public class PhieuGiamGiaRepo {
     public List<PhieuGiamGiaViewModel> getAll() {
         List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
         String sql = """
-                    SELECT dbo.PhieuGiamGia.ID, dbo.PhieuGiamGia.MaGiamGia, dbo.PhieuGiamGia.TenGiamGia, dbo.PhieuGiamGia.NgayBatDau, dbo.PhieuGiamGia.NgayKetThuc, dbo.PhieuGiamGia.SoLuong, dbo.PhieuGiamGia.HoaDonToiThieu, 
-                    dbo.PhieuGiamGia.SoPhanTramGiam, dbo.PhieuGiamGia.GiamToiDa, dbo.NhanVien.ID AS Expr1, dbo.NhanVien.SoDienThoai, dbo.NhanVien.NgaySinh, dbo.PhieuGiamGia.TrangThai
-                    FROM dbo.NhanVien 
-                    INNER JOIN dbo.PhieuGiamGia ON dbo.NhanVien.ID = dbo.PhieuGiamGia.IDNhanVien 
+                    SELECT       dbo.PhieuGiamGia.ID, dbo.PhieuGiamGia.MaGiamGia, dbo.PhieuGiamGia.TenGiamGia, dbo.PhieuGiamGia.NgayBatDau, dbo.PhieuGiamGia.NgayKetThuc, dbo.PhieuGiamGia.SoLuong, dbo.PhieuGiamGia.HoaDonToiThieu, 
+                                             dbo.PhieuGiamGia.SoPhanTramGiam, dbo.PhieuGiamGia.GiamToiDa, dbo.NhanVien.ID AS Expr1, dbo.NhanVien.SoDienThoai, dbo.NhanVien.NgaySinh, dbo.PhieuGiamGia.TrangThai
+                    FROM            dbo.NhanVien INNER JOIN
+                                             dbo.PhieuGiamGia ON dbo.NhanVien.ID = dbo.PhieuGiamGia.IDNhanVien
                     WHERE dbo.PhieuGiamGia.Deleted = 0 ORDER BY dbo.PhieuGiamGia.Created_at DESC
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -56,8 +56,7 @@ public class PhieuGiamGiaRepo {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[PhieuGiamGia]
-                            ([MaGiamGia]
-                            ,[TenGiamGia]
+                            ([TenGiamGia]
                             ,[NgayBatDau]
                             ,[NgayKetThuc]
                             ,[SoLuong]
@@ -67,19 +66,18 @@ public class PhieuGiamGiaRepo {
                             ,[IDNhanVien]
                             ,[TrangThai])
                       VALUES
-                            (?,?,?,?,?,?,?,?,?,?)
+                            (?,?,?,?,?,?,?,?,?)
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setObject(1, pgg.getMaGiamGia());
-            ps.setObject(2, pgg.getTenGiamGia());
-            ps.setObject(3, pgg.getNgayBatDau());
-            ps.setObject(4, pgg.getNgayKetThuc());
-            ps.setObject(5, pgg.getSoLuong());
-            ps.setObject(6, pgg.getHoaDonToiThieu());
-            ps.setObject(7, pgg.getSoPhanTramGiam());
-            ps.setObject(8, pgg.getGiamToiDa());
-            ps.setObject(9, pgg.getIdNV());
-            ps.setObject(10, pgg.getTrangThai());
+            ps.setObject(1, pgg.getTenGiamGia());
+            ps.setObject(2, pgg.getNgayBatDau());
+            ps.setObject(3, pgg.getNgayKetThuc());
+            ps.setObject(4, pgg.getSoLuong());
+            ps.setObject(5, pgg.getHoaDonToiThieu());
+            ps.setObject(6, pgg.getSoPhanTramGiam());
+            ps.setObject(7, pgg.getGiamToiDa());
+            ps.setObject(8, pgg.getIdNV());
+            ps.setObject(9, pgg.getTrangThai());
             check = ps.executeUpdate();
 
         } catch (Exception e) {
@@ -110,8 +108,7 @@ public class PhieuGiamGiaRepo {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[PhieuGiamGia]
-                        SET [MaGiamGia] = ?
-                           ,[TenGiamGia] = ?
+                        SET [TenGiamGia] = ?
                            ,[NgayBatDau] = ?
                            ,[NgayKetThuc] = ?
                            ,[SoLuong] = ?
@@ -122,16 +119,15 @@ public class PhieuGiamGiaRepo {
                       WHERE ID = ?
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setObject(1, pgg.getMaGiamGia());
-            ps.setObject(2, pgg.getTenGiamGia());
-            ps.setObject(3, pgg.getNgayBatDau());
-            ps.setObject(4, pgg.getNgayKetThuc());
-            ps.setObject(5, pgg.getSoLuong());
-            ps.setObject(6, pgg.getHoaDonToiThieu());
-            ps.setObject(7, pgg.getSoPhanTramGiam());
-            ps.setObject(8, pgg.getGiamToiDa());
-            ps.setObject(9, pgg.getTrangThai());
-            ps.setObject(10, newID);
+            ps.setObject(1, pgg.getTenGiamGia());
+            ps.setObject(2, pgg.getNgayBatDau());
+            ps.setObject(3, pgg.getNgayKetThuc());
+            ps.setObject(4, pgg.getSoLuong());
+            ps.setObject(5, pgg.getHoaDonToiThieu());
+            ps.setObject(6, pgg.getSoPhanTramGiam());
+            ps.setObject(7, pgg.getGiamToiDa());
+            ps.setObject(8, pgg.getTrangThai());
+            ps.setObject(9, newID);
             check = ps.executeUpdate();
 
         } catch (Exception e) {
@@ -150,7 +146,7 @@ public class PhieuGiamGiaRepo {
                                                                 WHERE PGG.TenGiamGia LIKE ? or
                                 				        PGG.MaGiamGia LIKE ? or
                 							PGG.SoLuong Like ? or
-                							PGG.NgatKetThuc Like ? or
+                							PGG.NgayKetThuc Like ? or
                 							PGG.NgayBatDau Like ? or
                 							PGG.HoaDonToiThieu Like ? or
                 							PGG.SoPhanTramGiam Like ? or

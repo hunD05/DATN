@@ -22,13 +22,13 @@ public class HDCTService {
     public List<HDCTViewModel> getAll(int idHD) {
         return repo.getAll(idHD);
     }
-    
-    public boolean addHDCT(int idHD, int idSPCT, int soLuong, double giaBan){
-        return repoHDCT.addHDCT(idHD, idSPCT, soLuong, giaBan);
-    }
 
 //    public void inHDCT(int idHD) {
 //        repo.inHDCT(idHD);
 //    }
+    
+    public boolean addHDCT(int idHD, int idSPCT, int soLuongMua, double giaBan){
+        return repoHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
+    }
 
 }

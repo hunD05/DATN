@@ -34,8 +34,8 @@ public class Size {
     public Size() {
     }
 
-    public Size(String maSize, String tenSize) {
-        this.maSize = maSize;
+    public Size( String tenSize) {
+
         this.tenSize = tenSize;
     }
 

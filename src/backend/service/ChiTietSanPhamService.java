@@ -6,6 +6,7 @@ package backend.service;
 
 import backend.entity.ChiTietSanPham;
 import backend.respository.ChiTietSanPhamRespository;
+import backend.viewmodel.SanPhamChiTietViewModel;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -15,28 +16,31 @@ import java.util.List;
  */
 public class ChiTietSanPhamService {
     ChiTietSanPhamRespository respository = new ChiTietSanPhamRespository();
-    public List<ChiTietSanPham> getAll() {
+    public List<SanPhamChiTietViewModel> getAll() {
         return respository.getAll();
     }
-    public ChiTietSanPham getById(long id) {
+    public SanPhamChiTietViewModel getById(long id) {
         return respository.getById(id);
     }
     
-    public List<ChiTietSanPham> DanhMuc(int selectedDanhMucID) {
-        return respository.DanhMuc(selectedDanhMucID);
+    public List<SanPhamChiTietViewModel> DanhMuc(String danhMuc) {
+        return respository.DanhMuc(danhMuc);
     }
-    public List<ChiTietSanPham> NSX(int selectedNsxID) {
-        return respository.NSX(selectedNsxID);
-    }
-    
-    public List<ChiTietSanPham> XuatXu(int selectedXuatXuID) {
-        return respository.XuatXu(selectedXuatXuID);
+
+    public List<SanPhamChiTietViewModel> NSX(String danhMuc) {
+        return respository.NSX(danhMuc);
     }
     
-    public List<ChiTietSanPham> GiaBan(BigDecimal selectedGiaBan) {
-        return respository.GiaBan(selectedGiaBan);
+    public List<SanPhamChiTietViewModel> XuatXu(String danhMuc) {
+        return respository.XuatXu(danhMuc);
     }
     
+    public List<SanPhamChiTietViewModel> giaBan(String sortOrder) {
+        return respository.giaBan(sortOrder);
+    }
+    public List<SanPhamChiTietViewModel> Search(String keyword) {
+        return respository.Search(keyword);
+    }
     public List<ChiTietSanPham> ConHang() {
         return respository.ConHang();
     }
@@ -48,16 +52,21 @@ public class ChiTietSanPhamService {
     public boolean add(ChiTietSanPham chiTietSanPham) {
         return respository.add(chiTietSanPham);
     }
-    
+    public List<SanPhamChiTietViewModel> filterData(String danhMuc, String xuatXu, String nsx, String giaBanSortOrder) {
+        return respository.filterData(danhMuc, xuatXu, nsx, giaBanSortOrder);
+    }
     public boolean update(ChiTietSanPham chiTietSanPham, String id) {
         return respository.update(chiTietSanPham, id);
     }
     
-    public boolean delete(Long maSP) {
+    public boolean delete(String maSP) {
         return respository.delete(maSP);
     }
-    
-    public List<ChiTietSanPham> getAllz(Long masp) {
-        return respository.getAllz(masp);
+    public List<SanPhamChiTietViewModel> SearchCbb(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan) {
+        return respository.SearchCbb(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
     }
+
+//    public List<SanPhamChiTietViewModel> getAllz(Long masp) {
+//        return respository.getAllz(masp);
+//    }
 }

@@ -26,7 +26,7 @@ public class NSXRespository {
                      [ID]
                        ,[MaNSX]
                        ,[TenNSX]
-                   FROM [dbo].[NSX]where deleted = 0
+                   FROM [dbo].[NSX]where deleted = 0 ORder by Created_at desc
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
@@ -50,16 +50,16 @@ public class NSXRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[NSX]
-                            ([MaNSX]
-                            ,[TenNSX])
+                            (
+                            [TenNSX])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaNSX());
-                ps.setObject(2, chiTietSanPham.getTenNSX());
+
+                ps.setObject(1, chiTietSanPham.getTenNSX());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -73,16 +73,16 @@ public class NSXRespository {
         int check = 0;
         String sql = """
                  UPDATE [dbo].[NSX]
-                    SET [MaNSX] = ?
-                       ,[TenNSX] = ?
+                    SET 
+                       [TenNSX] = ?
                   WHERE ID = ?
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (nsx != null) {
-                ps.setObject(1, nsx.getMaNSX());
-                ps.setObject(2, nsx.getTenNSX());
-                ps.setObject(3, id);
+
+                ps.setObject(1, nsx.getTenNSX());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

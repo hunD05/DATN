@@ -24,7 +24,7 @@ public class DangAoRespository {
                      [ID]
                        ,[MaDangAo]
                        ,[TenDangAo]
-                   FROM [dbo].[DangAo]where deleted = 0
+                   FROM [dbo].[DangAo]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -47,16 +47,15 @@ public class DangAoRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[DangAo]
-                            ([MaDangAo]
-                            ,[TenDangAo])
+                            (
+                            [TenDangAo])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaDangAo());
-                ps.setObject(2, chiTietSanPham.getTenDangAo());
+                ps.setObject(1, chiTietSanPham.getTenDangAo());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -70,16 +69,16 @@ public class DangAoRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[DangAo]
-                        SET [MaDangAo] = ?
-                           ,[TenDangAo] = ?
+                        SET 
+                           [TenDangAo] = ?
                       WHERE ID = ?
                      """;
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (dangAo != null) {
-                ps.setObject(1, dangAo.getMaDangAo());
-                ps.setObject(2, dangAo.getTenDangAo());
-                ps.setObject(3, id);
+       
+                ps.setObject(1, dangAo.getTenDangAo());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

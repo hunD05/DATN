@@ -20,14 +20,16 @@ public class SanPhamCBBRespository {
     public List<SanPham> getAll() {
         List<SanPham> ctspList = new ArrayList<>();
         String sql = """
-                 SELECT [ID]
-                   FROM [dbo].[SanPham]
+                 SELECT [ID],
+                     [TenSanPham]
+                   FROM [dbo].[SanPham] where deleted = 0
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 SanPham chiTietSanPham = new SanPham();
                 chiTietSanPham.setId(rs.getString(1));
+                chiTietSanPham.setTenSanPham(rs.getString(2));
                 ctspList.add(chiTietSanPham);
             }
         } catch (Exception e) {

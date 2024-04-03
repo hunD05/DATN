@@ -24,7 +24,7 @@ public class ThuongHieuRespository {
                  SELECT ROW_NUMBER() OVER (ORDER BY [ID]) AS STT, [ID]
                        ,[MaThuongHieu]
                        ,[TenThuongHieu]
-                   FROM [dbo].[ThuongHieu]where deleted = 0
+                   FROM [dbo].[ThuongHieu]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -47,16 +47,15 @@ public class ThuongHieuRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[ThuongHieu]
-                            ([MaThuongHieu]
-                            ,[TenThuongHieu])
+                            (
+                            [TenThuongHieu])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaThuongHieu());
-                ps.setObject(2, chiTietSanPham.getTenThuongHieu());
+                ps.setObject(1, chiTietSanPham.getTenThuongHieu());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -70,16 +69,16 @@ public class ThuongHieuRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[ThuongHieu]
-                        SET [MaThuongHieu] = ?
-                           ,[TenThuongHieu] = ?
+                        SET 
+                           [TenThuongHieu] = ?
                       WHERE ID = ?
                      """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (thuongHieu != null) {
-                ps.setObject(1, thuongHieu.getMaThuongHieu());
-                ps.setObject(2, thuongHieu.getTenThuongHieu());
-                ps.setObject(3, id);
+
+                ps.setObject(1, thuongHieu.getTenThuongHieu());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

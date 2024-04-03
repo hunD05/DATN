@@ -34,8 +34,8 @@ public class DuoiAo {
     public DuoiAo() {
     }
 
-    public DuoiAo(String maDuoiAo, String tenDuoiAo) {
-        this.maDuoiAo = maDuoiAo;
+    public DuoiAo( String tenDuoiAo) {
+
         this.tenDuoiAo = tenDuoiAo;
     }
 

@@ -30,6 +30,7 @@ import backend.service.SizeService;
 import backend.service.TayAoService;
 import backend.service.ThuonHieuService;
 import backend.service.XuatXuService;
+import backend.viewmodel.SanPhamChiTietViewModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +49,10 @@ public class SuaSanPhamChiTiet extends javax.swing.JPanel {
     /**
      * Creates new form ThuocTinhSanPham
      */
-    
     DefaultTableModel dtm = new DefaultTableModel();
-    List<backend.entity.ChiTietSanPham> chitietsanphams = new ArrayList<>();
+    List<SanPhamChiTietViewModel> chitietsanphams = new ArrayList<>();
     ChiTietSanPhamService chiTietSanPhamService = new ChiTietSanPhamService();
-    
+
     DefaultComboBoxModel dcbmDanhMuc = new DefaultComboBoxModel();
     List<DanhMuc> danhMucs = new ArrayList<>();
     DanhMucService danhMucService = new DanhMucService();
@@ -101,14 +101,14 @@ public class SuaSanPhamChiTiet extends javax.swing.JPanel {
     List<DangAo> dangAo = new ArrayList<>();
     DangAoService dangAoService = new DangAoService();
     String idctsp;
-    public SuaSanPhamChiTiet(String idChiTietSP, String sanPham,String danhMuc,String NSX,String xuatxu,String mauSac,String size,String thuongHieu,String chatLieu,String coAo,String duoiAo,String tayAo,String dangAoz,String soLuong,String gia,String moTa,String trangThai) {
+
+    public SuaSanPhamChiTiet(String idChiTietSP, String sanPham, String danhMuc, String NSX, String xuatxu, String mauSac, String size, String thuongHieu, String chatLieu, String coAo, String duoiAo, String tayAo, String dangAoz, String soLuong, String gia, String moTa, String trangThai) {
         initComponents();
         chitietsanphams = chiTietSanPhamService.getAll();
-        
+
 //        chitietsanphams = chiTietSanPhamService.getAll();
 //        dtm = (DefaultTableModel) tblChiTietSanPham.getModel();
 //        showDataTable(chitietsanphams);
-        
         danhMucs = danhMucService.getAll();
         dcbmDanhMuc = (DefaultComboBoxModel) cbbDanhMuc.getModel();
         showcbbDanhMuc(danhMucs);
@@ -156,7 +156,7 @@ public class SuaSanPhamChiTiet extends javax.swing.JPanel {
         sanPhams = sanPhamCBBService.getAllCBB();
         dcbmSanPham = (DefaultComboBoxModel) cbbSanPham.getModel();
         showcbbSanPham(sanPhams);
-        
+
         txtGia.setText(gia);
         txtSoLuong.setText(soLuong);
         txtMoTa.setText(moTa);
@@ -176,141 +176,146 @@ public class SuaSanPhamChiTiet extends javax.swing.JPanel {
         idctsp = idChiTietSP;
     }
 
-        
     public void showDataTable(List<backend.entity.ChiTietSanPham> chiTietSanPhams) {
         dtm.setRowCount(0);
         for (backend.entity.ChiTietSanPham chiTietSanPham : chiTietSanPhams) {
             dtm.addRow(new Object[]{chiTietSanPham.getStt(), chiTietSanPham.getGiaBan(), chiTietSanPham.getSoLuong(), chiTietSanPham.getMoTa(), chiTietSanPham.getTrangThai()});
         }
     }
-    
+
     public void showcbbDanhMuc(List<DanhMuc> danhMucs) {
         dcbmDanhMuc.removeAllElements();
         for (DanhMuc danhMuc : danhMucs) {
-            dcbmDanhMuc.addElement((int) danhMuc.getId());
+            dcbmDanhMuc.addElement(danhMuc.getTenDanhMuc());
         }
     }
 
     public void showcbbNSX(List<NSX> nsxs) {
         dcbmNSX.removeAllElements();
         for (NSX nsx1 : nsxs) {
-            dcbmNSX.addElement(nsx1.getId());
+            dcbmNSX.addElement(nsx1.getTenNSX());
         }
     }
 
     public void showcbbXuatXu(List<XuatXu> xuatXus) {
         dcbmXuatXu.removeAllElements();
         for (XuatXu xuatXu : xuatXus) {
-            dcbmXuatXu.addElement(xuatXu.getId());
+            dcbmXuatXu.addElement(xuatXu.getTenXuatXu());
         }
     }
 
     public void showcbbMauSac(List<MauSac> mauSacs) {
         dcbmMauSac.removeAllElements();
         for (MauSac mauSac : mauSacs) {
-            dcbmMauSac.addElement(mauSac.getId());
+            dcbmMauSac.addElement(mauSac.getTenMauSac());
         }
     }
 
     public void showcbbSize(List<Size> sizes) {
         dcbmSize.removeAllElements();
         for (Size size : sizes) {
-            dcbmSize.addElement(size.getId());
+            dcbmSize.addElement(size.getTenSize());
         }
     }
 
     public void showcbbThuongHieu(List<ThuongHieu> thuongHieus) {
         dcbmThuongHieu.removeAllElements();
         for (ThuongHieu thuongHieu : thuongHieus) {
-            dcbmThuongHieu.addElement(thuongHieu.getId());
+            dcbmThuongHieu.addElement(thuongHieu.getTenThuongHieu());
         }
     }
 
     public void showcbbChatLieu(List<ChatLieu> chatLieus) {
         dcbmChatLieu.removeAllElements();
         for (ChatLieu chatLieu : chatLieus) {
-            dcbmChatLieu.addElement(chatLieu.getId());
+            dcbmChatLieu.addElement(chatLieu.getTenChatLieu());
         }
     }
 
     public void showcbbCoAo(List<CoAo> coAos) {
         dcbmCoAo.removeAllElements();
         for (CoAo coAo : coAos) {
-            dcbmCoAo.addElement(coAo.getId());
+            dcbmCoAo.addElement(coAo.getTenCoAo());
         }
     }
 
     public void showcbbDuoiAo(List<DuoiAo> duoiAos) {
         dcbmDuoiAo.removeAllElements();
         for (DuoiAo duoiAo : duoiAos) {
-            dcbmDuoiAo.addElement(duoiAo.getId());
+            dcbmDuoiAo.addElement(duoiAo.getTenDuoiAo());
         }
     }
 
     public void showcbbTayAo(List<TayAo> tayAos) {
         dcbmTayAo.removeAllElements();
         for (TayAo tayAo : tayAos) {
-            dcbmTayAo.addElement(tayAo.getId());
+            dcbmTayAo.addElement(tayAo.getTenTayAo());
         }
     }
 
     public void showcbbDangAo(List<DangAo> dangAos) {
         dcbmDangAo.removeAllElements();
         for (DangAo dangAo1 : dangAos) {
-            dcbmDangAo.addElement(dangAo1.getId());
+            dcbmDangAo.addElement(dangAo1.getTenDangAo());
         }
     }
 
     public void showcbbSanPham(List<backend.entity.SanPham> sanPhams) {
         dcbmSanPham.removeAllElements();
         for (backend.entity.SanPham sanPham : sanPhams) {
-            dcbmSanPham.addElement(sanPham.getId());
+            dcbmSanPham.addElement(sanPham.getTenSanPham());
         }
     }
 
     public backend.entity.ChiTietSanPham getFormData() {
-        String sp = cbbSanPham.getSelectedItem().toString();
-        String danhMuc = cbbDanhMuc.getSelectedItem().toString();
-        String nsx = cbbNSX.getSelectedItem().toString();
-        String xuatXu = cbbXuatXu.getSelectedItem().toString();
-        String mauSac = cbbMauSac.getSelectedItem().toString();
-        String size = cbbSize.getSelectedItem().toString();
-        String thuongHieu = cbbThuongHieu.getSelectedItem().toString();
-        String chatLieu = cbbChatLieu.getSelectedItem().toString();
-        String coAo = cbbCoAo.getSelectedItem().toString();
-        String duoiAo = cbbDuoiAo.getSelectedItem().toString();
-        String tayAo = CbbTayAo.getSelectedItem().toString();
-        String dangAo = cbbDangAo.getSelectedItem().toString();
-        String soLuong = txtSoLuong.getText();
-        String gia = txtGia.getText();
-        String moTa = txtMoTa.getText();
-        String tinhTrang = txtTrangThai.getText();
+        try {
+            String sp = cbbSanPham.getSelectedItem().toString();
+            BigDecimal gia = new BigDecimal(txtGia.getText());
+            String soLuong = txtSoLuong.getText();
+            String moTa = txtMoTa.getText();
+            String danhMuc = cbbDanhMuc.getSelectedItem().toString();
+            String xuatXu = cbbXuatXu.getSelectedItem().toString();
+            String nsx = cbbNSX.getSelectedItem().toString();
+            String mauSac = cbbMauSac.getSelectedItem().toString();
+            String size = cbbSize.getSelectedItem().toString();
+            String thuongHieu = cbbThuongHieu.getSelectedItem().toString();
+            String chatLieu = cbbChatLieu.getSelectedItem().toString();
+            String coAo = cbbCoAo.getSelectedItem().toString();
+            String tayAo = CbbTayAo.getSelectedItem().toString();
+            String duoiAo = cbbDuoiAo.getSelectedItem().toString();
+            String dangAo = cbbDangAo.getSelectedItem().toString();
+            String tinhTrang = txtTrangThai.getText();
 
-        backend.entity.ChiTietSanPham chiTietSanPham = new backend.entity.ChiTietSanPham(
-                Long.parseLong(sp),
-                new BigDecimal(gia),
-                Long.parseLong(soLuong),
-                moTa,
-                Long.parseLong(danhMuc),
-                Long.parseLong(xuatXu),
-                Long.parseLong(nsx),
-                Long.parseLong(mauSac),
-                Long.parseLong(size),
-                Long.parseLong(thuongHieu),
-                Long.parseLong(chatLieu),
-                Long.parseLong(coAo),
-                Long.parseLong(tayAo),
-                Long.parseLong(duoiAo),
-                Long.parseLong(dangAo),
-                tinhTrang
-        );
+            backend.entity.ChiTietSanPham chiTietSanPham = new backend.entity.ChiTietSanPham(
+                    sp,
+                    gia,
+                    soLuong,
+                    moTa,
+                    danhMuc,
+                    xuatXu,
+                    nsx,
+                    mauSac,
+                    size,
+                    thuongHieu,
+                    chatLieu,
+                    coAo,
+                    tayAo,
+                    duoiAo,
+                    dangAo,
+                    tinhTrang
+            );
 
-        return chiTietSanPham;
+            return chiTietSanPham;
+        } catch (NumberFormatException e) {
+            // Xử lý ngoại lệ khi có lỗi xảy ra trong việc chuyển đổi các giá trị thành chuỗi
+            e.printStackTrace();
+            return null;
+        }
     }
+
     public void setData() {
-        
+
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -482,10 +487,10 @@ public class SuaSanPhamChiTiet extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (validateFormData()) {
-        backend.entity.ChiTietSanPham chiTietSanPham = getFormData();
-        chiTietSanPhamService.update(chiTietSanPham, idctsp);
-        JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-    }
+            backend.entity.ChiTietSanPham chiTietSanPham = getFormData();
+            chiTietSanPhamService.update(chiTietSanPham, idctsp);
+            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
     private boolean validateFormData() {
         try {

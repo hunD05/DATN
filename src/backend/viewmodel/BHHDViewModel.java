@@ -15,6 +15,8 @@ public class BHHDViewModel {
     private int id;
     private String maHD;
     private LocalDateTime ngayTao;
+    private String maKH;
+    private String tenKH;
     private String maNV;
     private int tongSP;
     private String trangThai;
@@ -23,10 +25,12 @@ public class BHHDViewModel {
     public BHHDViewModel() {
     }
 
-    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String maNV, int tongSP, String trangThai, double tongTien) {
+    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String maKH, String tenKH, String maNV, int tongSP, String trangThai, double tongTien) {
         this.id = id;
         this.maHD = maHD;
         this.ngayTao = ngayTao;
+        this.maKH = maKH;
+        this.tenKH = tenKH;
         this.maNV = maNV;
         this.tongSP = tongSP;
         this.trangThai = trangThai;
@@ -55,6 +59,22 @@ public class BHHDViewModel {
 
     public void setNgayTao(LocalDateTime ngayTao) {
         this.ngayTao = ngayTao;
+    }
+
+    public String getMaKH() {
+        return maKH;
+    }
+
+    public void setMaKH(String maKH) {
+        this.maKH = maKH;
+    }
+
+    public String getTenKH() {
+        return tenKH;
+    }
+
+    public void setTenKH(String tenKH) {
+        this.tenKH = tenKH;
     }
 
     public String getMaNV() {

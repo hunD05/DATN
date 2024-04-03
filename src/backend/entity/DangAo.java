@@ -34,8 +34,8 @@ public class DangAo {
     public DangAo() {
     }
 
-    public DangAo(String maDangAo, String tenDangAo) {
-        this.maDangAo = maDangAo;
+    public DangAo(String tenDangAo) {
+
         this.tenDangAo = tenDangAo;
     }
 

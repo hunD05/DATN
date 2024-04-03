@@ -24,7 +24,7 @@ public class SizeRespository {
                      [ID]
                        ,[MaSize]
                        ,[TenSize]
-                   FROM [dbo].[Size]where deleted = 0
+                   FROM [dbo].[Size]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -47,16 +47,15 @@ public class SizeRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[Size]
-                            ([MaSize]
-                            ,[TenSize])
+                            (
+                            [TenSize])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaSize());
-                ps.setObject(2, chiTietSanPham.getTenSize());
+                ps.setObject(1, chiTietSanPham.getTenSize());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -70,16 +69,15 @@ public class SizeRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[Size]
-                        SET [MaSize] = ?
-                           ,[TenSize] = ?
+                        SET 
+                           [TenSize] = ?
                       WHERE ID = ?
                      """;
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (size != null) {
-                ps.setObject(1, size.getMaSize());
-                ps.setObject(2, size.getTenSize());
-                ps.setObject(3, id);
+                ps.setObject(1, size.getTenSize());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

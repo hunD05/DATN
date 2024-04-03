@@ -10,6 +10,8 @@ import backend.viewmodel.PhieuGiamGiaViewModel;
 import java.awt.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import raven.toast.Notifications;
@@ -54,7 +56,19 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
-                System.out.println("Edit row : " + row);
+                int choice = JOptionPane.showConfirmDialog(ViewPhieuGiamGia.this, "Bạn có chắc chắn muốn Sửa?", "Xác nhận", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    if (check()) {
+                        PhieuGiamGiaViewModel pgg = lists.get(row);
+                        service.Sua(getFormData(), String.valueOf(pgg.getId()));
+                        lists = service.getAll();
+                        showDataTable(lists);
+                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã sửa");
+                    }
+                } else if (choice == JOptionPane.NO_OPTION) {
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã hủy");
+                }
+                clear();
             }
 
             @Override
@@ -104,18 +118,24 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
                 pgg.getNgayBatDau(),
                 pgg.getNgayKetThuc(),
                 pgg.getSoLuong(),
-                pgg.getHoaDonToiThieu(),
-                pgg.getSoPhanTramGiam(),
-                pgg.getGiamToiDa(),
+                formatCurrency(pgg.getHoaDonToiThieu()), // Định dạng hóa đơn tối thiểu
+                formatPercent(pgg.getSoPhanTramGiam()), // Định dạng phần trăm giảm
+                formatCurrency(pgg.getGiamToiDa()), // Định dạng giảm tối đa
                 pgg.getTrangThai(),});
         }
     }
+    // định dạng tiền 
+
+    private String formatCurrency(float value) {
+        return String.format("%.0f $", value); // format lại tiền
+    }
+
+    // để định dạng phần trăm
+    private String formatPercent(float value) {
+        return String.format("%.0f%%", value); // format lại số phần trăm giảm
+    }
 
     public boolean check() {
-        if (txtMa.getText().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mã trống");
-            return false;
-        }
         if (txtTen.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên trống");
             return false;
@@ -151,6 +171,17 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
             return false;
         }
 
+        // check ngày hiện tại
+        java.util.Date selectedDate = jdcNgayBatDau.getDate();
+
+        // Chuyển đổi ngày thành LocalDate
+        LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+//        if (localDate.isBefore(LocalDate.now())) {
+//            // Nếu ngày bắt đầu trước ngày hiện tại, bạn có thể thực hiện các hành động phù hợp ở đây
+//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày bắt đầu không được trước ngày hiện tại");
+//            return false;
+//        }
         try {
             Float.parseFloat(txtGiamToiDa.getText());
             Float.parseFloat(txtHoaDon.getText());
@@ -169,10 +200,10 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         cbbTrangThai.addItem("Đang diễn ra");
         cbbTrangThai.addItem("Chưa diễn ra");
         cbbTrangThai.addItem("Kết thúc");
+
     }
 
     public PhieuGiamGia getFormData() {
-        String ma = txtMa.getText();
         String ten = txtTen.getText();
         Date ngayBD = jdcNgayBatDau.getDate();
         Date ngayKT = jdcNgayKetThuc.getDate();
@@ -182,17 +213,29 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         String giam = txtGiamToiDa.getText();
         String trangThai;
         int idNV = 2;
-        if (ngayBD.after(ngayKT)) {
+
+        // kết thúc
+        java.util.Date local = jdcNgayKetThuc.getDate();
+        LocalDate kt = local.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // hiện tại
+        java.util.Date selectedDate = jdcNgayBatDau.getDate();
+        LocalDate ht = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        if (kt.isBefore(LocalDate.now())) {
             trangThai = "Kết thúc";
         } else {
             trangThai = "Đang diễn ra";
         }
-        PhieuGiamGia pgg = new PhieuGiamGia(ma, ten, ngayBD, ngayKT, Integer.valueOf(soLuong), Float.valueOf(hoaDon), Float.valueOf(phanTram), Float.valueOf(giam), trangThai, idNV);
+        if (ht.isAfter(LocalDate.now())) {
+            trangThai = "Chưa diễn ra";
+        }
+
+        PhieuGiamGia pgg = new PhieuGiamGia(ten, ngayBD, ngayKT, Integer.valueOf(soLuong), Float.valueOf(hoaDon), Float.valueOf(phanTram), Float.valueOf(giam), trangThai, idNV);
         return pgg;
     }
 
     private void clear() {
-        txtMa.setText("");
         txtTen.setText("");
         jdcNgayBatDau.setDate(null);
         jdcNgayKetThuc.setDate(null);
@@ -217,14 +260,13 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblHienThi = new javax.swing.JTable();
         roundPanel4 = new swing.RoundPanel();
-        txtMa = new textfield.TextField();
+        txtTen = new textfield.TextField();
         txtSoLuong = new textfield.TextField();
         txtSoPhanTram = new textfield.TextField();
-        txtTen = new textfield.TextField();
         txtHoaDon = new textfield.TextField();
-        txtGiamToiDa = new textfield.TextField();
         jdcNgayBatDau = new com.toedter.calendar.JDateChooser();
         jdcNgayKetThuc = new com.toedter.calendar.JDateChooser();
+        txtGiamToiDa = new textfield.TextField();
         jPanel1 = new javax.swing.JPanel();
         btnXoa = new javax.swing.JButton();
         btnSua = new javax.swing.JButton();
@@ -257,8 +299,8 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
 
         roundPanel4.setLayout(new java.awt.GridLayout(3, 10, 10, 10));
 
-        txtMa.setLabelText("Mã khuyến mãi");
-        roundPanel4.add(txtMa);
+        txtTen.setLabelText("Tên khuyến mãi");
+        roundPanel4.add(txtTen);
 
         txtSoLuong.setLabelText("Số lượng được phép sử dụng");
         roundPanel4.add(txtSoLuong);
@@ -266,14 +308,8 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         txtSoPhanTram.setLabelText("Phần trăm giảm");
         roundPanel4.add(txtSoPhanTram);
 
-        txtTen.setLabelText("Tên khuyến mãi");
-        roundPanel4.add(txtTen);
-
         txtHoaDon.setLabelText("Hóa đơn tối thiểu");
         roundPanel4.add(txtHoaDon);
-
-        txtGiamToiDa.setLabelText("Số tiền giảm tối đa");
-        roundPanel4.add(txtGiamToiDa);
 
         jdcNgayBatDau.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)), "Ngày bắt đầu", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10), new java.awt.Color(102, 102, 102))); // NOI18N
         jdcNgayBatDau.setOpaque(false);
@@ -282,6 +318,9 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         jdcNgayKetThuc.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)), "Ngày kết thúc", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10), new java.awt.Color(102, 102, 102))); // NOI18N
         jdcNgayKetThuc.setOpaque(false);
         roundPanel4.add(jdcNgayKetThuc);
+
+        txtGiamToiDa.setLabelText("Số tiền giảm tối đa");
+        roundPanel4.add(txtGiamToiDa);
 
         jPanel1.setLayout(new java.awt.GridLayout(1, 0, 20, 0));
 
@@ -337,7 +376,7 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(cbbTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 874, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtTim, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(roundPanel1Layout.createSequentialGroup()
@@ -363,9 +402,9 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbbTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
-                .addGap(7, 7, 7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                .addGap(46, 46, 46))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -404,42 +443,44 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         if (row > -1) {
             int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn Sửa?", "Xác nhận", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
-
-                PhieuGiamGiaViewModel pgg = lists.get(row);
-                service.Sua(getFormData(), String.valueOf(pgg.getId()));
-                lists = service.getAll();
-                showDataTable(lists);
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã sửa");
+                if (check()) {
+                    PhieuGiamGiaViewModel pgg = lists.get(row);
+                    service.Sua(getFormData(), String.valueOf(pgg.getId()));
+                    lists = service.getAll();
+                    showDataTable(lists);
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã sửa");
+                }
             } else if (choice == JOptionPane.NO_OPTION) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã hủy");
             }
             clear();
         } else {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn dòng để sửa");
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn dữ liệu để sửa");
         }
-
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void tblHienThiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHienThiMouseClicked
         // TODO add your handling code here:
         int row = tblHienThi.getSelectedRow();
-        PhieuGiamGiaViewModel pgg = lists.get(row);
-        txtGiamToiDa.setText(String.valueOf(pgg.getGiamToiDa()));
-        txtHoaDon.setText(String.valueOf(pgg.getHoaDonToiThieu()));
-        txtMa.setText(pgg.getMaGiamGia());
-        if (pgg.getNgayBatDau() != null) {
-            jdcNgayBatDau.setDate(pgg.getNgayBatDau());
-        } else {
-            jdcNgayBatDau.setDate(null);
+        if (row >= 0 && row < lists.size()) {
+            PhieuGiamGiaViewModel pgg = lists.get(row);
+            txtTen.setText(pgg.getTenGiamGia());
+            txtGiamToiDa.setText(String.format("%.0f", pgg.getGiamToiDa())); // Định dạng giảm tối đa
+            txtHoaDon.setText(String.format("%.0f", pgg.getHoaDonToiThieu())); // Định dạng hóa đơn tối thiểu và thêm kí hiệu "$" vào sau
+            if (pgg.getNgayBatDau() != null) {
+                jdcNgayBatDau.setDate(pgg.getNgayBatDau());
+            } else {
+                jdcNgayBatDau.setDate(null);
+            }
+            if (pgg.getNgayKetThuc() != null) {
+                jdcNgayKetThuc.setDate(pgg.getNgayKetThuc());
+            } else {
+                jdcNgayKetThuc.setDate(null);
+            }
+            txtSoLuong.setText(String.valueOf(pgg.getSoLuong()));
+            txtSoPhanTram.setText(String.format("%.0f", pgg.getSoPhanTramGiam())); // Định dạng phần trăm giảm
+
         }
-        if (pgg.getNgayKetThuc() != null) {
-            jdcNgayKetThuc.setDate(pgg.getNgayKetThuc());
-        } else {
-            jdcNgayKetThuc.setDate(null);
-        }
-        txtSoLuong.setText(String.valueOf(pgg.getSoLuong()));
-        txtSoPhanTram.setText(String.valueOf(pgg.getSoPhanTramGiam()));
-        txtTen.setText(pgg.getTenGiamGia());
     }//GEN-LAST:event_tblHienThiMouseClicked
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
@@ -460,7 +501,7 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
             }
             clear();
         } else {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn dòng để xóa");
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn dữ liệu để xóa");
         }
 
 
@@ -502,7 +543,6 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
     private javax.swing.JTable tblHienThi;
     private textfield.TextField txtGiamToiDa;
     private textfield.TextField txtHoaDon;
-    private textfield.TextField txtMa;
     private textfield.TextField txtSoLuong;
     private textfield.TextField txtSoPhanTram;
     private textfield.TextField txtTen;

@@ -37,7 +37,12 @@ public class KhachHangService {
         return repo.Delete(Ma);
 
     }
-    public List<KhachHangEntity> Tim(String ten){
+
+    public List<KhachHangEntity> Tim(String ten) {
         return repo.Tim(ten);
     }
+    
+//    public List<KhachHangEntity> getMT(int idKH){
+//        return repo.getMT(idKH);
+//    }
 }

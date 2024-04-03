@@ -16,26 +16,20 @@ public class SanPhamViewModel {
     private int stt;
     private String maSanPham;
     private String tenSanPham;
+    private String trangThai;
     private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private String createdBy;
-    private String updatedBy;
-    private boolean deleted;
     private Long soLuong;
 
     public SanPhamViewModel() {
     }
 
-    public SanPhamViewModel(String id, int stt, String maSanPham, String tenSanPham, Timestamp createdAt, Timestamp updatedAt, String createdBy, String updatedBy, boolean deleted, Long soLuong) {
+    public SanPhamViewModel(String id, int stt, String maSanPham, String tenSanPham, String trangThai, Timestamp createdAt, Long soLuong) {
         this.id = id;
         this.stt = stt;
         this.maSanPham = maSanPham;
         this.tenSanPham = tenSanPham;
+        this.trangThai = trangThai;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.deleted = deleted;
         this.soLuong = soLuong;
     }
 
@@ -71,44 +65,20 @@ public class SanPhamViewModel {
         this.tenSanPham = tenSanPham;
     }
 
+    public String getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(String trangThai) {
+        this.trangThai = trangThai;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Long getSoLuong() {
@@ -118,8 +88,4 @@ public class SanPhamViewModel {
     public void setSoLuong(Long soLuong) {
         this.soLuong = soLuong;
     }
-
-    
-
-    
 }

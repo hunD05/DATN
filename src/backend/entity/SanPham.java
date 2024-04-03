@@ -23,8 +23,7 @@ public class SanPham {
     private boolean deleted;
     private String maCTSP;
 
-    public SanPham(String maSanPham, String tenSanPham) {
-        this.maSanPham = maSanPham;
+    public SanPham(String tenSanPham) {
         this.tenSanPham = tenSanPham;
     }
 

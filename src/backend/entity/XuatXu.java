@@ -34,8 +34,8 @@ public class XuatXu {
     public XuatXu() {
     }
 
-    public XuatXu(String maXuatXu, String tenXuatXu) {
-        this.maXuatXu = maXuatXu;
+    public XuatXu(String tenXuatXu) {
+
         this.tenXuatXu = tenXuatXu;
     }
 

@@ -26,7 +26,7 @@ public class DuoiAoRespository {
                      [ID]
                        ,[MaDuoiAo]
                        ,[TenDuoiAo]
-                   FROM [dbo].[DuoiAo]where deleted = 0
+                   FROM [dbo].[DuoiAo]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -49,16 +49,16 @@ public class DuoiAoRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[DuoiAo]
-                            ([MaDuoiAo]
-                            ,[TenDuoiAo])
+                            (
+                            [TenDuoiAo])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaDuoiAo());
-                ps.setObject(2, chiTietSanPham.getTenDuoiAo());
+
+                ps.setObject(1, chiTietSanPham.getTenDuoiAo());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -72,16 +72,16 @@ public class DuoiAoRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[DuoiAo]
-                        SET [MaDuoiAo] = ?
-                           ,[TenDuoiAo] = ?
+                        SET 
+                           [TenDuoiAo] = ?
                       WHERE ID = ?
                      """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (duoiAo != null) {
-                ps.setObject(1, duoiAo.getMaDuoiAo());
-                ps.setObject(2, duoiAo.getTenDuoiAo());
-                ps.setObject(3, id);
+
+                ps.setObject(1, duoiAo.getTenDuoiAo());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

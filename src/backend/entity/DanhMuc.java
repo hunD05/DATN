@@ -34,8 +34,8 @@ public class DanhMuc {
     public DanhMuc() {
     }
 
-    public DanhMuc(String maDanhMuc, String tenDanhMuc) {
-        this.maDanhMuc = maDanhMuc;
+    public DanhMuc( String tenDanhMuc) {
+
         this.tenDanhMuc = tenDanhMuc;
     }
 

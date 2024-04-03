@@ -17,7 +17,7 @@ import java.util.List;
 public class SanPhamService {
     
     SanPhamRespository spr = new SanPhamRespository();
-    public List<SanPham> getAll(){
+    public List<SanPhamViewModel> getAll(){
         return spr.getAll();
     }
     
@@ -32,6 +32,16 @@ public class SanPhamService {
     public boolean update(SanPham sanPham,String ID){
         return spr.update(sanPham, ID);
     }
+    public List<SanPhamViewModel> search(String keyword) {
+        return spr.search(keyword);
+    }
     
+    public boolean checkMaSanPhamExists(String maSP) {
+        return spr.checkMaSanPhamExists(maSP);
+    }
+    
+    public List<SanPhamViewModel> searchByStatus(String status) {
+        return spr.searchByStatus(status);
+    }
     
 }

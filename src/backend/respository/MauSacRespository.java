@@ -23,7 +23,7 @@ public class MauSacRespository {
                  SELECT ROW_NUMBER() OVER (ORDER BY [ID]) AS STT,[ID]
                        ,[MaMauSac]
                        ,[TenMauSac]
-                   FROM [dbo].[MauSac]where deleted = 0
+                   FROM [dbo].[MauSac]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -46,16 +46,16 @@ public class MauSacRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[MauSac]
-                            ([MaMauSac]
-                            ,[TenMauSac])
+                            (
+                            [TenMauSac])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaMauSac());
-                ps.setObject(2, chiTietSanPham.getTenMauSac());
+
+                ps.setObject(1, chiTietSanPham.getTenMauSac());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -69,16 +69,15 @@ public class MauSacRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[MauSac]
-                        SET [MaMauSac] = ?
-                           ,[TenMauSac] = ?
+                        SET 
+                           [TenMauSac] = ?
                       WHERE ID = ?
                      """;
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (mauSac != null) {
-                ps.setObject(1, mauSac.getMaMauSac());
-                ps.setObject(2, mauSac.getTenMauSac());
-                ps.setObject(3, id);
+                ps.setObject(1, mauSac.getTenMauSac());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

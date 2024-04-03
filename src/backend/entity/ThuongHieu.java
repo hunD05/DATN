@@ -34,8 +34,8 @@ public class ThuongHieu {
     public ThuongHieu() {
     }
 
-    public ThuongHieu(String maThuongHieu, String tenThuongHieu) {
-        this.maThuongHieu = maThuongHieu;
+    public ThuongHieu( String tenThuongHieu) {
+
         this.tenThuongHieu = tenThuongHieu;
     }
 

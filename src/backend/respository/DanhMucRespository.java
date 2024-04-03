@@ -27,7 +27,7 @@ public class DanhMucRespository {
                      [ID]
                        ,[MaDanhMuc]
                        ,[TenDanhMuc]
-                   FROM [dbo].[DanhMuc]where deleted = 0
+                   FROM [dbo].[DanhMuc]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -49,16 +49,15 @@ public class DanhMucRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[DanhMuc]
-                            ([MaDanhMuc]
-                            ,[TenDanhMuc])
+                            (
+                            [TenDanhMuc])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaDanhMuc());
-                ps.setObject(2, chiTietSanPham.getTenDanhMuc());
+                ps.setObject(1, chiTietSanPham.getTenDanhMuc());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -72,16 +71,16 @@ public class DanhMucRespository {
         int check = 0;
         String sql = """
                  UPDATE [dbo].[DanhMuc]
-                    SET [MaDanhMuc] = ?
-                       ,[TenDanhMuc] = ?
+                    SET 
+                       [TenDanhMuc] = ?
                   WHERE ID = ?
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaDanhMuc());
-                ps.setObject(2, chiTietSanPham.getTenDanhMuc());
-                ps.setObject(3, id);
+
+                ps.setObject(1, chiTietSanPham.getTenDanhMuc());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

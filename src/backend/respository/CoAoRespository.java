@@ -25,7 +25,7 @@ public class CoAoRespository {
                      [ID]
                        ,[MaCoAo]
                        ,[TenCoAo]
-                   FROM [dbo].[CoAo]where deleted = 0
+                   FROM [dbo].[CoAo]where deleted = 0 ORder by Created_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -48,16 +48,16 @@ public class CoAoRespository {
         int check = 0;
         String sql = """
                  INSERT INTO [dbo].[CoAo]
-                            ([MaCoAo]
-                            ,[TenCoAo])
+                            (
+                            [TenCoAo])
                       VALUES
-                            (?,?)
+                            (?)
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getMaCoAo());
-                ps.setObject(2, chiTietSanPham.getTenCoAo());
+
+                ps.setObject(1, chiTietSanPham.getTenCoAo());
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {
@@ -71,16 +71,16 @@ public class CoAoRespository {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[CoAo]
-                        SET [MaCoAo] = ?
-                           ,[TenCoAo] = ?
+                        SET 
+                           [TenCoAo] = ?
                       WHERE ID = ?
                      """;
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (coAo != null) {
-                ps.setObject(1, coAo.getMaCoAo());
-                ps.setObject(2, coAo.getTenCoAo());
-                ps.setObject(3, id);
+
+                ps.setObject(1, coAo.getTenCoAo());
+                ps.setObject(2, id);
                 check = ps.executeUpdate();
             }
         } catch (Exception e) {

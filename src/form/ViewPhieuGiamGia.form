@@ -42,7 +42,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="cbbTrangThai" min="-2" pref="213" max="-2" attributes="0"/>
-                          <EmptySpace pref="874" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="txtTim" min="-2" pref="296" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -76,9 +76,9 @@
                       <Component id="cbbTrangThai" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtTim" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="469" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="418" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -194,9 +194,9 @@
             <Property name="verticalGap" type="int" value="10"/>
           </Layout>
           <SubComponents>
-            <Component class="textfield.TextField" name="txtMa">
+            <Component class="textfield.TextField" name="txtTen">
               <Properties>
-                <Property name="labelText" type="java.lang.String" value="M&#xe3; khuy&#x1ebf;n m&#xe3;i"/>
+                <Property name="labelText" type="java.lang.String" value="T&#xea;n khuy&#x1ebf;n m&#xe3;i"/>
               </Properties>
             </Component>
             <Component class="textfield.TextField" name="txtSoLuong">
@@ -209,19 +209,9 @@
                 <Property name="labelText" type="java.lang.String" value="Ph&#x1ea7;n tr&#x103;m gi&#x1ea3;m"/>
               </Properties>
             </Component>
-            <Component class="textfield.TextField" name="txtTen">
-              <Properties>
-                <Property name="labelText" type="java.lang.String" value="T&#xea;n khuy&#x1ebf;n m&#xe3;i"/>
-              </Properties>
-            </Component>
             <Component class="textfield.TextField" name="txtHoaDon">
               <Properties>
                 <Property name="labelText" type="java.lang.String" value="H&#xf3;a &#x111;&#x1a1;n t&#x1ed1;i thi&#x1ec3;u"/>
-              </Properties>
-            </Component>
-            <Component class="textfield.TextField" name="txtGiamToiDa">
-              <Properties>
-                <Property name="labelText" type="java.lang.String" value="S&#x1ed1; ti&#x1ec1;n gi&#x1ea3;m t&#x1ed1;i &#x111;a"/>
               </Properties>
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="jdcNgayBatDau">
@@ -256,6 +246,11 @@
                   </Border>
                 </Property>
                 <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="textfield.TextField" name="txtGiamToiDa">
+              <Properties>
+                <Property name="labelText" type="java.lang.String" value="S&#x1ed1; ti&#x1ec1;n gi&#x1ea3;m t&#x1ed1;i &#x111;a"/>
               </Properties>
             </Component>
           </SubComponents>

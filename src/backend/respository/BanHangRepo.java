@@ -22,12 +22,13 @@ public class BanHangRepo {
         List<BHHDViewModel> listBH = new ArrayList<>();
         String sql = """
                 SELECT dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, 
-                                        ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong), 0) AS TongSP, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan),0) AS TongThanhTien
+                                        ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong), 0) AS TongSP, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan),0) AS TongThanhTien, dbo.KhachHang.MaKhachHang, dbo.KhachHang.TenKhachHang 
                                  FROM dbo.HoaDon
                                  INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                                 LEFT JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
                                  LEFT JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
                                  WHERE dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' AND dbo.HoaDon.Deleted = 0
-                                 GROUP BY dbo.HoaDon.TrangThai, dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.ID
+                                 GROUP BY dbo.HoaDon.TrangThai, dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.ID, dbo.KhachHang.MaKhachHang, dbo.KhachHang.TenKhachHang 
                                  ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {

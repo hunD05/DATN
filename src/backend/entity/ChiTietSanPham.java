@@ -14,22 +14,22 @@ import java.util.Date;
 public class ChiTietSanPham {
 
     
-    private Long id;
-    private Long idSanPham;
+    private String id;
+    private String idSanPham;
     private BigDecimal giaBan;
-    private Long soLuong;
+    private String soLuong;
     private String moTa;
-    private Long idDanhMuc;
-    private Long idXuatXu;
-    private Long idNsx;
-    private Long idMauSac;
-    private Long idSize;
-    private Long idThuongHieu;
-    private Long idChatLieu;
-    private Long idCoAo;
-    private Long idTayAo;
-    private Long idDuoiAo;
-    private Long idDangAo;
+    private String idDanhMuc;
+    private String idXuatXu;
+    private String idNsx;
+    private String idMauSac;
+    private String idSize;
+    private String idThuongHieu;
+    private String idChatLieu;
+    private String idCoAo;
+    private String idTayAo;
+    private String idDuoiAo;
+    private String idDangAo;
     private String trangThai;
     private boolean deleted;
     private Date createdAt;
@@ -37,24 +37,24 @@ public class ChiTietSanPham {
     private String createdBy;
     private String updatedBy;
 
-    public ChiTietSanPham(Long stt) {
+    public ChiTietSanPham(String stt) {
         this.stt = stt;
     }
 
-    public Long getStt() {
+    public String getStt() {
         return stt;
     }
 
-    public void setStt(Long stt) {
+    public void setStt(String stt) {
         this.stt = stt;
     }
-    private Long stt;
+    private String stt;
     
     
     public ChiTietSanPham() {
     }
 
-    public ChiTietSanPham(Long idSanPham, BigDecimal giaBan, Long soLuong, String moTa, Long idDanhMuc, Long idXuatXu, Long idNsx, Long idMauSac, Long idSize, Long idThuongHieu, Long idChatLieu, Long idCoAo, Long idTayAo, Long idDuoiAo, Long idDangAo, String trangThai) {
+    public ChiTietSanPham(String idSanPham, BigDecimal giaBan, String soLuong, String moTa, String idDanhMuc, String idXuatXu, String idNsx, String idMauSac, String idSize, String idThuongHieu, String idChatLieu, String idCoAo, String idTayAo, String idDuoiAo, String idDangAo, String trangThai) {
         this.idSanPham = idSanPham;
         this.giaBan = giaBan;
         this.soLuong = soLuong;
@@ -75,19 +75,19 @@ public class ChiTietSanPham {
 
     
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getIdSanPham() {
+    public String getIdSanPham() {
         return idSanPham;
     }
 
-    public void setIdSanPham(Long idSanPham) {
+    public void setIdSanPham(String idSanPham) {
         this.idSanPham = idSanPham;
     }
 
@@ -99,11 +99,11 @@ public class ChiTietSanPham {
         this.giaBan = giaBan;
     }
 
-    public Long getSoLuong() {
+    public String getSoLuong() {
         return soLuong;
     }
 
-    public void setSoLuong(Long soLuong) {
+    public void setSoLuong(String soLuong) {
         this.soLuong = soLuong;
     }
 
@@ -115,91 +115,91 @@ public class ChiTietSanPham {
         this.moTa = moTa;
     }
 
-    public Long getIdDanhMuc() {
+    public String getIdDanhMuc() {
         return idDanhMuc;
     }
 
-    public void setIdDanhMuc(Long idDanhMuc) {
+    public void setIdDanhMuc(String idDanhMuc) {
         this.idDanhMuc = idDanhMuc;
     }
 
-    public Long getIdXuatXu() {
+    public String getIdXuatXu() {
         return idXuatXu;
     }
 
-    public void setIdXuatXu(Long idXuatXu) {
+    public void setIdXuatXu(String idXuatXu) {
         this.idXuatXu = idXuatXu;
     }
 
-    public Long getIdNsx() {
+    public String getIdNsx() {
         return idNsx;
     }
 
-    public void setIdNsx(Long idNsx) {
+    public void setIdNsx(String idNsx) {
         this.idNsx = idNsx;
     }
 
-    public Long getIdMauSac() {
+    public String getIdMauSac() {
         return idMauSac;
     }
 
-    public void setIdMauSac(Long idMauSac) {
+    public void setIdMauSac(String idMauSac) {
         this.idMauSac = idMauSac;
     }
 
-    public Long getIdSize() {
+    public String getIdSize() {
         return idSize;
     }
 
-    public void setIdSize(Long idSize) {
+    public void setIdSize(String idSize) {
         this.idSize = idSize;
     }
 
-    public Long getIdThuongHieu() {
+    public String getIdThuongHieu() {
         return idThuongHieu;
     }
 
-    public void setIdThuongHieu(Long idThuongHieu) {
+    public void setIdThuongHieu(String idThuongHieu) {
         this.idThuongHieu = idThuongHieu;
     }
 
-    public Long getIdChatLieu() {
+    public String getIdChatLieu() {
         return idChatLieu;
     }
 
-    public void setIdChatLieu(Long idChatLieu) {
+    public void setIdChatLieu(String idChatLieu) {
         this.idChatLieu = idChatLieu;
     }
 
-    public Long getIdCoAo() {
+    public String getIdCoAo() {
         return idCoAo;
     }
 
-    public void setIdCoAo(Long idCoAo) {
+    public void setIdCoAo(String idCoAo) {
         this.idCoAo = idCoAo;
     }
 
-    public Long getIdTayAo() {
+    public String getIdTayAo() {
         return idTayAo;
     }
 
-    public void setIdTayAo(Long idTayAo) {
+    public void setIdTayAo(String idTayAo) {
         this.idTayAo = idTayAo;
     }
 
-    public Long getIdDuoiAo() {
+    public String getIdDuoiAo() {
         return idDuoiAo;
     }
 
-    public void setIdDuoiAo(Long idDuoiAo) {
+    public void setIdDuoiAo(String idDuoiAo) {
         this.idDuoiAo = idDuoiAo;
     }
 
-    public Long getIdDangAo() {
+    public String getIdDangAo() {
         return idDangAo;
     }
 
-    public void setIdDangAo(Long idDangAo) {
+    public void setIdDangAo(String idDangAo) {
         this.idDangAo = idDangAo;
     }
 

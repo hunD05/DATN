@@ -34,8 +34,8 @@ public class TayAo {
     public TayAo() {
     }
 
-    public TayAo(String maTayAo, String tenTayAo) {
-        this.maTayAo = maTayAo;
+    public TayAo( String tenTayAo) {
+
         this.tenTayAo = tenTayAo;
     }
 

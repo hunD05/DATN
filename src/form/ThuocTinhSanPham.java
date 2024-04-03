@@ -349,6 +349,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                 }
 
             }
+
         };
         tblThuocTinh.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         tblThuocTinh.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
@@ -443,135 +444,135 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
     }
 
     public MauSac getFormDataMauSac() {
-        String maMauSac = txtMaThuocTinh.getText().trim();
+
         String tenMauSac = txtTenThuocTinh.getText().trim();
 
-        if (maMauSac.isEmpty() || tenMauSac.isEmpty()) {
+        if (tenMauSac.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new MauSac(maMauSac, tenMauSac);
+        return new MauSac(tenMauSac);
     }
 
     public ChatLieu getFormDataChatLieu() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new ChatLieu(ma, ten);
+        return new ChatLieu(ten);
     }
 
     public XuatXu getFormDataXuatXu() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new XuatXu(ma, ten);
+        return new XuatXu( ten);
     }
 
     public Size getFormDataSize() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new Size(ma, ten);
+        return new Size( ten);
     }
 
     public NSX getFormDataNSX() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new NSX(ma, ten);
+        return new NSX(ten);
     }
 
     public ThuongHieu getFormDataThuongHieu() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new ThuongHieu(ma, ten);
+        return new ThuongHieu(ten);
     }
 
     public DanhMuc getFormDataDanhMuc() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new DanhMuc(ma, ten);
+        return new DanhMuc(ten);
     }
 
     public CoAo getFormDataCoAo() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new CoAo(ma, ten);
+        return new CoAo( ten);
     }
 
     public DuoiAo getFormDataDuoiAo() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new DuoiAo(ma, ten);
+        return new DuoiAo( ten);
     }
 
     public TayAo getFormDataTayAo() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new TayAo(ma, ten);
+        return new TayAo(ten);
     }
 
     public DangAo getFormDataDangAo() {
-        String ma = txtMaThuocTinh.getText().trim();
+
         String ten = txtTenThuocTinh.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty()) {
+        if ( ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new DangAo(ma, ten);
+        return new DangAo( ten);
     }
 
     /**
@@ -603,12 +604,13 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
         rdoChatLieu = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        txtMaThuocTinh = new textfield.TextField();
         txtTenThuocTinh = new textfield.TextField();
         jPanel5 = new javax.swing.JPanel();
         btnThem = new javax.swing.JButton();
         btnSua = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(222, 222, 222));
 
         jLabel7.setFont(new java.awt.Font("Roboto", 1, 13)); // NOI18N
         jLabel7.setText("Danh sách thuộc tính");
@@ -750,9 +752,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
         jPanel4.setLayout(new java.awt.GridLayout(1, 0));
 
-        txtMaThuocTinh.setLabelText("Mã Thuộc tính");
-        jPanel4.add(txtMaThuocTinh);
-
         txtTenThuocTinh.setLabelText("Tên thuộc tính");
         jPanel4.add(txtTenThuocTinh);
 
@@ -811,7 +810,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 956, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1330, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -822,8 +821,8 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 684, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -863,7 +862,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 712, Short.MAX_VALUE)
+                .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 888, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -875,77 +874,77 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                 // Lấy dòng được chọn từ danh sách màu sắc
                 MauSac mauSac = mausac.get(row);
                 // Hiển thị thông tin của MauSac
-                txtMaThuocTinh.setText(mauSac.getMaMauSac());
+
                 txtTenThuocTinh.setText(mauSac.getTenMauSac());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoSize.isSelected()) {
                 // Lấy dòng được chọn từ danh sách size
                 Size size = sizes.get(row);
                 // Hiển thị thông tin của Size
-                txtMaThuocTinh.setText(size.getMaSize());
+
                 txtTenThuocTinh.setText(size.getTenSize());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoDanhMuc.isSelected()) {
                 // Lấy dòng được chọn từ danh sách danh mục
                 DanhMuc danhMuc = danhMucs.get(row);
                 // Hiển thị thông tin của DanhMuc
-                txtMaThuocTinh.setText(danhMuc.getMaDanhMuc());
+
                 txtTenThuocTinh.setText(danhMuc.getTenDanhMuc());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoXuatXu.isSelected()) {
                 // Lấy dòng được chọn từ danh sách xuất xứ
                 XuatXu xuatXu = xuatXus.get(row);
                 // Hiển thị thông tin của XuatXu
-                txtMaThuocTinh.setText(xuatXu.getMaXuatXu());
+
                 txtTenThuocTinh.setText(xuatXu.getTenXuatXu());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoNSX.isSelected()) {
                 // Lấy dòng được chọn từ danh sách NSX
                 NSX nsx = nsxs.get(row);
                 // Hiển thị thông tin của NSX
-                txtMaThuocTinh.setText(nsx.getMaNSX());
+
                 txtTenThuocTinh.setText(nsx.getTenNSX());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoChatLieu.isSelected()) {
                 // Lấy dòng được chọn từ danh sách chất liệu
                 ChatLieu chatLieu = chatLieus.get(row);
                 // Hiển thị thông tin của ChatLieu
-                txtMaThuocTinh.setText(chatLieu.getMaChatLieu());
+
                 txtTenThuocTinh.setText(chatLieu.getTenChatLieu());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoCoAo.isSelected()) {
                 // Lấy dòng được chọn từ danh sách cỡ áo
                 CoAo coAo = coAos.get(row);
                 // Hiển thị thông tin của CoAo
-                txtMaThuocTinh.setText(coAo.getMaCoAo());
+
                 txtTenThuocTinh.setText(coAo.getTenCoAo());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoDangAo.isSelected()) {
                 // Lấy dòng được chọn từ danh sách dáng áo
                 DangAo dangAo = dangAos.get(row);
                 // Hiển thị thông tin của DangAo
-                txtMaThuocTinh.setText(dangAo.getMaDangAo());
+
                 txtTenThuocTinh.setText(dangAo.getTenDangAo());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoDuoiAo.isSelected()) {
                 // Lấy dòng được chọn từ danh sách đuôi áo
                 DuoiAo duoiAo = duoiAos.get(row);
                 // Hiển thị thông tin của DuoiAo
-                txtMaThuocTinh.setText(duoiAo.getMaDuoiAo());
+
                 txtTenThuocTinh.setText(duoiAo.getTenDuoiAo());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoTayAo.isSelected()) {
                 // Lấy dòng được chọn từ danh sách tay áo
                 TayAo tayAo = tayAos.get(row);
                 // Hiển thị thông tin của TayAo
-                txtMaThuocTinh.setText(tayAo.getMaTayAo());
+
                 txtTenThuocTinh.setText(tayAo.getTenTayAo());
                 // Thực hiện các xử lý khác nếu cần
             } else if (rdoThuongHieu.isSelected()) {
                 // Lấy dòng được chọn từ danh sách thương hiệu
                 ThuongHieu thuongHieu = thuongHieus.get(row);
                 // Hiển thị thông tin của ThuongHieu
-                txtMaThuocTinh.setText(thuongHieu.getMaThuongHieu());
+
                 txtTenThuocTinh.setText(thuongHieu.getTenThuongHieu());
                 // Thực hiện các xử lý khác nếu cần
             }
@@ -1289,6 +1288,8 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Thêm dữ liệu thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_btnThemActionPerformed
@@ -1460,7 +1461,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
     private javax.swing.JRadioButton rdoXuatXu;
     private swing.RoundPanel roundPanel2;
     private javax.swing.JTable tblThuocTinh;
-    private textfield.TextField txtMaThuocTinh;
     private textfield.TextField txtTenThuocTinh;
     // End of variables declaration//GEN-END:variables
 }

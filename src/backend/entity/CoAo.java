@@ -35,8 +35,8 @@ public class CoAo {
     public CoAo() {
     }
 
-    public CoAo(String maCoAo, String tenCoAo) {
-        this.maCoAo = maCoAo;
+    public CoAo(String tenCoAo) {
+
         this.tenCoAo = tenCoAo;
     }
 
