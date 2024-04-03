@@ -13,6 +13,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import raven.toast.Notifications;
 
@@ -61,6 +63,28 @@ public class ThemKhachHang extends javax.swing.JPanel {
         dtmKH = (DefaultTableModel) tblKH.getModel();
         listKH = srKH.getAll();
         showDataTable(listKH);
+
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchKH();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchKH();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchKH();
+            }
+        });
+    }
+    
+    public void searchKH(){
+        listKH = srKH.Tim(txtSearch.getText().trim());
+        showDataTable(listKH);
     }
 
     public void showDataTable(List<KhachHangEntity> khachHangEntitys) {
@@ -107,13 +131,13 @@ public class ThemKhachHang extends javax.swing.JPanel {
         }
         return true;
     }
-    
+
     public KhachHangEntity getFormData() {
         String ten = txtTen.getText();
         boolean gioiTinh = rdoNam.isSelected();
         String soDienThoai = txtSDT.getText();
         String diaChi = txtDiaChi.getText();
-        KhachHangEntity kh = new KhachHangEntity(ten, gioiTinh, soDienThoai,diaChi);
+        KhachHangEntity kh = new KhachHangEntity(ten, gioiTinh, soDienThoai, diaChi);
         return kh;
     }
 

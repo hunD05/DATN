@@ -28,7 +28,7 @@ public class Menu extends JPanel {
         //        {"~MAIN~"},
         {"Trang chủ"},
         //        {"~WEB APP~"},
-        {"Sản phẩm", "Chi tiết sản phẩm", "Thuộc tính sản phẩm", "Sản phẩm"},
+        {"Sản phẩm", "Sản phẩm", "Sản phẩm chi tiết", "Thuộc tính sản phẩm"},
         {"Bán hàng"},
         {"Hóa đơn"},
         //        {"~COMPONENT~"},

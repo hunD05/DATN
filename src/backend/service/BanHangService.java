@@ -28,4 +28,8 @@ public class BanHangService {
     public boolean updateSP(int idSPCT, int soLuongCL){
         return repo.updateSP(idSPCT, soLuongCL);
     }
+    
+    public List<BHSPViewModel> searchSP(String tuKhoa){
+        return repo.searchSP(tuKhoa);
+    }
 }

@@ -151,11 +151,11 @@ public class MainForm extends JLayeredPane {
             if (index == 0) {
                 Application.showForm(new Form_1());
             } else if (index == 1) {
-                if (subIndex == 1) {
+                if (subIndex == 2) {
                     Application.showForm(new ChiTietSanPham());
-                } else if (subIndex == 2) {
-                    Application.showForm(new ThuocTinhSanPham());
                 } else if (subIndex == 3) {
+                    Application.showForm(new ThuocTinhSanPham());
+                } else if (subIndex == 1) {
                     Application.showForm(new SanPhamz());
                 } else {
                     action.cancel();

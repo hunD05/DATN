@@ -42,6 +42,8 @@ public class BanHangRepo {
                 bh.setTrangThai(rs.getString(5));
                 bh.setId(rs.getInt(6));
                 bh.setTongTien(rs.getDouble(7));
+                bh.setMaKH(rs.getString(8));
+                bh.setTenKH(rs.getString(9));
                 listBH.add(bh);
             }
         } catch (Exception e) {
@@ -96,5 +98,42 @@ public class BanHangRepo {
             e.printStackTrace();
         }
         return check > 0;
+    }
+    
+        public List<BHSPViewModel> searchSP(String tuKhoa) {
+        List<BHSPViewModel> listSP = new ArrayList<>();
+        String sql = """
+                     SELECT    dbo.ChiTietSanPham.ID, dbo.SanPham.TenSanPham, dbo.DanhMuc.TenDanhMuc, dbo.XuatXu.TenXuatXu, dbo.NSX.TenNSX, dbo.Size.TenSize, dbo.ChiTietSanPham.SoLuong, dbo.ChiTietSanPham.GiaBan
+                     FROM         dbo.ChiTietSanPham INNER JOIN
+                                           dbo.DanhMuc ON dbo.ChiTietSanPham.IDDanhMuc = dbo.DanhMuc.ID INNER JOIN
+                                           dbo.NSX ON dbo.ChiTietSanPham.IDNsx = dbo.NSX.ID INNER JOIN
+                                           dbo.SanPham ON dbo.ChiTietSanPham.IDSanPham = dbo.SanPham.ID INNER JOIN
+                                           dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN
+                                           dbo.XuatXu ON dbo.ChiTietSanPham.IDXuatXu = dbo.XuatXu.ID
+                     WHERE dbo.SanPham.TenSanPham LIKE ? OR dbo.DanhMuc.TenDanhMuc LIKE ? OR dbo.XuatXu.TenXuatXu LIKE ? OR dbo.NSX.TenNSX LIKE ? OR dbo.Size.TenSize LIKE ?
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, '%' + tuKhoa + '%');
+            ps.setObject(2, '%' + tuKhoa + '%');
+            ps.setObject(3, '%' + tuKhoa + '%');
+            ps.setObject(4, '%' + tuKhoa + '%');
+            ps.setObject(5, '%' + tuKhoa + '%');
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BHSPViewModel bh = new BHSPViewModel();
+                bh.setMaSPCT(rs.getInt(1));
+                bh.setTenSP(rs.getString(2));
+                bh.setDanhMuc(rs.getString(3));
+                bh.setXuatXu(rs.getString(4));
+                bh.setNsx(rs.getString(5));
+                bh.setSize(rs.getString(6));
+                bh.setGiaBan(rs.getDouble(8));
+                bh.setSoLuong(rs.getInt(7));
+                listSP.add(bh);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listSP;
     }
 }
