@@ -104,7 +104,6 @@
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Component id="cbbTrangThai" pref="495" max="32767" attributes="0"/>
                                                       <Component id="txtEmail" max="32767" attributes="0"/>
-                                                      <Component id="txtMa" alignment="0" max="32767" attributes="0"/>
                                                       <Group type="102" alignment="0" attributes="0">
                                                           <Component id="txtNgaySinh" min="-2" pref="451" max="-2" attributes="0"/>
                                                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -159,23 +158,20 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="txtTen" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtMa" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="txtSDT" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cbbTrangThai" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtSDT" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtEmail" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtCCCD" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="cbbChucVu" max="32767" attributes="0"/>
-                          <Component id="txtNgaySinh" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="txtCCCD" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtNgaySinh" min="-2" pref="46" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cbbChucVu" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
@@ -232,11 +228,6 @@
                   <Font name="Roboto" size="13" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Thi&#x1ebf;t l&#x1ead;p th&#xf4;ng tin nh&#xe2;n vi&#xea;n"/>
-              </Properties>
-            </Component>
-            <Component class="textfield.TextField" name="txtMa">
-              <Properties>
-                <Property name="labelText" type="java.lang.String" value="M&#xe3; nh&#xe2;n vi&#xea;n"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
@@ -467,15 +458,13 @@
             <Component class="combobox.Combobox" name="cbbChucVu">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
+                  <StringArray count="4">
                     <StringItem index="0" value=""/>
-                    <StringItem index="1" value="QL kho"/>
-                    <StringItem index="2" value="QL qu&#x1ea7;y"/>
-                    <StringItem index="3" value="QL nh&#xe2;n vi&#xea;n"/>
-                    <StringItem index="4" value="QL h&#xe0;ng"/>
+                    <StringItem index="1" value="Qu&#x1ea3;n l&#xfd;"/>
+                    <StringItem index="2" value="B&#xe1;n h&#xe0;ng"/>
+                    <StringItem index="3" value="K&#x1ebf; to&#xe1;n"/>
                   </StringArray>
                 </Property>
-                <Property name="selectedIndex" type="int" value="-1"/>
                 <Property name="autoscrolls" type="boolean" value="true"/>
                 <Property name="labeText" type="java.lang.String" value="Ch&#x1ee9;c v&#x1ee5;"/>
               </Properties>

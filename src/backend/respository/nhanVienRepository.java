@@ -23,10 +23,10 @@ public class nhanVienRepository {
         List<nhanVienViewModel> lists = new ArrayList<>();
         String sql = """
                     SELECT dbo.NhanVien.ID, dbo.NhanVien.MaNhanVien, dbo.NhanVien.TenNhanVien, dbo.NhanVien.GioiTinh, dbo.NhanVien.SoDienThoai, dbo.NhanVien.CCCD, dbo.ChucVu.TenChucVu, dbo.NhanVien.Email, dbo.NhanVien.NgaySinh, 
-                                                                             dbo.NhanVien.TrangThai
-                                                           FROM     dbo.NhanVien INNER JOIN
-                                                                             dbo.ChucVu ON dbo.NhanVien.IDChucVu = dbo.ChucVu.ID
-                    where dbo.NhanVien.Deleted = 0 order by dbo.NhanVien.Created_at DESC
+                                      dbo.NhanVien.TrangThai
+                    FROM     dbo.NhanVien INNER JOIN
+                                      dbo.ChucVu ON dbo.NhanVien.IDChucVu = dbo.ChucVu.ID
+                    				  where dbo.NhanVien.Deleted = 0 order by dbo.NhanVien.Created_at DESC
                      """;
         try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -92,29 +92,26 @@ public class nhanVienRepository {
                     declare @idcv bigint
                     SET @idcv = (SELECT TOP (1) id FROM ChucVu Where TenChucVu = ?)
                     INSERT INTO [dbo].[NhanVien]
-                                  ([MaNhanVien]
-                                  ,[TenNhanVien]
-                                  ,[GioiTinh]
-                                  ,[SoDienThoai]
-                                  ,[CCCD]
-                                  ,[IDChucVu]
-                                  ,[Email]
-                                  ,[NgaySinh]
-                                  ,[TrangThai]
-                                 )
-                            VALUES
-                                  (?,?,?,?,?,@idcv,?,?,?)
+                               ([TenNhanVien]
+                               ,[GioiTinh]
+                               ,[SoDienThoai]
+                               ,[CCCD]
+                               ,[IDChucVu]
+                               ,[Email]
+                               ,[NgaySinh]
+                               ,[TrangThai])
+                         VALUES
+                               (?,?,?,?,@idcv,?,?,?)
                      """;
         try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, tenChucVu);
-            ps.setObject(2, NV.getMaNV());
-            ps.setObject(3, NV.getTenNV());
-            ps.setObject(4, NV.isGioiTinh());
-            ps.setObject(5, NV.getSDT());
-            ps.setObject(6, NV.getCCCD());
-            ps.setObject(7, NV.getEmail());
-            ps.setObject(8, NV.getNgaySinh());
-            ps.setObject(9, NV.getTrangThai());
+            ps.setObject(2, NV.getTenNV());
+            ps.setObject(3, NV.isGioiTinh());
+            ps.setObject(4, NV.getSDT());
+            ps.setObject(5, NV.getCCCD());
+            ps.setObject(6, NV.getEmail());
+            ps.setObject(7, NV.getNgaySinh());
+            ps.setObject(8, NV.getTrangThai());
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,10 +123,9 @@ public class nhanVienRepository {
         int check = 0;
         String sql = """
                      declare @idcv bigint
-                                         SET @idcv = (SELECT TOP (1) id FROM ChucVu Where TenChucVu = ?)
+                     SET @idcv = (SELECT TOP (1) id FROM ChucVu Where TenChucVu = ?)
                     UPDATE [dbo].[NhanVien]
-                       SET[MaNhanVien] = ?
-                          ,[TenNhanVien] = ?
+                       SET [TenNhanVien] = ?
                           ,[GioiTinh] = ?
                           ,[SoDienThoai] = ?
                           ,[CCCD] = ?
@@ -141,15 +137,14 @@ public class nhanVienRepository {
                      """;
         try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, tenChucVu);
-            ps.setObject(2, NV.getMaNV());
-            ps.setObject(3, NV.getTenNV());
-            ps.setObject(4, NV.isGioiTinh());
-            ps.setObject(5, NV.getSDT());
-            ps.setObject(6, NV.getCCCD());
-            ps.setObject(7, NV.getEmail());
-            ps.setObject(8, NV.getNgaySinh());
-            ps.setObject(9, NV.getTrangThai());
-            ps.setObject(10, ma);
+            ps.setObject(2, NV.getTenNV());
+            ps.setObject(3, NV.isGioiTinh());
+            ps.setObject(4, NV.getSDT());
+            ps.setObject(5, NV.getCCCD());
+            ps.setObject(6, NV.getEmail());
+            ps.setObject(7, NV.getNgaySinh());
+            ps.setObject(8, NV.getTrangThai());
+            ps.setObject(9, ma);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

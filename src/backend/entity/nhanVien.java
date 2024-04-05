@@ -88,8 +88,8 @@ public class nhanVien {
         this.trangThai = trangThai;
     }
 
-    public nhanVien(String maNV, String tenNV, boolean gioiTinh, String SDT, String CCCD, String Email, Date ngaySinh, String trangThai) {
-        this.maNV = maNV;
+    public nhanVien(String tenNV, boolean gioiTinh, String SDT, String CCCD, String Email, Date ngaySinh, String trangThai) {
+
         this.tenNV = tenNV;
         this.gioiTinh = gioiTinh;
         this.SDT = SDT;

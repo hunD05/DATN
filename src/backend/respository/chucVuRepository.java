@@ -21,6 +21,7 @@ public class chucVuRepository {
         List<chucVu> lists = new ArrayList<>();
         String sql = """
                      SELECT [ID]
+                           
                            ,[TenChucVu]
                        FROM [dbo].[ChucVu]
                      """;

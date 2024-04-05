@@ -65,6 +65,10 @@ public class ChiTietSanPhamService {
     public List<SanPhamChiTietViewModel> SearchCbb(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan) {
         return respository.SearchCbb(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
     }
+    
+    public List<SanPhamChiTietViewModel> getSP(String tenSP) {
+        return respository.getSP(tenSP);
+    }
 
 //    public List<SanPhamChiTietViewModel> getAllz(Long masp) {
 //        return respository.getAllz(masp);

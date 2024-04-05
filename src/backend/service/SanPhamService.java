@@ -43,5 +43,7 @@ public class SanPhamService {
     public List<SanPhamViewModel> searchByStatus(String status) {
         return spr.searchByStatus(status);
     }
-    
+public boolean isTenSanPhamExisted(String tenSanPham) {
+        return spr.isTenSanPhamExisted(tenSanPham);
+    }
 }

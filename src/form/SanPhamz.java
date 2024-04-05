@@ -4,6 +4,7 @@
  */
 package form;
 
+import backend.service.ChiTietSanPhamService;
 import backend.service.MaChiTietSPService;
 import backend.service.SanPhamService;
 import backend.viewmodel.SanPhamChiTietViewModel;
@@ -27,6 +28,7 @@ import raven.toast.Notifications;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import raven.application.Application;
+import raven.application.form.MainForm;
 import raven.cell.PanelAction;
 
 /**
@@ -38,6 +40,8 @@ public class SanPhamz extends javax.swing.JPanel {
     /**
      * Creates new form SanPhamz
      */
+    List<SanPhamChiTietViewModel> chitietsanpham = new ArrayList<>();
+
     DefaultTableModel dtm = new DefaultTableModel();
     List<SanPhamViewModel> ListSanPhamViewModels = new ArrayList<>();
     SanPhamService sanPhamService = new SanPhamService();
@@ -45,6 +49,7 @@ public class SanPhamz extends javax.swing.JPanel {
     DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
     List<backend.entity.ChiTietSanPham> chiTietSanPhams = new ArrayList<>();
     MaChiTietSPService maChiTietSPService = new MaChiTietSPService();
+    ChiTietSanPhamService chiTietSanPhamService = new ChiTietSanPhamService();
 
     public SanPhamz() {
         initComponents();
@@ -58,12 +63,29 @@ public class SanPhamz extends javax.swing.JPanel {
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
+
                 if (row == -1) {
                     Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một sản phẩm");
                     return;
                 }
 
-                int confirmResult = JOptionPane.showConfirmDialog(SanPhamz.this, "Bạn có chắc muốn sửa thông tin sản phẩm này?", "Xác nhận sửa sản phẩm", JOptionPane.YES_NO_OPTION);
+                // Lấy tên sản phẩm hiện tại từ bảng
+                String tenSanPhamHienTai = (String) tblSanPham.getValueAt(row, 2);
+                String tenSP = txtTenSP.getText().trim();
+
+                // Kiểm tra các trường thông tin có đầy đủ hay không
+                if (tenSP.isEmpty()) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
+                    return;
+                }
+
+                // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu hay chưa
+                if (!tenSP.equals(tenSanPhamHienTai) && sanPhamService.isTenSanPhamExisted(tenSP)) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+                    return;
+                }
+
+                int confirmResult = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn sửa thông tin sản phẩm này?", "Xác nhận sửa sản phẩm", JOptionPane.YES_NO_OPTION);
 
                 if (confirmResult == JOptionPane.YES_OPTION) {
                     SanPhamViewModel sanPham = ListSanPhamViewModels.get(row);
@@ -105,6 +127,19 @@ public class SanPhamz extends javax.swing.JPanel {
         tblSanPham.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
         tblSanPham.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
 
+//        tblSanPham.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent evt) {
+//                int index = tblSanPham.getSelectedRow();
+//                if (index >= 0 && evt.getClickCount() == 2) {
+//                    String tenSP = (String) tblSanPham.getValueAt(index, 1); // Lấy tên sản phẩm từ hàng đã chọn
+//                    List<SanPhamChiTietViewModel> productList = chiTietSanPhamService.getSP(tenSP); // Lấy danh sách sản phẩm chi tiết dựa trên tên sản phẩm
+//                    ChiTietSanPham chiTietSanPham = new ChiTietSanPham();
+//                    chiTietSanPham.showDataTable(productList); // Hiển thị dữ liệu trên form ChiTietSanPham
+//                    Application.showForm(chiTietSanPham);
+//                }
+//            }
+//        });
     }
 
     public void showDataTable(List<SanPhamViewModel> sanPhams) {
@@ -138,7 +173,23 @@ public class SanPhamz extends javax.swing.JPanel {
                     return;
                 }
 
-                int confirmResult = JOptionPane.showConfirmDialog(SanPhamz.this, "Bạn có chắc muốn sửa thông tin sản phẩm này?", "Xác nhận sửa sản phẩm", JOptionPane.YES_NO_OPTION);
+                // Lấy tên sản phẩm hiện tại từ bảng
+                String tenSanPhamHienTai = (String) tblSanPham.getValueAt(row, 2);
+                String tenSP = txtTenSP.getText().trim();
+
+                // Kiểm tra các trường thông tin có đầy đủ hay không
+                if (tenSP.isEmpty()) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
+                    return;
+                }
+
+                // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu hay chưa
+                if (!tenSP.equals(tenSanPhamHienTai) && sanPhamService.isTenSanPhamExisted(tenSP)) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+                    return;
+                }
+
+                int confirmResult = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn sửa thông tin sản phẩm này?", "Xác nhận sửa sản phẩm", JOptionPane.YES_NO_OPTION);
 
                 if (confirmResult == JOptionPane.YES_OPTION) {
                     SanPhamViewModel sanPham = ListSanPhamViewModels.get(row);
@@ -146,7 +197,6 @@ public class SanPhamz extends javax.swing.JPanel {
                     if (sanPhamService.update(getFormData(), sanPham.getId())) {
                         ListSanPhamViewModels = sanPhamService.getAll();
                         showDataTable(ListSanPhamViewModels);
-                        rdoTatCa.setSelected(true);
                         Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
                     } else {
                         Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
@@ -191,7 +241,15 @@ public class SanPhamz extends javax.swing.JPanel {
         return sanPham;
     }
 
-
+    public List<SanPhamChiTietViewModel> getSelectedProductListImel() {
+        List<SanPhamChiTietViewModel> productList = new ArrayList<>();
+        int index = tblSanPham.getSelectedRow();
+        if (index >= 0) {
+            String tenSP = (String) tblSanPham.getValueAt(index, 2); // Lấy tên sản phẩm từ hàng đã chọn
+            productList = chiTietSanPhamService.getSP(tenSP); // Lấy danh sách sản phẩm chi tiết dựa trên tên sản phẩm
+        }
+        return productList;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -407,15 +465,19 @@ public class SanPhamz extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
-        int row = tblSanPham.getSelectedRow();
-        SanPhamViewModel sanPham = ListSanPhamViewModels.get(row);
-        txtTenSP.setText(sanPham.getTenSanPham());
+        int index = tblSanPham.getSelectedRow();
+        SanPhamViewModel sanPhamViewModel = ListSanPhamViewModels.get(index);
+        txtTenSP.setText(sanPhamViewModel.getTenSanPham());
 
-        if (evt.getClickCount() == 2) {
-            Application.showForm(new ChiTietSanPham());
+        if (index >= 0 && evt.getClickCount() == 2) {
+            String tenSP = (String) tblSanPham.getValueAt(index, 2); // Lấy tên sản phẩm từ hàng đã chọn
+            List<SanPhamChiTietViewModel> productList = chiTietSanPhamService.getSP(tenSP); // Lấy danh sách sản phẩm chi tiết dựa trên tên sản phẩm
+            ChiTietSanPham chiTietSanPham = new ChiTietSanPham();
+            chiTietSanPham.chitietsanpham = productList;
+            chiTietSanPham.showDataTable(productList); // Hiển thị dữ liệu trên form ChiTietSanPham
+            MainForm mainForm = new MainForm();
+            Application.showForm(chiTietSanPham);
         }
-
-
     }//GEN-LAST:event_tblSanPhamMouseClicked
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
@@ -424,6 +486,12 @@ public class SanPhamz extends javax.swing.JPanel {
         // Kiểm tra các trường thông tin có đầy đủ hay không
         if (tenSP.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
+            return;
+        }
+
+        // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu hay chưa
+        if (sanPhamService.isTenSanPhamExisted(tenSP)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
             return;
         }
 
@@ -475,6 +543,20 @@ public class SanPhamz extends javax.swing.JPanel {
 
         if (row == -1) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một sản phẩm");
+            return;
+        }
+
+        String tenSP = txtTenSP.getText().trim();
+
+        // Kiểm tra các trường thông tin có đầy đủ hay không
+        if (tenSP.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
+            return;
+        }
+
+        // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu hay chưa
+        if (sanPhamService.isTenSanPhamExisted(tenSP)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
             return;
         }
 

@@ -538,7 +538,8 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
                 row.createCell(10).setCellValue(chiTietSanPham.getMaTayAo());
                 row.createCell(11).setCellValue(chiTietSanPham.getTenDangAo());
                 row.createCell(12).setCellValue(chiTietSanPham.getSoLuong());
-                row.createCell(13).setCellValue((RichTextString) chiTietSanPham.getGiaBan());
+                row.createCell(13).setCellValue(chiTietSanPham.getGiaBan().doubleValue()); // hoặc intValue() nếu giá trị là nguyên
+
             }
 
             // Lưu file Excel
@@ -561,6 +562,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
         String data = "Tên sản phẩm: " + product.getTenSanPham() + "\n"
                 + "Danh mục: " + product.getTenDanhMuc() + "\n"
                 + "Xuất xứ: " + product.getTenXuatXu() + "\n"
+                + "NSX: " + product.getTenNSX() + "\n"
                 + "Mô tả: " + product.getMota() + "\n"
                 + // Sử dụng mô tả thay vì các thuộc tính khác
                 "Màu sắc: " + product.getTenMauSac() + "\n"
