@@ -76,19 +76,22 @@ public class HDViewModelRepo {
         List<HoaDonViewModel> listHD = new ArrayList<>();
         String sql = """
                     SELECT dbo.HoaDon.ID, 
-                           dbo.HoaDon.MaHoaDon, 
-                           dbo.HoaDon.NgayTao, 
-                           dbo.HoaDon.NgayThanhToan, 
-                           SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
-                           dbo.NhanVien.MaNhanVien, 
-                           dbo.KhachHang.TenKhachHang, 
-                           dbo.HoaDon.DiaChi, 
-                           dbo.HoaDon.SoDienThoai, 
-                           dbo.HoaDon.TrangThai
-                    FROM dbo.HoaDon
-                    INNER JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                    INNER JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
-                    INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                                                   dbo.HoaDon.MaHoaDon, 
+                                                   dbo.HoaDon.NgayTao, 
+                                                   dbo.HoaDon.NgayThanhToan, 
+                                                   SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
+                                                   dbo.NhanVien.MaNhanVien, 
+                                                   dbo.KhachHang.TenKhachHang, 
+                                                   dbo.HoaDon.DiaChi, 
+                                                   dbo.HoaDon.SoDienThoai, 
+                                                   dbo.HoaDon.TrangThai,
+                                                   dbo.PhuongThucThanhToan.TenKieuThanhToan
+                                            FROM dbo.HinhThucThanhToan INNER JOIN
+                                                                     dbo.HoaDon ON dbo.HinhThucThanhToan.IDHoaDon = dbo.HoaDon.ID INNER JOIN
+                                                                     dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon INNER JOIN
+                                                                     dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
+                                                                     dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
+                                                                     dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                     WHERE dbo.HoaDon.MaHoaDon LIKE ?
                        OR dbo.KhachHang.TenKhachHang LIKE ?
                        OR dbo.HoaDon.DiaChi LIKE ?
@@ -97,14 +100,16 @@ public class HDViewModelRepo {
                        OR dbo.KhachHang.TenKhachHang LIKE ?
                        OR dbo.HoaDon.NgayThanhToan LIKE ?
                     GROUP BY dbo.HoaDon.ID, 
-                             dbo.HoaDon.MaHoaDon, 
-                             dbo.HoaDon.NgayTao, 
-                             dbo.HoaDon.NgayThanhToan, 
-                             dbo.NhanVien.MaNhanVien, 
-                             dbo.KhachHang.TenKhachHang, 
-                             dbo.HoaDon.DiaChi, 
-                             dbo.HoaDon.SoDienThoai, 
-                             dbo.HoaDon.TrangThai;
+                                                     dbo.HoaDon.MaHoaDon, 
+                                                     dbo.HoaDon.NgayTao, 
+                                                     dbo.HoaDon.NgayThanhToan, 
+                                                     dbo.NhanVien.MaNhanVien, 
+                                                     dbo.KhachHang.TenKhachHang, 
+                                                     dbo.HoaDon.DiaChi, 
+                                                     dbo.HoaDon.SoDienThoai, 
+                                                     dbo.HoaDon.TrangThai,
+                                                     dbo.PhuongThucThanhToan.TenKieuThanhToan
+                     ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, '%' + tuKhoa + '%');
@@ -139,25 +144,23 @@ public class HDViewModelRepo {
     public List<HoaDonViewModel> searchGiaTien(double min, double max) {
         List<HoaDonViewModel> listHD = new ArrayList<>();
         String sql = """                    
-                    SELECT 
-                        dbo.HoaDon.ID, 
-                        dbo.HoaDon.MaHoaDon, 
-                        dbo.HoaDon.NgayTao, 
-                        dbo.HoaDon.NgayThanhToan,  
-                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien, 
-                        dbo.NhanVien.MaNhanVien, 
-                        dbo.KhachHang.TenKhachHang, 
-                        dbo.HoaDon.DiaChi, 
-                        dbo.HoaDon.SoDienThoai, 
-                        dbo.HoaDon.TrangThai
-                    FROM
-                        dbo.HoaDon
-                    INNER JOIN
-                        dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                    INNER JOIN
-                        dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
-                    INNER JOIN
-                        dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                    SELECT dbo.HoaDon.ID, 
+                                                   dbo.HoaDon.MaHoaDon, 
+                                                dbo.HoaDon.NgayTao, 
+                                            dbo.HoaDon.NgayThanhToan, 
+                                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
+                                     dbo.NhanVien.MaNhanVien, 
+                                   dbo.KhachHang.TenKhachHang, 
+                                 dbo.HoaDon.DiaChi, 
+                               dbo.HoaDon.SoDienThoai, 
+                             dbo.HoaDon.TrangThai,
+                           dbo.PhuongThucThanhToan.TenKieuThanhToan
+                    FROM dbo.HinhThucThanhToan INNER JOIN
+                              dbo.HoaDon ON dbo.HinhThucThanhToan.IDHoaDon = dbo.HoaDon.ID INNER JOIN
+                             dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon INNER JOIN
+                             dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
+                             dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
+                             dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                     GROUP BY 
                         dbo.HoaDon.ID, 
                         dbo.HoaDon.MaHoaDon, 
@@ -168,7 +171,8 @@ public class HDViewModelRepo {
                         dbo.KhachHang.TenKhachHang, 
                         dbo.HoaDon.DiaChi, 
                         dbo.HoaDon.SoDienThoai, 
-                        dbo.HoaDon.TrangThai
+                        dbo.HoaDon.TrangThai,
+                        dbo.PhuongThucThanhToan.TenKieuThanhToan
                     HAVING 
                         SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) BETWEEN ? AND ?;
                  """;
@@ -201,29 +205,34 @@ public class HDViewModelRepo {
         List<HoaDonViewModel> listHD = new ArrayList<>();
         String sql = """
                             SELECT dbo.HoaDon.ID, 
-                                                                        dbo.HoaDon.MaHoaDon, 
-                                                                        dbo.HoaDon.NgayTao, 
-                                                                        dbo.HoaDon.NgayThanhToan, 
-                                                                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
-                                                                        dbo.NhanVien.MaNhanVien, 
-                                                                        dbo.KhachHang.TenKhachHang, 
-                                                                        dbo.HoaDon.DiaChi, 
-                                                                        dbo.HoaDon.SoDienThoai, 
-                                                                        dbo.HoaDon.TrangThai
-                                                                 FROM dbo.HoaDon
-                                                                 INNER JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                                                                 INNER JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
-                                                                 INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                                                                               dbo.HoaDon.MaHoaDon, 
+                                                                               dbo.HoaDon.NgayTao, 
+                                                                               dbo.HoaDon.NgayThanhToan, 
+                                                                               SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
+                                                                               dbo.NhanVien.MaNhanVien, 
+                                                                               dbo.KhachHang.TenKhachHang, 
+                                                                               dbo.HoaDon.DiaChi, 
+                                                                               dbo.HoaDon.SoDienThoai, 
+                                                                               dbo.HoaDon.TrangThai,
+                                                                               dbo.PhuongThucThanhToan.TenKieuThanhToan
+                                                                        FROM dbo.HinhThucThanhToan INNER JOIN
+                                                                                                 dbo.HoaDon ON dbo.HinhThucThanhToan.IDHoaDon = dbo.HoaDon.ID INNER JOIN
+                                                                                                 dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon INNER JOIN
+                                                                                                 dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
+                                                                                                 dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
+                                                                                                 dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                                                                  WHERE dbo.HoaDon.TrangThai LIKE ?
                                                                  GROUP BY dbo.HoaDon.ID, 
                                                                           dbo.HoaDon.MaHoaDon, 
                                                                           dbo.HoaDon.NgayTao, 
-                                                                          dbo.HoaDon.NgayThanhToan, 
-                                                                          dbo.NhanVien.MaNhanVien, 
-                                                                          dbo.KhachHang.TenKhachHang, 
-                                                                          dbo.HoaDon.DiaChi, 
-                                                                          dbo.HoaDon.SoDienThoai, 
-                                                                          dbo.HoaDon.TrangThai;
+                                                                          dbo.HoaDon.NgayThanhToan,  
+                                                                                         dbo.HoaDonChiTiet.GiaBan, 
+                                                                                         dbo.NhanVien.MaNhanVien, 
+                                                                                         dbo.KhachHang.TenKhachHang, 
+                                                                                         dbo.HoaDon.DiaChi, 
+                                                                                         dbo.HoaDon.SoDienThoai, 
+                                                                                         dbo.HoaDon.TrangThai,
+                                                                                         dbo.PhuongThucThanhToan.TenKieuThanhToan;
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, trangThai);
@@ -253,19 +262,22 @@ public class HDViewModelRepo {
         List<HoaDonViewModel> listHD = new ArrayList<>();
         String sql = """
                         SELECT dbo.HoaDon.ID, 
-                                        dbo.HoaDon.MaHoaDon, 
-                                        dbo.HoaDon.NgayTao, 
-                                        dbo.HoaDon.NgayThanhToan, 
-                                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
-                                        dbo.NhanVien.MaNhanVien, 
-                                        dbo.KhachHang.TenKhachHang, 
-                                        dbo.HoaDon.DiaChi, 
-                                        dbo.HoaDon.SoDienThoai, 
-                                        dbo.HoaDon.TrangThai
-                                 FROM dbo.HoaDon
-                                 INNER JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                                 INNER JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
-                                 INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                                                                                                       dbo.HoaDon.MaHoaDon, 
+                                                                                                       dbo.HoaDon.NgayTao, 
+                                                                                                       dbo.HoaDon.NgayThanhToan, 
+                                                                                                       SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) AS TongThanhTien,
+                                                                                                       dbo.NhanVien.MaNhanVien, 
+                                                                                                       dbo.KhachHang.TenKhachHang, 
+                                                                                                       dbo.HoaDon.DiaChi, 
+                                                                                                       dbo.HoaDon.SoDienThoai, 
+                                                                                                       dbo.HoaDon.TrangThai,
+                                                                                                       dbo.PhuongThucThanhToan.TenKieuThanhToan
+                                                                                                FROM dbo.HinhThucThanhToan INNER JOIN
+                                                                                                                         dbo.HoaDon ON dbo.HinhThucThanhToan.IDHoaDon = dbo.HoaDon.ID INNER JOIN
+                                                                                                                         dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon INNER JOIN
+                                                                                                                         dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
+                                                                                                                         dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
+                                                                                                                         dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                                  WHERE dbo.HoaDon.ID LIKE ?
                                  GROUP BY dbo.HoaDon.ID, 
                                           dbo.HoaDon.MaHoaDon, 
@@ -275,7 +287,8 @@ public class HDViewModelRepo {
                                           dbo.KhachHang.TenKhachHang, 
                                           dbo.HoaDon.DiaChi, 
                                           dbo.HoaDon.SoDienThoai, 
-                                          dbo.HoaDon.TrangThai;
+                                          dbo.HoaDon.TrangThai,
+                                          dbo.PhuongThucThanhToan.TenKieuThanhToan;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);
