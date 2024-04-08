@@ -39,16 +39,16 @@ public class ThemKhachHang extends javax.swing.JPanel {
 //    }
     interface KhachHangSelectedListener extends EventListener {
 
-        void khachHangSelected(String maKhachHang, String tenKhachHang);
+        void khachHangSelected(String sdtChon, String tenKhachHang);
     };
 
     private List<KhachHangSelectedListener> listeners = new ArrayList<>();
-    private String maKhachHangChon;
+    private String sdtChon;
     private String tenKhachHangChon;
 
     // Các phương thức để lấy mã và tên khách hàng đã chọn
-    public String getMaKhachHangChon() {
-        return maKhachHangChon;
+    public String getSDTChon() {
+        return sdtChon;
     }
 
     public String getTenKhachHangChon() {
@@ -104,9 +104,9 @@ public class ThemKhachHang extends javax.swing.JPanel {
     }
 
     // Phương thức để thông báo cho tất cả các lắng nghe về sự kiện rằng một khách hàng đã được chọn
-    private void fireKhachHangSelectedEvent(String maKhachHang, String tenKhachHang) {
+    private void fireKhachHangSelectedEvent(String sdt, String tenKhachHang) {
         for (KhachHangSelectedListener listener : listeners) {
-            listener.khachHangSelected(maKhachHang, tenKhachHang);
+            listener.khachHangSelected(sdt, tenKhachHang);
         }
     }
 
@@ -344,11 +344,11 @@ public class ThemKhachHang extends javax.swing.JPanel {
         // Lấy thông tin mã và tên khách hàng từ hàng được chọn trong bảng
         int selectedRow = tblKH.getSelectedRow();
         if (selectedRow != -1) {
-            maKhachHangChon = tblKH.getValueAt(selectedRow, 1).toString();
+            sdtChon = tblKH.getValueAt(selectedRow, 4).toString();
             tenKhachHangChon = tblKH.getValueAt(selectedRow, 2).toString();
 
             // Thông báo cho các lắng nghe về sự kiện rằng một khách hàng đã được chọn
-            fireKhachHangSelectedEvent(maKhachHangChon, tenKhachHangChon);
+            fireKhachHangSelectedEvent(sdtChon, tenKhachHangChon);
         }
 
         Window window = SwingUtilities.getWindowAncestor(this);

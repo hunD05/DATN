@@ -15,27 +15,31 @@ public class BHHDViewModel {
     private int id;
     private String maHD;
     private LocalDateTime ngayTao;
-    private String maKH;
+    private String soDT;
     private String tenKH;
     private String maNV;
     private int tongSP;
     private String trangThai;
     private double tongTien;
+    private String phuongThucThanhToan;
 
     public BHHDViewModel() {
     }
 
-    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String maKH, String tenKH, String maNV, int tongSP, String trangThai, double tongTien) {
+    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String soDT, String tenKH, String maNV, int tongSP, String trangThai, double tongTien, String phuongThucThanhToan) {
         this.id = id;
         this.maHD = maHD;
         this.ngayTao = ngayTao;
-        this.maKH = maKH;
+        this.soDT = soDT;
         this.tenKH = tenKH;
         this.maNV = maNV;
         this.tongSP = tongSP;
         this.trangThai = trangThai;
         this.tongTien = tongTien;
+        this.phuongThucThanhToan = phuongThucThanhToan;
     }
+
+    
 
     public int getId() {
         return id;
@@ -61,12 +65,12 @@ public class BHHDViewModel {
         this.ngayTao = ngayTao;
     }
 
-    public String getMaKH() {
-        return maKH;
+    public String getSoDT() {
+        return soDT;
     }
 
-    public void setMaKH(String maKH) {
-        this.maKH = maKH;
+    public void setSoDT(String soDT) {
+        this.soDT = soDT;
     }
 
     public String getTenKH() {
@@ -107,6 +111,14 @@ public class BHHDViewModel {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+
+    public String getPhuongThucThanhToan() {
+        return phuongThucThanhToan;
+    }
+
+    public void setPhuongThucThanhToan(String phuongThucThanhToan) {
+        this.phuongThucThanhToan = phuongThucThanhToan;
     }
 
     

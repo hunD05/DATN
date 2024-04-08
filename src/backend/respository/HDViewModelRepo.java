@@ -29,11 +29,14 @@ public class HDViewModelRepo {
                                dbo.KhachHang.TenKhachHang, 
                                dbo.HoaDon.DiaChi, 
                                dbo.HoaDon.SoDienThoai, 
-                               dbo.HoaDon.TrangThai
-                        FROM dbo.HoaDon
-                        INNER JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
-                        INNER JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
-                        INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
+                               dbo.HoaDon.TrangThai,
+                               dbo.PhuongThucThanhToan.TenKieuThanhToan
+                        FROM dbo.HinhThucThanhToan INNER JOIN
+                                                 dbo.HoaDon ON dbo.HinhThucThanhToan.IDHoaDon = dbo.HoaDon.ID INNER JOIN
+                                                 dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon INNER JOIN
+                                                 dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
+                                                 dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
+                                                 dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                         GROUP BY dbo.HoaDon.ID, 
                                  dbo.HoaDon.MaHoaDon, 
                                  dbo.HoaDon.NgayTao, 
@@ -42,7 +45,8 @@ public class HDViewModelRepo {
                                  dbo.KhachHang.TenKhachHang, 
                                  dbo.HoaDon.DiaChi, 
                                  dbo.HoaDon.SoDienThoai, 
-                                 dbo.HoaDon.TrangThai
+                                 dbo.HoaDon.TrangThai,
+                                 dbo.PhuongThucThanhToan.TenKieuThanhToan
                         ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
@@ -59,6 +63,7 @@ public class HDViewModelRepo {
                 hd.setDiaChi(rs.getString(8));
                 hd.setSoDT(rs.getString(9));
                 hd.setTrangThai(rs.getString(10));
+                hd.setHinhThucThanhToan(rs.getString(11));
                 listHD.add(hd);
             }
         } catch (Exception e) {
@@ -122,6 +127,7 @@ public class HDViewModelRepo {
                 hd.setDiaChi(rs.getString(8));
                 hd.setSoDT(rs.getString(9));
                 hd.setTrangThai(rs.getString(10));
+                hd.setHinhThucThanhToan(rs.getString(11));
                 listHD.add(hd);
             }
         } catch (Exception e) {
@@ -182,6 +188,7 @@ public class HDViewModelRepo {
                 hd.setDiaChi(rs.getString(8));
                 hd.setSoDT(rs.getString(9));
                 hd.setTrangThai(rs.getString(10));
+                hd.setHinhThucThanhToan(rs.getString(11));
                 listHD.add(hd);
             }
         } catch (Exception e) {
@@ -233,6 +240,7 @@ public class HDViewModelRepo {
                 hd.setDiaChi(rs.getString(8));
                 hd.setSoDT(rs.getString(9));
                 hd.setTrangThai(rs.getString(10));
+                hd.setHinhThucThanhToan(rs.getString(11));
                 listHD.add(hd);
             }
         } catch (Exception e) {
@@ -284,6 +292,7 @@ public class HDViewModelRepo {
                 hd.setDiaChi(rs.getString(8));
                 hd.setSoDT(rs.getString(9));
                 hd.setTrangThai(rs.getString(10));
+                hd.setHinhThucThanhToan(rs.getString(11));
                 listHD.add(hd);
             }
         } catch (Exception e) {

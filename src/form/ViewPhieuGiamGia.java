@@ -8,6 +8,8 @@ import backend.entity.PhieuGiamGia;
 import backend.service.PhieuGiamGiaService;
 import backend.viewmodel.PhieuGiamGiaViewModel;
 import java.awt.Component;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -118,17 +120,15 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
                 pgg.getNgayBatDau(),
                 pgg.getNgayKetThuc(),
                 pgg.getSoLuong(),
-                formatCurrency(pgg.getHoaDonToiThieu()), // Định dạng hóa đơn tối thiểu
+                currencyFormat.format(pgg.getHoaDonToiThieu()), // Định dạng hóa đơn tối thiểu
                 formatPercent(pgg.getSoPhanTramGiam()), // Định dạng phần trăm giảm
-                formatCurrency(pgg.getGiamToiDa()), // Định dạng giảm tối đa
+                currencyFormat.format(pgg.getGiamToiDa()), // Định dạng giảm tối đa
                 pgg.getTrangThai(),});
         }
     }
     // định dạng tiền 
 
-    private String formatCurrency(float value) {
-        return String.format("%.0f $", value); // format lại tiền
-    }
+    private NumberFormat currencyFormat = new DecimalFormat("###,###,### VND");
 
     // để định dạng phần trăm
     private String formatPercent(float value) {

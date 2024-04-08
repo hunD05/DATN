@@ -32,4 +32,16 @@ public class BanHangService {
     public List<BHSPViewModel> searchSP(String tuKhoa){
         return repo.searchSP(tuKhoa);
     }
+    
+    public List<BHHDViewModel> searchHD(String tuKhoa){
+        return repo.searchHD(tuKhoa);
+    }
+    
+    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan){
+        return repo.searchCBBSP(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
+    }
+    
+    public List<BHSPViewModel> getOneSP(int idSPCT){
+        return repo.getOneSP(idSPCT);
+    }
 }

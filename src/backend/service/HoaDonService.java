@@ -43,8 +43,8 @@ public class HoaDonService {
         return repoHD.addHD();
     }
     
-    public boolean updateHD(int idHD, String maNV, String maKH, String maGG){
-        return repoHD.updateHD(idHD, maNV, maKH, maGG);
+    public boolean updateHD(int idHD, String maNV, String soDT, String maGG){
+        return repoHD.updateHD(idHD, maNV, soDT, maGG);
     }
 
 }

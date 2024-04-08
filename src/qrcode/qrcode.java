@@ -145,7 +145,6 @@ public class qrcode extends javax.swing.JFrame implements Runnable, ThreadFactor
 
             if (result != null) {
                 closeWindowAndWebcam();
-
                 if (qrCodeListener != null) {
                     qrCodeListener.onQRCodeScanned(Integer.valueOf(result.getText()));
                 }

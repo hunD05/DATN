@@ -23,11 +23,12 @@ public class HoaDonViewModel {
     private String diaChi;
     private String soDT;
     private String trangThai;
+    private String hinhThucThanhToan;
 
     public HoaDonViewModel() {
     }
 
-    public HoaDonViewModel(int id, String maHD, LocalDateTime ngayTao, LocalDateTime ngayThanhToan, double giaTien, String maNV, String tenKH, String diaChi, String soDT, String trangThai) {
+    public HoaDonViewModel(int id, String maHD, LocalDateTime ngayTao, LocalDateTime ngayThanhToan, double giaTien, String maNV, String tenKH, String diaChi, String soDT, String trangThai, String hinhThucThanhToan) {
         this.id = id;
         this.maHD = maHD;
         this.ngayTao = ngayTao;
@@ -38,6 +39,7 @@ public class HoaDonViewModel {
         this.diaChi = diaChi;
         this.soDT = soDT;
         this.trangThai = trangThai;
+        this.hinhThucThanhToan = hinhThucThanhToan;
     }
 
     public int getId() {
@@ -118,6 +120,14 @@ public class HoaDonViewModel {
 
     public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
+    }
+
+    public String getHinhThucThanhToan() {
+        return hinhThucThanhToan;
+    }
+
+    public void setHinhThucThanhToan(String hinhThucThanhToan) {
+        this.hinhThucThanhToan = hinhThucThanhToan;
     }
 
     

@@ -221,4 +221,85 @@ public class PhieuGiamGiaRepo {
         }
         return listSearch;
     }
+    
+    public List<PhieuGiamGiaViewModel> searchTT(String tenGG) {
+        List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
+        String sql = """
+                    SELECT       dbo.PhieuGiamGia.ID, dbo.PhieuGiamGia.MaGiamGia, dbo.PhieuGiamGia.TenGiamGia, dbo.PhieuGiamGia.NgayBatDau, dbo.PhieuGiamGia.NgayKetThuc, dbo.PhieuGiamGia.SoLuong, dbo.PhieuGiamGia.HoaDonToiThieu, 
+                                             dbo.PhieuGiamGia.SoPhanTramGiam, dbo.PhieuGiamGia.GiamToiDa, dbo.NhanVien.ID AS Expr1, dbo.NhanVien.SoDienThoai, dbo.NhanVien.NgaySinh, dbo.PhieuGiamGia.TrangThai
+                    FROM            dbo.NhanVien INNER JOIN
+                                             dbo.PhieuGiamGia ON dbo.NhanVien.ID = dbo.PhieuGiamGia.IDNhanVien
+                    WHERE dbo.PhieuGiamGia.Deleted = 0 AND dbo.PhieuGiamGia.TenGiamGia LIKE ? ORDER BY dbo.PhieuGiamGia.Created_at DESC
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setObject(1, tenGG);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PhieuGiamGiaViewModel pgg = new PhieuGiamGiaViewModel();
+                pgg.setId(rs.getInt(1));
+                pgg.setMaGiamGia(rs.getString(2));
+                pgg.setTenGiamGia(rs.getString(3));
+                pgg.setNgayBatDau(rs.getDate(4));
+                pgg.setNgayKetThuc(rs.getDate(5));
+                pgg.setSoLuong(rs.getInt(6));
+                pgg.setHoaDonToiThieu(rs.getFloat(7));
+                pgg.setSoPhanTramGiam(rs.getFloat(8));
+                pgg.setGiamToiDa(rs.getFloat(9));
+                pgg.setIdNhanVien(rs.getInt(10));
+                pgg.setSdt(rs.getString(11));
+                pgg.setNgaySinh(rs.getDate(12));
+                pgg.setTrangThai(rs.getString(13));
+                listPGG.add(pgg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listPGG;
+    }
+    
+        public List<PhieuGiamGiaViewModel> sortGG() {
+        List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
+        String sql = """
+                    SELECT dbo.PhieuGiamGia.ID, dbo.PhieuGiamGia.MaGiamGia, dbo.PhieuGiamGia.TenGiamGia, dbo.PhieuGiamGia.NgayBatDau, dbo.PhieuGiamGia.NgayKetThuc, dbo.PhieuGiamGia.SoLuong, dbo.PhieuGiamGia.HoaDonToiThieu, 
+                           dbo.PhieuGiamGia.SoPhanTramGiam, dbo.PhieuGiamGia.GiamToiDa, dbo.NhanVien.ID AS Expr1, dbo.NhanVien.SoDienThoai, dbo.NhanVien.NgaySinh, dbo.PhieuGiamGia.TrangThai
+                    FROM   dbo.NhanVien INNER JOIN
+                           dbo.PhieuGiamGia ON dbo.NhanVien.ID = dbo.PhieuGiamGia.IDNhanVien
+                    WHERE dbo.PhieuGiamGia.Deleted = 0 
+                    ORDER BY  dbo.PhieuGiamGia.GiamToiDa DESC, dbo.PhieuGiamGia.Created_at DESC
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PhieuGiamGiaViewModel pgg = new PhieuGiamGiaViewModel();
+                pgg.setId(rs.getInt(1));
+                pgg.setMaGiamGia(rs.getString(2));
+                pgg.setTenGiamGia(rs.getString(3));
+                pgg.setNgayBatDau(rs.getDate(4));
+                pgg.setNgayKetThuc(rs.getDate(5));
+                pgg.setSoLuong(rs.getInt(6));
+                pgg.setHoaDonToiThieu(rs.getFloat(7));
+                pgg.setSoPhanTramGiam(rs.getFloat(8));
+                pgg.setGiamToiDa(rs.getFloat(9));
+                pgg.setIdNhanVien(rs.getInt(10));
+                pgg.setSdt(rs.getString(11));
+                pgg.setNgaySinh(rs.getDate(12));
+                pgg.setTrangThai(rs.getString(13));
+                listPGG.add(pgg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listPGG;
+    }
+        
+//                    txtSoDT.setText("");
+//            txtTenKH.setText("");
+//            txtTenKH2.setText("");
+//            cbbPGG.setSelectedItem(null);
+//            txtMaHD.setText("");
+//            txtNTao.setText("");
+//            txtNTToan.setText("");
+//            txtMaNV.setText("");
+//            txtTongTien.setText("");
+//        [255,51,51]
 }

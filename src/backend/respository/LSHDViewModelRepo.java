@@ -19,7 +19,7 @@ public class LSHDViewModelRepo {
     public List<LSHDViewModel> getAll(int idHD) {
         List<LSHDViewModel> listLSHD = new ArrayList<>();
         String sql = """
-                            SELECT  dbo.LichSuHoaDon.ID, dbo.NhanVien.MaNhanVien, dbo.LichSuHoaDon.Gio, dbo.LichSuHoaDon.HanhDong
+                            SELECT  dbo.LichSuHoaDon.IDHoaDon, dbo.NhanVien.MaNhanVien, dbo.LichSuHoaDon.Gio, dbo.LichSuHoaDon.HanhDong
                             FROM      dbo.HoaDon INNER JOIN
                                              dbo.LichSuHoaDon ON dbo.HoaDon.ID = dbo.LichSuHoaDon.IDHoaDon INNER JOIN
                                              dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID AND dbo.LichSuHoaDon.IDNhanVien = dbo.NhanVien.ID

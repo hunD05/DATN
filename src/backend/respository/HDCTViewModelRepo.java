@@ -29,7 +29,7 @@ public class HDCTViewModelRepo {
                                                      dbo.MauSac ON dbo.ChiTietSanPham.IDMauSac = dbo.MauSac.ID INNER JOIN
                                                      dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN
                                                      dbo.ThuongHieu ON dbo.ChiTietSanPham.IDThuongHieu = dbo.ThuongHieu.ID
-                                                        WHERE dbo.HoaDonChiTiet.IDHoaDon = ? 
+                                                        WHERE dbo.HoaDonChiTiet.IDHoaDon = ? AND dbo.HoaDonChiTiet.Deleted = 0
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);

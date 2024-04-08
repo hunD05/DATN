@@ -10,6 +10,7 @@ import com.github.sarxos.webcam.WebcamResolution;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
@@ -26,6 +27,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -34,16 +36,21 @@ import javax.swing.JPanel;
 public class quetQR {
 
     private static Webcam webcam;
+    private static codeQR qrCodeScan;
+    private static JFrame webcamFrame;
 
-    private static BanHang BanHangInstance; // Thêm biến tham chiếu
+    public interface codeQR {
 
-    public static void setBanHangInstance(BanHang banHang) {
-        BanHangInstance = banHang;
+        void onQRCodeScanned(int result);
+    }
+
+    public void setQRCodeListener(codeQR listener) {
+        this.qrCodeScan = listener;
     }
 
     public static void openWebcam() {
-        JFrame webcamFrame = new JFrame("Webcam Viewer");
-        webcamFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Đóng JFrame khi cửa sổ được đóng
+        webcamFrame = new JFrame("Webcam Viewer");
+        webcamFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         webcamFrame.setSize(640, 480);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -60,7 +67,7 @@ public class quetQR {
         webcamFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                closeWebcam(); // Gọi phương thức đóng webcam khi cửa sổ được đóng
+                closeWebcam();
             }
         });
 
@@ -90,12 +97,24 @@ public class quetQR {
                             Result result = reader.decode(bitmap);
                             if (result != null) {
                                 String qrCodeValue = result.getText();
-                                closeWebcam();
-                                handleQRCodeValue(qrCodeValue);
-
+                                System.out.println("QR Code value: " + qrCodeValue);
+                                if (qrCodeValue != null && qrCodeScan != null) {
+                                    try {
+                                        int intValue = Integer.parseInt(qrCodeValue);
+                                        System.out.println("QR Code value (parsed): " + intValue); // Kiểm tra giá trị đã được parse đúng hay không
+                                        qrCodeScan.onQRCodeScanned(intValue);
+                                        System.out.println("Ở trong if: " + qrCodeValue);
+                                        closeWebcam();
+                                    } catch (NumberFormatException e) {
+                                        System.err.println("Error parsing QR code value: " + qrCodeValue);
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    System.out.println("qrCodeScan is null or qrCodeValue is null"); // In ra để kiểm tra xem tại sao if không được thực hiện
+                                }
                             }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                        } catch (NotFoundException ex) {
+                            // Không tìm thấy mã QR trong hình ảnh, tiếp tục quét
                         }
                     }
                 }
@@ -110,14 +129,10 @@ public class quetQR {
         }
     }
 
-    private static void handleQRCodeValue(String qrCodeValue) {
-        // Hiển thị giá trị mã QR trên giao diện người dùng
-        System.out.println("QR Code value: " + qrCodeValue);
-
-        // Gửi giá trị mã QR sang lớp ThemKhachHang
-// Gửi giá trị mã QR sang lớp BanHang
-        if (BanHangInstance != null) {
-            BanHangInstance.processQRCodeValue(qrCodeValue);
+    // Phương thức để đóng cửa sổ webcam
+    public void closeQRFrame() {
+        if (webcamFrame != null) {
+            webcamFrame.dispose();
         }
     }
 

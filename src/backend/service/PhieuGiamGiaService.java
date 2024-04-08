@@ -40,4 +40,12 @@ public class PhieuGiamGiaService {
     public List<PhieuGiamGiaViewModel> trangThai(String tt) {
         return repo.trangThai(tt);
     }
+    
+    public List<PhieuGiamGiaViewModel> searchTT(String tenGG){
+        return repo.searchTT(tenGG);
+    }
+    
+    public List<PhieuGiamGiaViewModel> sortGG() {
+        return repo.sortGG();
+    }
 }
