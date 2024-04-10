@@ -22,11 +22,12 @@ public class BHHDViewModel {
     private String trangThai;
     private double tongTien;
     private String phuongThucThanhToan;
+    private String diaChi;
 
     public BHHDViewModel() {
     }
 
-    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String soDT, String tenKH, String maNV, int tongSP, String trangThai, double tongTien, String phuongThucThanhToan) {
+    public BHHDViewModel(int id, String maHD, LocalDateTime ngayTao, String soDT, String tenKH, String maNV, int tongSP, String trangThai, double tongTien, String phuongThucThanhToan, String diaChi) {
         this.id = id;
         this.maHD = maHD;
         this.ngayTao = ngayTao;
@@ -37,7 +38,10 @@ public class BHHDViewModel {
         this.trangThai = trangThai;
         this.tongTien = tongTien;
         this.phuongThucThanhToan = phuongThucThanhToan;
+        this.diaChi = diaChi;
     }
+
+    
 
     
 
@@ -119,6 +123,14 @@ public class BHHDViewModel {
 
     public void setPhuongThucThanhToan(String phuongThucThanhToan) {
         this.phuongThucThanhToan = phuongThucThanhToan;
+    }
+
+    public String getDiaChi() {
+        return diaChi;
+    }
+
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
     

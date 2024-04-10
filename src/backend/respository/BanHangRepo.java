@@ -30,15 +30,16 @@ public class BanHangRepo {
                        ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan),0) AS TongThanhTien,
                        dbo.KhachHang.SoDienThoai,
                        dbo.KhachHang.TenKhachHang,
-                       dbo.PhuongThucThanhToan.TenKieuThanhToan
+                       dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                       dbo.KhachHang.DiaChi
                 FROM dbo.HoaDon
                 INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
                 LEFT JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
                 LEFT JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
                 LEFT JOIN dbo.HinhThucThanhToan ON dbo.HoaDon.ID = dbo.HinhThucThanhToan.IDHoaDon
                 LEFT JOIN dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
-                WHERE dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' AND dbo.HoaDon.Deleted = 0
-                GROUP BY dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, dbo.KhachHang.SoDienThoai, dbo.KhachHang.TenKhachHang, dbo.PhuongThucThanhToan.TenKieuThanhToan
+                WHERE (dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' OR dbo.HoaDon.TrangThai LIKE N'Chờ giao' OR dbo.HoaDon.TrangThai LIKE N'Đang Giao') AND dbo.HoaDon.Deleted = 0
+                GROUP BY dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, dbo.KhachHang.SoDienThoai, dbo.KhachHang.TenKhachHang, dbo.PhuongThucThanhToan.TenKieuThanhToan, dbo.KhachHang.DiaChi
                 ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
@@ -55,6 +56,7 @@ public class BanHangRepo {
                 bh.setSoDT(rs.getString(8));
                 bh.setTenKH(rs.getString(9));
                 bh.setPhuongThucThanhToan(rs.getString(10));
+                bh.setDiaChi(rs.getString(11));
                 listBH.add(bh);
             }
         } catch (Exception e) {
@@ -161,7 +163,8 @@ public class BanHangRepo {
                                             ISNULL(SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan),0) AS TongThanhTien,
                                             dbo.KhachHang.SoDienThoai,
                                             dbo.KhachHang.TenKhachHang,
-                                            dbo.PhuongThucThanhToan.TenKieuThanhToan
+                                            dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                                            dbo.KhachHang.DiaChi
                                      FROM dbo.HoaDon
                                      INNER JOIN dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID
                                      LEFT JOIN dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID
@@ -169,7 +172,7 @@ public class BanHangRepo {
                                      LEFT JOIN dbo.HinhThucThanhToan ON dbo.HoaDon.ID = dbo.HinhThucThanhToan.IDHoaDon
                                      LEFT JOIN dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
                                      WHERE dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' AND dbo.HoaDon.Deleted = 0 AND (dbo.HoaDon.MaHoaDon LIKE ? OR dbo.NhanVien.MaNhanVien LIKE ?)
-                                     GROUP BY dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, dbo.KhachHang.SoDienThoai, dbo.KhachHang.TenKhachHang, dbo.PhuongThucThanhToan.TenKieuThanhToan
+                                     GROUP BY dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, dbo.KhachHang.SoDienThoai, dbo.KhachHang.TenKhachHang, dbo.PhuongThucThanhToan.TenKieuThanhToan, dbo.KhachHang.DiaChi
                                      ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
@@ -188,6 +191,7 @@ public class BanHangRepo {
                 bh.setSoDT(rs.getString(8));
                 bh.setTenKH(rs.getString(9));
                 bh.setPhuongThucThanhToan(rs.getString(10));
+                bh.setDiaChi(rs.getString(11));
                 listBH.add(bh);
             }
         } catch (Exception e) {

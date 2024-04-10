@@ -39,12 +39,13 @@ public class ThemKhachHang extends javax.swing.JPanel {
 //    }
     interface KhachHangSelectedListener extends EventListener {
 
-        void khachHangSelected(String sdtChon, String tenKhachHang);
+        void khachHangSelected(String sdtChon, String tenKhachHang, String diaChi);
     };
 
     private List<KhachHangSelectedListener> listeners = new ArrayList<>();
     private String sdtChon;
     private String tenKhachHangChon;
+    private String diaChiChon;
 
     // Các phương thức để lấy mã và tên khách hàng đã chọn
     public String getSDTChon() {
@@ -54,6 +55,12 @@ public class ThemKhachHang extends javax.swing.JPanel {
     public String getTenKhachHangChon() {
         return tenKhachHangChon;
     }
+
+    public String getDiaChiChon() {
+        return diaChiChon;
+    }
+    
+    
 
     /**
      * Creates new form ThemKhachHang
@@ -104,9 +111,9 @@ public class ThemKhachHang extends javax.swing.JPanel {
     }
 
     // Phương thức để thông báo cho tất cả các lắng nghe về sự kiện rằng một khách hàng đã được chọn
-    private void fireKhachHangSelectedEvent(String sdt, String tenKhachHang) {
+    private void fireKhachHangSelectedEvent(String sdt, String tenKhachHang, String diaChi) {
         for (KhachHangSelectedListener listener : listeners) {
-            listener.khachHangSelected(sdt, tenKhachHang);
+            listener.khachHangSelected(sdt, tenKhachHang, diaChi);
         }
     }
 
@@ -346,9 +353,10 @@ public class ThemKhachHang extends javax.swing.JPanel {
         if (selectedRow != -1) {
             sdtChon = tblKH.getValueAt(selectedRow, 4).toString();
             tenKhachHangChon = tblKH.getValueAt(selectedRow, 2).toString();
+            diaChiChon = tblKH.getValueAt(selectedRow, 5).toString();
 
             // Thông báo cho các lắng nghe về sự kiện rằng một khách hàng đã được chọn
-            fireKhachHangSelectedEvent(sdtChon, tenKhachHangChon);
+            fireKhachHangSelectedEvent(sdtChon, tenKhachHangChon, diaChiChon);
         }
 
         Window window = SwingUtilities.getWindowAncestor(this);
