@@ -28,17 +28,18 @@ public class Menu extends JPanel {
         //        {"~MAIN~"},
         {"Trang chủ"},
         //        {"~WEB APP~"},
-        {"Sản phẩm", "Sản phẩm", "Sản phẩm chi tiết", "Thuộc tính"},
+        {"Thống kê"},
         {"Bán hàng"},
+        {"Sản phẩm", "Sản phẩm", "Sản phẩm chi tiết", "Thuộc tính"},
         {"Hóa đơn"},
         //        {"~COMPONENT~"},
         {"Phiếu giảm giá"},
+        {"Nhân viên"},
         {"Khách hàng"},
         //        {"~OTHER~"},
-        {"Thống kê"},
         //        {"Icons", "Feather Icons", "Flag Icons", "Mdi Icons"},
         //        {"Special Pages", "Blank page", "Faq", "Invoice", "Profile", "Pricing", "Timeline"},
-        {"Logout"}
+        {"Đăng xuất"}
     };
 
     private void addEmpty() {

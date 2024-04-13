@@ -8,6 +8,7 @@ import form.ChiTietSanPham;
 import form.Form_1;
 import form.HoaDon;
 import form.KhachHang;
+import form.NhanVien;
 import form.ViewPhieuGiamGia;
 import form.SanPhamz;
 import form.ThongKe;
@@ -89,29 +90,29 @@ public class MainForm extends JLayeredPane {
     }
 
     private void init() {
-        
-        setBorder(new EmptyBorder(5, 5, 5, 5));
-    setLayout(new MainFormLayout());
-    menu = new Menu();
-    panelBody = new JPanel(new BorderLayout());
-    initMenuArrowIcon();
-    menuButton.putClientProperty(FlatClientProperties.STYLE, ""
-            + "background:$Menu.button.background;"
-            + "arc:999;"
-            + "focusWidth:0;"
-            + "borderWidth:0");
-    menuButton.addActionListener((ActionEvent e) -> {
-        setMenuFull(!menu.isMenuFull());
-    });
-    initMenuEvent();
-    setLayer(menuButton, JLayeredPane.POPUP_LAYER);
-    add(menuButton);
-    add(menu);
-    add(panelBody);
 
-    // Khởi tạo closeButton
-    closeButton = new JButton("X");
-    initCloseButton();
+        setBorder(new EmptyBorder(5, 5, 5, 5));
+        setLayout(new MainFormLayout());
+        menu = new Menu();
+        panelBody = new JPanel(new BorderLayout());
+        initMenuArrowIcon();
+        menuButton.putClientProperty(FlatClientProperties.STYLE, ""
+                + "background:$Menu.button.background;"
+                + "arc:999;"
+                + "focusWidth:0;"
+                + "borderWidth:0");
+        menuButton.addActionListener((ActionEvent e) -> {
+            setMenuFull(!menu.isMenuFull());
+        });
+        initMenuEvent();
+        setLayer(menuButton, JLayeredPane.POPUP_LAYER);
+        add(menuButton);
+        add(menu);
+        add(panelBody);
+
+        // Khởi tạo closeButton
+        closeButton = new JButton("X");
+        initCloseButton();
 
         // Thêm nút đóng
         JButton closeButton = new JButton("Đóng");
@@ -154,6 +155,10 @@ public class MainForm extends JLayeredPane {
             if (index == 0) {
                 Application.showForm(new Form_1());
             } else if (index == 1) {
+                Application.showForm(new ThongKe());
+            } else if (index == 2) {
+                Application.showForm(new BanHang());
+            } else if (index == 3) {
                 if (subIndex == 2) {
                     Application.showForm(new ChiTietSanPham());
                 } else if (subIndex == 3) {
@@ -163,17 +168,15 @@ public class MainForm extends JLayeredPane {
                 } else {
                     action.cancel();
                 }
-            } else if (index == 2) {
-                Application.showForm(new BanHang());
-            } else if (index == 3) {
-                Application.showForm(new HoaDon());
             } else if (index == 4) {
-                Application.showForm(new ViewPhieuGiamGia());
+                Application.showForm(new HoaDon());
             } else if (index == 5) {
-                Application.showForm(new KhachHang());
+                Application.showForm(new ViewPhieuGiamGia());
             } else if (index == 6) {
-                Application.showForm(new ThongKe());
+                Application.showForm(new NhanVien());
             } else if (index == 7) {
+                Application.showForm(new KhachHang());
+            } else if (index == 8) {
                 Application.logout();
             } else {
                 action.cancel();

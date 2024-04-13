@@ -1142,10 +1142,9 @@ SELECT
 //        }
 //        return chiTietSanPhams;
 //    }
-    
     public List<SanPhamChiTietViewModel> getSP(String tenSP) {
-    List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
-    String sql = """
+        List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
+        String sql = """
         SELECT 
             ROW_NUMBER() OVER (ORDER BY ctsp.Created_at DESC) AS RowNumber,
             sp.TenSanPham, 
@@ -1185,9 +1184,86 @@ SELECT
         ORDER BY 
             ctsp.Created_at DESC;
     """;
-    try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setString(1, tenSP);
-        ResultSet rs = ps.executeQuery();
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, tenSP);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
+                sanPhamChiTietViewModel.setSTT(rs.getInt("RowNumber"));
+                sanPhamChiTietViewModel.setTenSanPham(rs.getString("TenSanPham"));
+
+                // Định dạng giá bán
+                sanPhamChiTietViewModel.setGiaBan(rs.getBigDecimal("GiaBan"));
+
+                sanPhamChiTietViewModel.setSoLuong(rs.getInt("SoLuong"));
+                sanPhamChiTietViewModel.setTenDanhMuc(rs.getString("TenDanhMuc"));
+                sanPhamChiTietViewModel.setTenXuatXu(rs.getString("TenXuatXu"));
+                sanPhamChiTietViewModel.setTenNSX(rs.getString("TenNSX"));
+                sanPhamChiTietViewModel.setTenMauSac(rs.getString("TenMauSac"));
+                sanPhamChiTietViewModel.setTenSize(rs.getString("TenSize"));
+                sanPhamChiTietViewModel.setTenThuongHieu(rs.getString("TenThuongHieu"));
+                sanPhamChiTietViewModel.setTenChatLieu(rs.getString("TenChatLieu"));
+                sanPhamChiTietViewModel.setTenCoAo(rs.getString("TenCoAo"));
+                sanPhamChiTietViewModel.setMaDuoiAo(rs.getString("TenDuoiAo"));
+                sanPhamChiTietViewModel.setMaTayAo(rs.getString("TenTayAo"));
+                sanPhamChiTietViewModel.setTenDangAo(rs.getString("TenDangAo"));
+                sanPhamChiTietViewModel.setId(rs.getString("ID"));
+                sanPhamChiTietViewModel.setMota(rs.getString("MoTa"));
+                sanPhamChiTietViewModel.setTrangThai(rs.getString("TrangThai"));
+                sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sanPhamChiTietViewModels;
+    }
+
+    public List<SanPhamChiTietViewModel> getTop10BestSellingProducts() {
+    List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
+    String sql = """
+        SELECT TOP 10
+            ROW_NUMBER() OVER (ORDER BY ctsp.SoLuong DESC) AS RowNumber,
+            sp.TenSanPham, 
+            ctsp.GiaBan, 
+            ctsp.SoLuong, 
+            dm.TenDanhMuc, 
+            xx.TenXuatXu, 
+            nsx.TenNSX, 
+            ms.TenMauSac, 
+            sz.TenSize, 
+            th.TenThuongHieu, 
+            cl.TenChatLieu, 
+            ca.TenCoAo, 
+            da.TenDuoiAo, 
+            ta.TenTayAo, 
+            dangao.TenDangAo,
+            ctsp.ID,
+            ctsp.MoTa,
+            ctsp.TrangThai
+        FROM 
+            dbo.ChatLieu cl 
+        INNER JOIN dbo.ChiTietSanPham ctsp ON cl.ID = ctsp.IDChatLieu 
+        INNER JOIN dbo.ChucVu cv ON cl.ID = cv.ID 
+        INNER JOIN dbo.CoAo ca ON ctsp.IDCoAo = ca.ID 
+        INNER JOIN dbo.DangAo dangao ON ctsp.IDDangAo = dangao.ID 
+        INNER JOIN dbo.DanhMuc dm ON ctsp.IDDanhMuc = dm.ID 
+        INNER JOIN dbo.DuoiAo da ON ctsp.IDDuoiAo = da.ID 
+        INNER JOIN dbo.MauSac ms ON ctsp.IDMauSac = ms.ID 
+        INNER JOIN dbo.NSX nsx ON ctsp.IDNsx = nsx.ID 
+        INNER JOIN dbo.SanPham sp ON ctsp.IDSanPham = sp.ID 
+        INNER JOIN dbo.Size sz ON ctsp.IDSize = sz.ID 
+        INNER JOIN dbo.TayAo ta ON ctsp.IDTayAo = ta.ID 
+        INNER JOIN dbo.ThuongHieu th ON ctsp.IDThuongHieu = th.ID 
+        INNER JOIN dbo.XuatXu xx ON ctsp.IDXuatXu = xx.ID
+        WHERE 
+            ctsp.Deleted = 0
+        ORDER BY 
+            ctsp.SoLuong DESC;
+    """;
+    try (Connection con = DBConnect.getConnection();  
+         PreparedStatement ps = con.prepareStatement(sql);  
+         ResultSet rs = ps.executeQuery()) {
+
         while (rs.next()) {
             SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
             sanPhamChiTietViewModel.setSTT(rs.getInt("RowNumber"));
@@ -1219,6 +1295,5 @@ SELECT
     return sanPhamChiTietViewModels;
 }
 
+
 }
-
-

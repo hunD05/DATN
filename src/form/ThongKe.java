@@ -1,8 +1,10 @@
 package form;
 
 import backend.respository.DBConnect;
-import backend.service.ThongKeService;
+import backend.service.ChiTietSanPhamService;
 import backend.service.HoaDonService;
+import backend.service.ThongKeService;
+import backend.viewmodel.SanPhamChiTietViewModel;
 import card.ModelCard;
 import com.raven.chart.ModelChart;
 import com.toedter.calendar.JYearChooser;
@@ -33,6 +35,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +46,7 @@ public class ThongKe extends javax.swing.JPanel {
     private DefaultTableModel dtm = new DefaultTableModel();
     private List<backend.entity.ThongKe> list = new ArrayList<>();
     private ThongKeService sr = new ThongKeService();
+    private ChiTietSanPhamService chiTietSanPhamService = new ChiTietSanPhamService();
 
     public ThongKe() {
         initComponents();
@@ -110,15 +115,13 @@ public class ThongKe extends javax.swing.JPanel {
     private void init() {
         chart.addLegend("Tổng doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
 
-        LocalDate startDate = LocalDate.of(2024, Month.JANUARY, 1); // Ngày bắt đầu
-        LocalDate endDate = LocalDate.now(); // Ngày hiện tại
+        LocalDate startDate = LocalDate.of(2024, Month.JANUARY, 1);
+        LocalDate endDate = LocalDate.now();
 
         Map<LocalDate, BigDecimal> revenueByDate = sr.getTotalRevenueByDate(startDate, endDate);
 
-        // Sử dụng TreeMap với Comparator mặc định để sắp xếp tăng dần theo key (ngày)
         TreeMap<LocalDate, BigDecimal> sortedRevenueByDate = new TreeMap<>(revenueByDate);
 
-        // Duyệt qua từng ngày và tổng doanh thu tương ứng để thêm vào biểu đồ
         sortedRevenueByDate.forEach((date, revenue) -> {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             String formattedDate = formatter.format(java.sql.Date.valueOf(date));
@@ -138,15 +141,38 @@ public class ThongKe extends javax.swing.JPanel {
                 filterDataByDateRange();
             }
         });
-        
-        
-        // Không cần gọi chart.start() ở đây, chỉ cần gọi một lần sau khi thêm dữ liệu vào biểu đồ
-        //  init card data
+
         card1.setData(new ModelCard(null, null, null, formatGiaBan(sr.calculateTotalRevenueFromPaidHoaDonChiTiet()), "Doanh thu"));
         card2.setData(new ModelCard(null, null, null, String.valueOf(sr.countPaidHoaDon()) + " Hóa đơn", "Số hóa đơn đã thanh toán"));
         card3.setData(new ModelCard(null, null, null, String.valueOf(sr.countUnpaidHoaDon()) + " Hóa đơn", "Số hóa đơn chưa thanh toán"));
         card4.setData(new ModelCard(null, null, null, String.valueOf(sr.countUniqueKhachHangInHoaDon() + " Khách hàng"), "Số khách hàng"));
 
+        chartSanPhamHetHang.addLegend("Sản phẩm sắp hết hàng", new Color(220, 20, 60), new Color(255, 100, 100));
+
+        List<SanPhamChiTietViewModel> sanPhamHetHang = chiTietSanPhamService.getSanPhamHetHang();
+
+        // Thêm dữ liệu vào biểu đồ
+        sanPhamHetHang.forEach(sp -> {
+            chartSanPhamHetHang.addData(new ModelChart(sp.getTenSanPham(), new double[]{sp.getSoLuong()}));
+        });
+
+        chartSanPhamHetHang.start();
+
+        List<SanPhamChiTietViewModel> topProducts = chiTietSanPhamService.getTopProducts();
+
+// Sắp xếp danh sách sản phẩm theo số lượng bán hàng giảm dần (hoặc theo tiêu chí bạn muốn)
+        Collections.sort(topProducts, Comparator.comparingInt(SanPhamChiTietViewModel::getSoLuong).reversed());
+
+        chartSanPhamBanChay.addLegend("Sản phẩm chạy", new Color(75, 0, 130), new Color(148, 0, 211));
+
+
+// Thêm dữ liệu của các sản phẩm vào biểu đồ
+        for (SanPhamChiTietViewModel product : topProducts) {
+            chartSanPhamBanChay.addData(new ModelChart(product.getTenSanPham(), new double[]{product.getSoLuong()}));
+        }
+
+// Khởi chạy biểu đồ
+        chartSanPhamBanChay.start();
     }
 
     private void filterDataByYear(int year) {
@@ -171,6 +197,7 @@ public class ThongKe extends javax.swing.JPanel {
 
         // Cập nhật biểu đồ
         chart.start();
+
     }
 
     private void filterDataByDateRange() {
@@ -248,9 +275,13 @@ public class ThongKe extends javax.swing.JPanel {
         chsYear = new com.toedter.calendar.JYearChooser();
         jSeparator2 = new javax.swing.JSeparator();
         DateChooserEnd = new com.toedter.calendar.JDateChooser();
+        jLabel4 = new javax.swing.JLabel();
+        chartSanPhamBanChay = new com.raven.chart.Chart();
         panelBorder1 = new com.raven.swing.PanelBorder();
         jScrollPane4 = new javax.swing.JScrollPane();
         table3 = new javaswingdev.swing.table.Table();
+        chartSanPhamHetHang = new com.raven.chart.Chart();
+        jLabel3 = new javax.swing.JLabel();
         roundPanel1 = new swing.RoundPanel();
         card1 = new card.Card();
         card4 = new card.Card();
@@ -338,6 +369,11 @@ public class ThongKe extends javax.swing.JPanel {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setText("Sản phẩm bán chạy");
+
+        chartSanPhamBanChay.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
         javax.swing.GroupLayout roundPanel3Layout = new javax.swing.GroupLayout(roundPanel3);
         roundPanel3.setLayout(roundPanel3Layout);
         roundPanel3Layout.setHorizontalGroup(
@@ -346,7 +382,11 @@ public class ThongKe extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(roundPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(roundPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(roundPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(chartSanPhamBanChay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundPanel3Layout.setVerticalGroup(
@@ -355,7 +395,11 @@ public class ThongKe extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(roundPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chartSanPhamBanChay, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -369,20 +413,34 @@ public class ThongKe extends javax.swing.JPanel {
         ));
         jScrollPane4.setViewportView(table3);
 
+        chartSanPhamHetHang.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Sản phẩm sắp hết hàng");
+
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
         panelBorder1Layout.setHorizontalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder1Layout.createSequentialGroup()
+            .addGroup(panelBorder1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE)
+                    .addComponent(chartSanPhamHetHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelBorder1Layout.setVerticalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chartSanPhamHetHang, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -431,8 +489,8 @@ public class ThongKe extends javax.swing.JPanel {
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(roundPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(roundPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -462,10 +520,14 @@ public class ThongKe extends javax.swing.JPanel {
     private card.Card card3;
     private card.Card card4;
     private com.raven.chart.Chart chart;
+    private com.raven.chart.Chart chartSanPhamBanChay;
+    private com.raven.chart.Chart chartSanPhamHetHang;
     private com.toedter.calendar.JYearChooser chsYear;
     private javaswingdev.swing.titlebar.ComponentResizer componentResizer1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
