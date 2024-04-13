@@ -66,6 +66,11 @@ public class KhachHang extends javax.swing.JPanel {
                 }
             }
 
+            @Override
+            public void onView(int row) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
         };
         tblBang.getColumnModel().getColumn(6).setCellRenderer(new TableActionCellRender());
         tblBang.getColumnModel().getColumn(6).setCellEditor(new TableActionCellEditor(event));

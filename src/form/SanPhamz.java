@@ -123,6 +123,11 @@ public class SanPhamz extends javax.swing.JPanel {
                     }
                 }
             }
+
+            @Override
+            public void onView(int row) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
         };
         tblSanPham.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
         tblSanPham.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
@@ -227,6 +232,11 @@ public class SanPhamz extends javax.swing.JPanel {
                         Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Xóa thất bại");
                     }
                 }
+            }
+
+            @Override
+            public void onView(int row) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
 
         };

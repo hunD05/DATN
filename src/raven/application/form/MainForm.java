@@ -8,7 +8,6 @@ import form.ChiTietSanPham;
 import form.Form_1;
 import form.HoaDon;
 import form.KhachHang;
-import form.NhanVien;
 import form.ViewPhieuGiamGia;
 import form.SanPhamz;
 import form.ThongKe;
@@ -26,10 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javaswingdev.swing.titlebar.TitleBar;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import raven.application.Application;
 import raven.application.form.other.FormDashboard;
@@ -87,6 +89,7 @@ public class MainForm extends JLayeredPane {
     }
 
     private void init() {
+        
         setBorder(new EmptyBorder(5, 5, 5, 5));
     setLayout(new MainFormLayout());
     menu = new Menu();
@@ -145,7 +148,7 @@ public class MainForm extends JLayeredPane {
         menuButton.setIcon(new FlatSVGIcon("raven/icon/svg/" + icon, 0.8f));
     }
 
-       private void initMenuEvent() {
+    private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
             // Application.mainForm.showForm(new DefaultForm("Form : " + index + " " + subIndex));
             if (index == 0) {
@@ -169,13 +172,8 @@ public class MainForm extends JLayeredPane {
             } else if (index == 5) {
                 Application.showForm(new KhachHang());
             } else if (index == 6) {
-                Application.showForm(new NhanVien());
-                
-            }else if (index == 7) {
                 Application.showForm(new ThongKe());
-                
-            } 
-            else if (index == 8) {
+            } else if (index == 7) {
                 Application.logout();
             } else {
                 action.cancel();

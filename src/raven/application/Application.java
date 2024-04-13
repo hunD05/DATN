@@ -8,13 +8,43 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
+import javaswingdev.swing.titlebar.TitleBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import raven.application.form.LoginForm;
 import raven.application.form.MainForm;
 import raven.toast.Notifications;
+
+//
+//                       _oo0oo_
+//                      o8888888o
+//                      88" . "88
+//                      (| -_- |)
+//                      0\  =  /0
+//                    ___/`---'\___
+//                  .' \\|     |// '.
+//                 / \\|||  :  |||// \
+//                / _||||| -:- |||||- \
+//               |   | \\\  -  /// |   |
+//               | \_|  ''\---/''  |_/ |
+//               \  .-\__  '-'  ___/-. /
+//             ___'. .'  /--.--\  `. .'___
+//          ."" '<  `.___\_<|>_/___.' >' "".
+//         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+//         \  \ `_.   \_ __\ /__ _/   .-` /  /
+//     =====`-.____`.___ \_____/___.-`___.-'=====
+//                       `=---='
+//
+//	          Nam mô a di đà phật
+//        Đức ngài đã phù hộ cho đoạn code này
+//            thằng nào động vào file này
+//              cả lò nhà thằng đó chết
+//
+//                em không yêu tôi vì
+//                   tôi cởi trần ?
 
 
 public class Application extends javax.swing.JFrame {
@@ -25,7 +55,7 @@ public class Application extends javax.swing.JFrame {
 
     public Application() {
         initComponents();
-        setSize(new Dimension(1600, 1050));
+        setSize(new Dimension(1600, 900));
         setLocationRelativeTo(null);
         mainForm = new MainForm();
         loginForm = new LoginForm();
@@ -33,11 +63,11 @@ public class Application extends javax.swing.JFrame {
         Notifications.getInstance().setJFrame(this);
         Shape roundedShape = new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 10, 10);
         setShape(roundedShape);
-
+        repositionTitleBar();
     }
 
     public static void showForm(Component component) {
-        component.applyComponentOrientation(app.getComponentOrientation());
+    component.applyComponentOrientation(app.getComponentOrientation());
         app.mainForm.showForm(component);
     }
 
@@ -61,6 +91,17 @@ public class Application extends javax.swing.JFrame {
 
     public static void setSelectedMenu(int index, int subIndex) {
         app.mainForm.setSelectedMenu(index, subIndex);
+    }
+    private void repositionTitleBar() {
+        Point windowLocation = getLocation();
+        Dimension windowSize = getSize();
+        TitleBar titleBar = new TitleBar();
+        Dimension titleBarSize = titleBar.getPreferredSize();
+
+        int x = windowLocation.x + windowSize.width - titleBarSize.width;
+        int y = windowLocation.y;
+
+        titleBar.setLocation(x, y);
     }
 
     @SuppressWarnings("unchecked")

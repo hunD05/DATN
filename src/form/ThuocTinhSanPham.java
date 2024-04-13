@@ -349,6 +349,11 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                 }
 
             }
+
+            @Override
+            public void onView(int row) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
         };
         tblThuocTinh.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         tblThuocTinh.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));

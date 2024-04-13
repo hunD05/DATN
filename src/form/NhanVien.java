@@ -70,6 +70,11 @@ public class NhanVien extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(btnXoa, "Vui lòng chọn một dòng để xóa.", "Lưu ý", JOptionPane.WARNING_MESSAGE);
                 }
             }
+
+            @Override
+            public void onView(int row) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
         };
 // Kiểm tra số lượng cột của bảng trước khi truy cập cột thứ 11
         int columnCount = tblHienThi.getColumnCount();

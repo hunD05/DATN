@@ -57,6 +57,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -184,74 +185,6 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         dcbmPGG = (DefaultComboBoxModel) cbbPGG.getModel();
         dcbmPGG2 = (DefaultComboBoxModel) cbbPGG2.getModel();
         listPGG = srPGG.sortGG();
-
-        txtTienDua.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-        });
-
-        txtTienCK.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-        });
-
-        txtTienDuaDH.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-        });
-
-        txtTienCKDH.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                tinhTienThua();
-            }
-        });
 
         cbbPGG.addItemListener(new ItemListener() {
             @Override
@@ -899,7 +832,6 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                     dcbmPGG.addElement(phieuGiamGia.getTenGiamGia());
                 }
             }
-            dcbmPGG.setSelectedItem(null);
         } else if (indexTab == 1) {
             // Xóa tất cả các phần tử cũ trong combo box
             dcbmPGG2.removeAllElements();
@@ -917,11 +849,50 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                     dcbmPGG2.addElement(phieuGiamGia.getTenGiamGia());
                 }
             }
-            dcbmPGG2.setSelectedItem(null);
         }
-
     }
 
+//    private void handlePGGSelection(Object selectedItem, JTextField txtTongTien, JLabel lbTong) {
+//    int index = selectedRowIndex;
+//    System.out.println("Đang xử lý phần tử thứ " + index);
+//
+//    if (index >= 0) {
+//        BHHDViewModel hd1 = listHD.get(index);
+//        String pgg = null;
+//        if (selectedItem != null) {
+//            pgg = selectedItem.toString();
+//        }
+//        double tongTien = hd1.getTongTien();
+//
+//        // Tính toán giảm giá dựa trên tên của phiếu giảm giá được chọn
+//        double giamGia = 0.0;
+//        double giamToiDa = 0.0;
+//        if (pgg != null) {
+//            // Tìm phần trăm và giảm tối đa từ danh sách phiếu giảm giá
+//            for (PhieuGiamGiaViewModel phieuGiamGia : listPGG) {
+//                if (phieuGiamGia.getTenGiamGia().equals(pgg)) {
+//                    double phanTramGiam = phieuGiamGia.getSoPhanTramGiam() / 100.0;
+//                    giamToiDa = phieuGiamGia.getGiamToiDa();
+//                    giamGia = Math.min(tongTien * phanTramGiam, giamToiDa); // Lấy giá trị nhỏ nhất giữa giảm theo phần trăm và giảm tối đa
+//                    break;
+//                }
+//            }
+//        }
+//
+//        // Tính tổng tiền sau khi được giảm giá
+//        double tongTienSauGiamGia = tongTien - giamGia;
+//
+//        // Hiển thị hộp thoại xác nhận trước khi áp dụng phiếu giảm giá
+//        int option = JOptionPane.showConfirmDialog(null, "Phiếu giảm giả này có thể giảm tối đa " + currencyFormat.format(giamToiDa), "Xác nhận", JOptionPane.YES_NO_OPTION);
+//        if (option == JOptionPane.YES_OPTION) {
+//            // Áp dụng giảm giá và cập nhật tổng tiền
+//            txtTongTien.setText(currencyFormat.format(tongTienSauGiamGia));
+//            lbTong.setText(currencyFormat.format(tongTienSauGiamGia));
+//        } else {
+//            // Nếu người dùng chọn NO hoặc đóng hộp thoại, không thực hiện gì cả
+//        }
+//    }
+//}
     @Override
     public void nhanVienSelected(String sdtChon, String tenNV) {
         txtTenNV.setText(tenNV);
@@ -1373,6 +1344,17 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         jLabel20.setForeground(new java.awt.Color(255, 255, 255));
         jLabel20.setText("Tổng: ");
 
+        cbbPGG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbPGGActionPerformed(evt);
+            }
+        });
+        cbbPGG.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cbbPGGKeyReleased(evt);
+            }
+        });
+
         lbTong.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
         lbTong.setForeground(new java.awt.Color(255, 51, 51));
         lbTong.setText("0 VND");
@@ -1405,6 +1387,18 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         txtTongTien.setForeground(new java.awt.Color(255, 51, 51));
         txtTongTien.setText("0 VND");
 
+        txtTienDua.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTienDuaKeyReleased(evt);
+            }
+        });
+
+        txtTienCK.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTienCKKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout roundPanel6Layout = new javax.swing.GroupLayout(roundPanel6);
         roundPanel6.setLayout(roundPanel6Layout);
         roundPanel6Layout.setHorizontalGroup(
@@ -1419,16 +1413,6 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                 .addGap(0, 27, Short.MAX_VALUE))
             .addGroup(roundPanel6Layout.createSequentialGroup()
                 .addGroup(roundPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(roundPanel6Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(roundPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(roundPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel19)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(roundPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtTienThua, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(roundPanel6Layout.createSequentialGroup()
                         .addGroup(roundPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(roundPanel6Layout.createSequentialGroup()
@@ -1466,12 +1450,19 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                             .addComponent(txtTienCK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(roundPanel6Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabel8))
-                    .addGroup(roundPanel6Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel20)
-                        .addGap(6, 6, 6)
-                        .addComponent(lbTong)))
+                        .addGroup(roundPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(roundPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel19)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(roundPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtTienThua, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel8)
+                            .addGroup(roundPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addGap(6, 6, 6)
+                                .addComponent(lbTong)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel6Layout.setVerticalGroup(
@@ -1683,6 +1674,18 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
         txtTongTienDH.setForeground(new java.awt.Color(255, 51, 51));
         txtTongTienDH.setText("0 VND");
+
+        txtTienDuaDH.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTienDuaDHKeyReleased(evt);
+            }
+        });
+
+        txtTienCKDH.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTienCKDHKeyReleased(evt);
+            }
+        });
 
         jLabel58.setForeground(new java.awt.Color(255, 255, 255));
         jLabel58.setText("Địa chỉ");
@@ -2034,47 +2037,57 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
                 // Kiểm tra xem người dùng đã nhập hay chưa
                 if (input != null && !input.isEmpty()) {
-                    // Chuyển đổi chuỗi nhập vào thành số nguyên
-                    int soLuongMua = Integer.parseInt(input);
+                    try {
+                        // Chuyển đổi chuỗi nhập vào thành số nguyên
+                        int soLuongMua = Integer.parseInt(input);
 
-                    // Kiểm tra xem số lượng mua có lớn hơn số lượng hiện có không
-                    if (soLuongMua > soLuongHienCo) {
-                        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua vượt quá số lượng hiện có!");
-                    } else {
-                        // Trừ đi số lượng mới từ số lượng hiện có để cập nhật số lượng còn lại
-                        int soLuongConLai = soLuongHienCo - soLuongMua;
+                        // Kiểm tra xem số lượng mua có lớn hơn 0 không
+                        if (soLuongMua > 0) {
+                            // Kiểm tra xem số lượng mua có lớn hơn số lượng hiện có không
+                            if (soLuongMua > soLuongHienCo) {
+                                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua vượt quá số lượng hiện có!");
+                            } else {
+                                // Tiếp tục xử lý
+                                // Trừ đi số lượng mới từ số lượng hiện có để cập nhật số lượng còn lại
+                                int soLuongConLai = soLuongHienCo - soLuongMua;
 
-                        // Cập nhật số lượng còn lại vào cơ sở dữ liệu
-                        srBH.updateSP(sp.getMaSPCT(), soLuongConLai);
+                                // Cập nhật số lượng còn lại vào cơ sở dữ liệu
+                                srBH.updateSP(sp.getMaSPCT(), soLuongConLai);
 
-                        // Lấy lại danh sách sản phẩm sau khi cập nhật
-                        listSP = srBH.getSP();
-                        showDataSP(listSP);
+                                // Lấy lại danh sách sản phẩm sau khi cập nhật
+                                listSP = srBH.getSP();
+                                showDataSP(listSP);
 
-                        // Thêm hóa đơn chi tiết với số lượng mua vào cơ sở dữ liệu
-                        srHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
+                                // Thêm hóa đơn chi tiết với số lượng mua vào cơ sở dữ liệu
+                                srHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
 
-                        // Lấy lại danh sách hóa đơn chi tiết sau khi thêm mới
-                        dtmHDCT = (DefaultTableModel) tblGH.getModel();
-                        listHDCT = srHDCT.getAll(idHD);
-                        showDataHDCT(listHDCT);
+                                // Lấy lại danh sách hóa đơn chi tiết sau khi thêm mới
+                                dtmHDCT = (DefaultTableModel) tblGH.getModel();
+                                listHDCT = srHDCT.getAll(idHD);
+                                showDataHDCT(listHDCT);
 
-                        listHD = srBH.getHD();
-                        showDataHD(listHD);
+                                listHD = srBH.getHD();
+                                showDataHD(listHD);
 
-                        if (indexTab == 0) {
-                            showDetailHD(rowIndexHD);
-                        } else if (indexTab == 1) {
-                            showDetailHDGH(rowIndexHD);
+                                if (indexTab == 0) {
+                                    showDetailHD(rowIndexHD);
+                                } else if (indexTab == 1) {
+                                    showDetailHDGH(rowIndexHD);
+                                }
+
+                                System.out.println("idHD: " + idHD);
+                                System.out.println("idSPCT: " + idSPCT);
+                                System.out.println("soLuongmua: " + soLuongMua);
+                                System.out.println("giaBan: " + giaBan);
+                                // Hiển thị kết quả hoặc thực hiện các hành động khác với kết quả này
+                                System.out.println("Số lượng còn lại:" + soLuongConLai);
+                                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm sản phẩm vào giỏ hàng!");
+                            }
+                        } else {
+                            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua phải lớn hơn 0!");
                         }
-
-                        System.out.println("idHD: " + idHD);
-                        System.out.println("idSPCT: " + idSPCT);
-                        System.out.println("soLuongmua: " + soLuongMua);
-                        System.out.println("giaBan: " + giaBan);
-                        // Hiển thị kết quả hoặc thực hiện các hành động khác với kết quả này
-                        System.out.println("Số lượng còn lại:" + soLuongConLai);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm sản phẩm vào giỏ hàng!");
+                    } catch (NumberFormatException e) {
+                        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng nhập vào một số nguyên dương!");
                     }
                 }
             }
@@ -2177,6 +2190,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
                     srHTTT.addHTTT(idHD, tenKTT, chuyenKhoan, tienMat);
                     Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thanh toán thành công");
+                    reset();
                 } else {
                     // Hiển thị thông báo lỗi nếu tiền thừa là số âm
                     JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -2200,6 +2214,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             showDetailHDGH(index);
 
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã hủy thành công");
+            reset(); 
         } else {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chọn hóa đơn để hủy");
         }
@@ -2304,6 +2319,30 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             indexTab = 0;
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void cbbPGGKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cbbPGGKeyReleased
+
+    }//GEN-LAST:event_cbbPGGKeyReleased
+
+    private void cbbPGGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbPGGActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbPGGActionPerformed
+
+    private void txtTienDuaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTienDuaKeyReleased
+        tinhTienThua();
+    }//GEN-LAST:event_txtTienDuaKeyReleased
+
+    private void txtTienCKKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTienCKKeyReleased
+        tinhTienThua();
+    }//GEN-LAST:event_txtTienCKKeyReleased
+
+    private void txtTienDuaDHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTienDuaDHKeyReleased
+        tinhTienThua();
+    }//GEN-LAST:event_txtTienDuaDHKeyReleased
+
+    private void txtTienCKDHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTienCKDHKeyReleased
+        tinhTienThua();
+    }//GEN-LAST:event_txtTienCKDHKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -26,8 +26,8 @@ public class Chart extends javax.swing.JPanel {
     DecimalFormat df = new DecimalFormat("#,##0.##");
     private List<ModelLegend> legends = new ArrayList<>();
     private List<ModelChart> model = new ArrayList<>();
-    private final int seriesSize = 18;
-    private final int seriesSpace = 10;
+    private final int seriesSize = 50; // Điều chỉnh kích thước của mỗi cột
+    private final int seriesSpace = 5; // Điều chỉnh khoảng cách giữa các cột
     private final Animator animator;
     private float animate;
     private String showLabel;
@@ -164,7 +164,9 @@ public class Chart extends javax.swing.JPanel {
     private Dimension getLabelWidth(String text, Graphics2D g2) {
         FontMetrics ft = g2.getFontMetrics();
         Rectangle2D r2 = ft.getStringBounds(text, g2);
-        return new Dimension((int) r2.getWidth(), (int) r2.getHeight());
+        // Thêm một giá trị phụ để đảm bảo rằng không có khoảng trắng trái dư thừa
+        int additionalSpace = 2;
+        return new Dimension((int) r2.getWidth() + additionalSpace, (int) r2.getHeight());
     }
 
     @SuppressWarnings("unchecked")
