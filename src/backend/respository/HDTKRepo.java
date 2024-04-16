@@ -23,7 +23,7 @@ public class HDTKRepo {
                  SELECT 
                      ID, MaHoaDon, NgayTao, NgayThanhToan, IDNhanVien, IDKhachHang, IDPhieuGG, DiaChi, SoDienThoai, TrangThai, Deleted, Created_at, Updated_at, Created_by, Updated_by
                  FROM 
-                     HoaDon where deleted = 0
+                     HoaDon where deleted = 0 AND HoaDon.TrangThai LIKE N'Đã Thanh Toán'
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();

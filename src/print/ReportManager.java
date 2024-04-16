@@ -50,7 +50,7 @@ public class ReportManager {
         para.put("khachHang", data.getTenKH());
         para.put("sdt", data.getSdt());
         para.put("diachi", data.getDiaChi());
-        para.put("tongtien", data.getTongTien().replaceAll("[^\\d.]", ""));
+        para.put("tongtien", data.getTongTien());
 
         // Convert InputStream to BufferedImage
         try {

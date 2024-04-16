@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import raven.toast.Notifications;
 
 /**
  *
@@ -43,49 +44,77 @@ public class MauSacRespository {
     }
     
     public boolean add(MauSac chiTietSanPham) {
-        int check = 0;
-        String sql = """
-                 INSERT INTO [dbo].[MauSac]
-                            (
-                            [TenMauSac])
-                      VALUES
-                            (?)
-                 """;
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM MauSac WHERE TenMauSac = ?";
+    String sqlInsert = "INSERT INTO [dbo].[MauSac] ([TenMauSac]) VALUES (?)";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            if (chiTietSanPham != null) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
 
-                ps.setObject(1, chiTietSanPham.getTenMauSac());
-                check = ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Kiểm tra xem tên màu sắc đã tồn tại hay chưa
+        psCheckName.setString(1, chiTietSanPham.getTenMauSac());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên màu sắc đã tồn tại, không thể thêm mới
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Tên màu sắc chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
+        psInsert.setString(1, chiTietSanPham.getTenMauSac());
+        check = psInsert.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
     }
+
+    return check > 0;
+}
+
     
     public boolean update(MauSac mauSac, String id) {
-        int check = 0;
-        String sql = """
-                     UPDATE [dbo].[MauSac]
-                        SET 
-                           [TenMauSac] = ?
-                      WHERE ID = ?
-                     """;
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM MauSac WHERE TenMauSac = ?";
+    String sqlUpdate = "UPDATE [dbo].[MauSac] SET [TenMauSac] = ? WHERE ID = ?";
 
-        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            if (mauSac != null) {
-                ps.setObject(1, mauSac.getTenMauSac());
-                ps.setObject(2, id);
-                check = ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+
+        // Kiểm tra xem tên MauSac đã tồn tại hay chưa
+        psCheckName.setString(1, mauSac.getTenMauSac());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên MauSac đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin MauSac vào cơ sở dữ liệu
+        psUpdate.setObject(1, mauSac.getTenMauSac());
+        psUpdate.setObject(2, id);
+        check = psUpdate.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;

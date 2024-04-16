@@ -200,25 +200,33 @@ public class BanHangRepo {
         return listBH;
     }
 
-    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan) {
+    public List<BHSPViewModel> searchCBBSP(String danhMuc, String xuatXu, String nsx, String gia) {
         List<BHSPViewModel> listSP = new ArrayList<>();
-        String sql = ""
-    + "SELECT dbo.ChiTietSanPham.ID, dbo.SanPham.TenSanPham, dbo.DanhMuc.TenDanhMuc, dbo.XuatXu.TenXuatXu, dbo.NSX.TenNSX, dbo.Size.TenSize, dbo.ChiTietSanPham.SoLuong, dbo.ChiTietSanPham.GiaBan "
-    + "FROM dbo.ChiTietSanPham INNER JOIN "
-    + "dbo.DanhMuc ON dbo.ChiTietSanPham.IDDanhMuc = dbo.DanhMuc.ID INNER JOIN "
-    + "dbo.NSX ON dbo.ChiTietSanPham.IDNsx = dbo.NSX.ID INNER JOIN "
-    + "dbo.SanPham ON dbo.ChiTietSanPham.IDSanPham = dbo.SanPham.ID INNER JOIN "
-    + "dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN "
-    + "dbo.XuatXu ON dbo.ChiTietSanPham.IDXuatXu = dbo.XuatXu.ID "
-    + "WHERE dbo.SanPham.Deleted = 0 AND (dbo.DanhMuc.TenDanhMuc LIKE ? OR dbo.XuatXu.TenXuatXu LIKE ? OR dbo.NSX.TenNSX LIKE ?) "
-    + "ORDER BY dbo.ChiTietSanPham.GiaBan " + (sapXepGiaTangDan ? "ASC" : "DESC");
-
-
-
+        String sql = """
+                 SELECT dbo.ChiTietSanPham.ID, dbo.SanPham.TenSanPham, dbo.DanhMuc.TenDanhMuc, dbo.XuatXu.TenXuatXu, dbo.NSX.TenNSX, dbo.Size.TenSize, dbo.ChiTietSanPham.SoLuong, dbo.ChiTietSanPham.GiaBan
+                     FROM dbo.ChiTietSanPham INNER JOIN 
+                     dbo.DanhMuc ON dbo.ChiTietSanPham.IDDanhMuc = dbo.DanhMuc.ID INNER JOIN 
+                     dbo.NSX ON dbo.ChiTietSanPham.IDNsx = dbo.NSX.ID INNER JOIN 
+                     dbo.SanPham ON dbo.ChiTietSanPham.IDSanPham = dbo.SanPham.ID INNER JOIN 
+                     dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN 
+                     dbo.XuatXu ON dbo.ChiTietSanPham.IDXuatXu = dbo.XuatXu.ID 
+                     WHERE dbo.SanPham.Deleted = 0 
+                 """;
+        if (danhMuc != null && !danhMuc.isEmpty()) {
+            sql += " AND dbo.DanhMuc.TenDanhMuc = N'" + danhMuc + "'";
+        }
+        if (xuatXu != null && !xuatXu.isEmpty()) {
+            sql += " AND dbo.XuatXu.TenXuatXu = N'" + xuatXu + "'";
+        }
+        if (nsx != null && !nsx.isEmpty()) {
+            sql += " AND dbo.NSX.TenNSX = N'" + nsx + "'";
+        }
+        if ("GiaBan ASC".equals(gia)) {
+            sql += " ORDER BY dbo.ChiTietSanPham.GiaBan ASC";
+        } else if ("GiaBan DESC".equals(gia)) {
+            sql += " ORDER BY dbo.ChiTietSanPham.GiaBan DESC";
+        }
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
-            ps.setObject(1, danhmuc); // Thiết lập giá trị cho tham số 1
-            ps.setObject(2, xuatxu);  // Thiết lập giá trị cho tham số 2
-            ps.setObject(3, nsx);      // Thiết lập giá trị cho tham số 3
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 BHSPViewModel bh = new BHSPViewModel();
@@ -237,7 +245,7 @@ public class BanHangRepo {
         }
         return listSP;
     }
-    
+
     public List<BHSPViewModel> getOneSP(int idSPCT) {
         List<BHSPViewModel> listSP = new ArrayList<>();
         String sql = """

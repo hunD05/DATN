@@ -26,6 +26,7 @@ public class ThongKeRepository {
                          HoaDon HD
                      INNER JOIN 
                          HoaDonChiTiet HDCT ON HD.ID = HDCT.IDHoaDon
+                     WHERE HD.TrangThai LIKE N'Đã Thanh Toán'
                      GROUP BY 
                          HD.MaHoaDon, 
                          HD.NgayTao

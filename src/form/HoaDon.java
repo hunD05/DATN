@@ -4,10 +4,18 @@
  */
 package form;
 
+import backend.entity.ChatLieu;
+import backend.entity.MauSac;
+import backend.entity.Size;
+import backend.entity.ThuongHieu;
+import backend.service.ChatLieuService;
 import backend.service.HDCTService;
 import backend.service.HoaDonService;
 import backend.service.LSHDService;
+import backend.service.MauSacService;
 import backend.service.QLHDService;
+import backend.service.SizeService;
+import backend.service.ThuonHieuService;
 import backend.viewmodel.HDCTViewModel;
 import backend.viewmodel.HoaDonViewModel;
 import backend.viewmodel.LSHDViewModel;
@@ -72,6 +80,26 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
 
+    private NumberFormat currencyFormat = new DecimalFormat("###,###,### VND");
+
+    private DefaultComboBoxModel dcbmMauSac = new DefaultComboBoxModel();
+    private List<MauSac> mauSacs = new ArrayList<>();
+    private MauSacService MauSacService = new MauSacService();
+
+    private DefaultComboBoxModel dcbmSize = new DefaultComboBoxModel();
+    private List<Size> sizes = new ArrayList<>();
+    private SizeService sizeService = new SizeService();
+
+    private DefaultComboBoxModel dcbmThuongHieu = new DefaultComboBoxModel();
+    private List<ThuongHieu> thuongHieus = new ArrayList<>();
+    private ThuonHieuService thuongHieuService = new ThuonHieuService();
+
+    private DefaultComboBoxModel dcbmChatLieu = new DefaultComboBoxModel();
+    private List<ChatLieu> chatLieus = new ArrayList<>();
+    private ChatLieuService chatLieuService = new ChatLieuService();
+
+    private DefaultComboBoxModel dcbmGia = new DefaultComboBoxModel();
+
     /**
      * Creates new form HoaDon
      */
@@ -80,19 +108,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         dtmHD = (DefaultTableModel) jTable1.getModel();
         listHD = srHD.getAll();
         showDataTable1(listHD);
-        // Lấy đối tượng TableColumn của cột "STT" từ JTable
-        TableColumn columnSTT = jTable1.getColumnModel().getColumn(0); // 0 là chỉ số cột, có thể là 1 nếu cột "STT" là cột thứ hai
-
-// Đặt kích cỡ chiều rộng mong muốn
-        columnSTT.setPreferredWidth(1); // là chiều rộng mong muốn
-
-// Cập nhật lại JTable để áp dụng thay đổi
-        jTable1.repaint();
 
         dcbm = (DefaultComboBoxModel) cbbTrangThai.getModel();
-        dcbm.addElement("Tất cả");
-        dcbm.addElement("Chưa Thanh Toán");
-        dcbm.addElement("Đã Thanh Toán");
+        showCbbTT();
 
 //tim min max
         txtMin.getDocument().addDocumentListener(new DocumentListener() {
@@ -154,11 +172,77 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             }
         });
 
+        mauSacs = MauSacService.getAll();
+        dcbmMauSac = (DefaultComboBoxModel) cbbMau.getModel();
+
+        sizes = sizeService.getAll();
+        dcbmSize = (DefaultComboBoxModel) cbbSize.getModel();
+
+        thuongHieus = thuongHieuService.getAll();
+        dcbmThuongHieu = (DefaultComboBoxModel) cbbThuongHieu.getModel();
+
+        chatLieus = chatLieuService.getAll();
+        dcbmChatLieu = (DefaultComboBoxModel) cbbChatLieu.getModel();
+
+        dcbmGia = (DefaultComboBoxModel) cbbGiaTien.getModel();
+
+        cbbMau.addActionListener(e -> searchHDCT(Integer.valueOf(selectedInvoiceId)));
+        cbbChatLieu.addActionListener(e -> searchHDCT(Integer.valueOf(selectedInvoiceId)));
+        cbbThuongHieu.addActionListener(e -> searchHDCT(Integer.valueOf(selectedInvoiceId)));
+        cbbSize.addActionListener(e -> searchHDCT(Integer.valueOf(selectedInvoiceId)));
+        cbbGiaTien.addActionListener(e -> searchHDCT(Integer.valueOf(selectedInvoiceId)));
+
+    }
+
+    public void showcbbMauSac(List<MauSac> mauSacs) {
+        dcbmMauSac.removeAllElements();
+        dcbmMauSac.addElement(null);
+        for (MauSac mauSac : mauSacs) {
+            dcbmMauSac.addElement(mauSac.getTenMauSac());
+        }
+    }
+
+    public void showcbbSize(List<Size> sizes) {
+        dcbmSize.removeAllElements();
+        dcbmSize.addElement(null);
+        for (Size size : sizes) {
+            dcbmSize.addElement(size.getTenSize());
+        }
+    }
+
+    public void showcbbThuongHieu(List<ThuongHieu> thuongHieus) {
+        dcbmThuongHieu.removeAllElements();
+        dcbmThuongHieu.addElement(null);
+        for (ThuongHieu thuongHieu : thuongHieus) {
+            dcbmThuongHieu.addElement(thuongHieu.getTenThuongHieu());
+        }
+    }
+
+    public void showcbbChatLieu(List<ChatLieu> chatLieus) {
+        dcbmChatLieu.removeAllElements();
+        dcbmChatLieu.addElement(null);
+        for (ChatLieu chatLieu : chatLieus) {
+            dcbmChatLieu.addElement(chatLieu.getTenChatLieu());
+        }
+    }
+
+    public void showcbbGia() {
+        dcbmGia.removeAllElements();
+        dcbmGia.addElement(null);
+        dcbmGia.addElement("Giá từ thấp đến cao");
+        dcbmGia.addElement("Giá từ cao đến thấp");
+    }
+
+    public void showCbbTT() {
+        dcbm.addElement("Tất cả");
+        dcbm.addElement("Chưa Thanh Toán");
+        dcbm.addElement("Đã Thanh Toán");
+        dcbm.addElement("Chờ Giao");
+        dcbm.addElement("Đang Giao");
     }
 
     public void showDataTable1(List<HoaDonViewModel> listHD) {
         dtmHD.setRowCount(0);
-        NumberFormat currencyFormat = new DecimalFormat("# VND"); // Định dạng số tiền
 // Lấy đối tượng TableColumn của cột "STT" từ JTable
         TableColumn columnSTT = jTable1.getColumnModel().getColumn(0);
 
@@ -176,9 +260,10 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             dtmHD.addRow(new Object[]{
                 i++, hd.getMaHD(),
                 ngayThanhToan,
-                currencyFormat.format(hd.getGiaTien()),
                 hd.getMaNV(), hd.getTenKH(), hd.getDiaChi(),
-                hd.getSoDT(), hd.getHinhThucThanhToan(),
+                hd.getSoDT(),
+                currencyFormat.format(hd.getGiaTien()),
+                hd.getHinhThucThanhToan(),
                 hd.getTrangThai()
             });
         }
@@ -187,7 +272,6 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
     public void showDataTable2(List<HDCTViewModel> listHDCT) {
         dtmHDCT.setRowCount(0);
-        NumberFormat currencyFormat = new DecimalFormat("# VND");
         int i = 1;
         for (HDCTViewModel hdct : listHDCT) {
             dtmHDCT.addRow(new Object[]{
@@ -261,7 +345,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         }
     }
 
-    private void printHD() {
+    public void printHD() {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex >= 0) {
@@ -274,39 +358,12 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 // Lặp qua các hàng trong bảng jTable2 để lấy thông tin chi tiết
                 for (int i = 0; i < jTable2.getRowCount(); i++) {
                     // Lấy dữ liệu từ mỗi hàng
-                    String tenSP = jTable2.getValueAt(i, 2).toString();
-
-                    // Kiểm tra và chuyển đổi số lượng
-                    int soLuong = 0;
-                    try {
-                        soLuong = Integer.parseInt(jTable2.getValueAt(i, 7).toString());
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        // Xử lý nếu giá trị không hợp lệ
-                    }
-
-                    // Kiểm tra và chuyển đổi giá bán
-                    double giaBan = 0.0;
-                    String giaBanStr = jTable2.getValueAt(i, 8).toString().replaceAll("[^\\d.]", "");
-                    if (!giaBanStr.isEmpty()) {
-                        try {
-                            giaBan = Double.parseDouble(giaBanStr);
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                            // Xử lý nếu giá trị không hợp lệ
-                        }
-                    }
-
+                    HDCTViewModel hdct = listHDCT.get(i);
+                    String tenSP = hdct.getTenSP();
+                    int soLuong = hdct.getSoLuong();
+                    double giaBan = hdct.getGiaBan();
                     double tongTien = soLuong * giaBan;
-
-                    // In dữ liệu ra console
-                    System.out.println("Tên sản phẩm: " + tenSP);
-                    System.out.println("Số lượng: " + soLuong);
-                    System.out.println("Đơn giá: " + giaBan);
-                    System.out.println("Tổng tiền: " + tongTien);
-
-                    // Thêm thông tin vào danh sách fields để tạo báo cáo
-                    fields.add(new FieldReportPayment(i + 1, tenSP, String.valueOf(giaBan), String.valueOf(soLuong), String.valueOf(tongTien)));
+                    fields.add(new FieldReportPayment(i + 1, tenSP, currencyFormat.format(giaBan), String.valueOf(soLuong), currencyFormat.format(tongTien)));
                 }
                 // Kiểm tra nếu có dữ liệu để tạo báo cáo
                 if (!fields.isEmpty()) {
@@ -315,7 +372,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                     if (qrCodeStream != null) {
                         // Tạo tham số để in báo cáo
                         ParameterReportPayment dataPrint = new ParameterReportPayment(
-                                hd.getMaHD(), String.valueOf(hd.getNgayTao().format(formatter)), hd.getTenKH(), hd.getSoDT(), hd.getDiaChi(), String.valueOf(hd.getGiaTien()).replaceAll("[^\\d.]", ""), qrCodeStream, fields);
+                                hd.getMaHD(), String.valueOf(hd.getNgayTao().format(formatter)), hd.getTenKH(), hd.getSoDT(), hd.getDiaChi(), currencyFormat.format(hd.getGiaTien()), qrCodeStream, fields);
 
                         // Trước khi gọi printReportPayment
                         ReportManager.getInstance().checkJRXMLPath();
@@ -324,6 +381,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
                         // Gọi phương thức in báo cáo
                         ReportManager.getInstance().printReportPayment(dataPrint);
+                        System.out.println(currencyFormat.format(hd.getGiaTien()));
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Không có dữ liệu để tạo báo cáo.");
@@ -370,6 +428,32 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         }
     }
 
+    private void searchHDCT(int idHD) {
+        String selectedMau = (String) cbbMau.getSelectedItem();
+        String selectedSize = (String) cbbSize.getSelectedItem();
+        String selectedChatLieu = (String) cbbChatLieu.getSelectedItem();
+        String selectedGia = (String) cbbGiaTien.getSelectedItem();
+        String selectedThuongHieu = (String) cbbThuongHieu.getSelectedItem();
+        if ("Giá từ thấp đến cao".equals((String) cbbGiaTien.getSelectedItem())) {
+            selectedGia = "GiaBan ASC";
+        } else if ("Giá từ cao đến thấp".equals((String) cbbGiaTien.getSelectedItem())) {
+            selectedGia = "GiaBan DESC";
+        } else {
+            selectedGia = "Created_at DESC";
+        }
+        listHDCT = srHDCT.searchCBBSP(idHD, selectedMau, selectedSize, selectedChatLieu, selectedThuongHieu, selectedGia);
+        // Hiển thị dữ liệu đã lọc
+        showDataTable2(listHDCT);
+    }
+
+    public void showCbbHDCT() {
+        showcbbChatLieu(chatLieus);
+        showcbbMauSac(mauSacs);
+        showcbbSize(sizes);
+        showcbbThuongHieu(thuongHieus);
+        showcbbGia();
+    }
+
     @Override
     public void onQRCodeScanned(int result) {
         // Xử lý giá trị QR Code tại đây, bạn có thể làm gì đó với giá trị này
@@ -378,6 +462,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         // Gọi phương thức để cập nhật dữ liệu hóa đơn tương ứng với giá trị QRCode
         listHD = srHD.getOne(result);
         showDataTable1(listHD);
+        showCbbHDCT();
 
         // Cập nhật dữ liệu cho HDCT
         dtmHDCT = (DefaultTableModel) jTable2.getModel();
@@ -416,6 +501,12 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        cbbMau = new combobox.Combobox();
+        cbbSize = new combobox.Combobox();
+        cbbChatLieu = new combobox.Combobox();
+        cbbThuongHieu = new combobox.Combobox();
+        cbbGiaTien = new combobox.Combobox();
+        txtSearch1 = new textfield.TextField();
         roundPanel3 = new swing.RoundPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
@@ -463,6 +554,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             }
         });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
         btnPrint.setText("In hóa đơn");
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
@@ -492,30 +586,33 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                                        .addComponent(cbbTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtMin, javax.swing.GroupLayout.DEFAULT_SIZE, 1055, Short.MAX_VALUE)))
+                                .addGap(5, 5, 5)
+                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                                        .addComponent(btnQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtMax, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(5, 5, 5))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnPrint)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnExport))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(roundPanel1Layout.createSequentialGroup()
-                                .addComponent(cbbTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtMin, javax.swing.GroupLayout.DEFAULT_SIZE, 1055, Short.MAX_VALUE)))
-                        .addGap(5, 5, 5)
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(roundPanel1Layout.createSequentialGroup()
-                                .addComponent(btnQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtMax, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(5, 5, 5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnExport)
+                        .addGap(6, 6, 6))))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -534,11 +631,11 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                     .addComponent(cbbTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnExport)
-                    .addComponent(btnPrint))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPrint)
+                    .addComponent(btnExport))
                 .addContainerGap())
         );
 
@@ -554,9 +651,49 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             }
         ));
         jScrollPane2.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
         jLabel2.setFont(new java.awt.Font("Roboto", 1, 13)); // NOI18N
         jLabel2.setText("Hóa đơn chi tiết");
+
+        cbbMau.setLabeText("Màu sắc");
+        cbbMau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbMauActionPerformed(evt);
+            }
+        });
+
+        cbbSize.setLabeText("Size");
+        cbbSize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbSizeActionPerformed(evt);
+            }
+        });
+
+        cbbChatLieu.setLabeText("Chất liệu");
+        cbbChatLieu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbChatLieuActionPerformed(evt);
+            }
+        });
+
+        cbbThuongHieu.setLabeText("Thương hiệu");
+        cbbThuongHieu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbThuongHieuActionPerformed(evt);
+            }
+        });
+
+        cbbGiaTien.setLabeText("Giá tiền");
+        cbbGiaTien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbGiaTienActionPerformed(evt);
+            }
+        });
+
+        txtSearch1.setLabelText("Tìm kiếm hóa đơn");
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
         roundPanel2.setLayout(roundPanel2Layout);
@@ -565,19 +702,39 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             .addGroup(roundPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1215, Short.MAX_VALUE)
                     .addGroup(roundPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2))
+                    .addGroup(roundPanel2Layout.createSequentialGroup()
+                        .addComponent(txtSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbbMau, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbbSize, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbbChatLieu, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbbThuongHieu, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbbGiaTien, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         roundPanel2Layout.setVerticalGroup(
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
+                .addGap(7, 7, 7)
+                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbbMau, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbbSize, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbbChatLieu, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbbThuongHieu, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbbGiaTien, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -593,6 +750,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
             }
         ));
         jScrollPane3.setViewportView(jTable3);
+        if (jTable3.getColumnModel().getColumnCount() > 0) {
+            jTable3.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
         jLabel3.setFont(new java.awt.Font("Roboto", 1, 13)); // NOI18N
         jLabel3.setText("Lịch sử hóa đơn");
@@ -601,20 +761,22 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         roundPanel3.setLayout(roundPanel3Layout);
         roundPanel3Layout.setHorizontalGroup(
             roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(roundPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                    .addGroup(roundPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         roundPanel3Layout.setVerticalGroup(
             roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -627,19 +789,20 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                     .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(roundPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(roundPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5))
+                    .addComponent(roundPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -655,6 +818,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         int rowIndex = jTable1.getSelectedRow();
         HoaDonViewModel hd = listHD.get(rowIndex);
         selectedInvoiceId = String.valueOf(hd.getId());
+        showCbbHDCT();
 
         dtmHDCT = (DefaultTableModel) jTable2.getModel();
         listHDCT = srHDCT.getAll(hd.getId());
@@ -677,8 +841,27 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         qrcode qrScannerFrame = new qrcode();
         qrScannerFrame.setQRCodeListener(this);
         qrScannerFrame.setVisible(true);
-
     }//GEN-LAST:event_btnQRActionPerformed
+
+    private void cbbMauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbMauActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbMauActionPerformed
+
+    private void cbbSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbSizeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbSizeActionPerformed
+
+    private void cbbChatLieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbChatLieuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbChatLieuActionPerformed
+
+    private void cbbThuongHieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbThuongHieuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbThuongHieuActionPerformed
+
+    private void cbbGiaTienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbGiaTienActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbGiaTienActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -686,6 +869,11 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnQR;
+    private combobox.Combobox cbbChatLieu;
+    private combobox.Combobox cbbGiaTien;
+    private combobox.Combobox cbbMau;
+    private combobox.Combobox cbbSize;
+    private combobox.Combobox cbbThuongHieu;
     private combobox.Combobox cbbTrangThai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -702,5 +890,6 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
     private textfield.TextField txtMax;
     private textfield.TextField txtMin;
     private textfield.TextField txtSearch;
+    private textfield.TextField txtSearch1;
     // End of variables declaration//GEN-END:variables
 }

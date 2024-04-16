@@ -52,5 +52,13 @@ public class HoaDonService {
     public boolean giaoHang(int idHD, String maNV, String soDT, String maGG, Date ngayNhan){
         return repoHD.giaoHang(idHD, maNV, soDT, maGG, ngayNhan);
     }
+    
+   public boolean updateHDKH(int idHD, String soDT, String diaChi, String tenKH){
+        return repoHD.updateHDKH(idHD, soDT, diaChi, tenKH);
+    }
+   
+   public boolean updateHDKL(int idHD, String maNV, String tenKH, String maGG){
+       return repoHD.updateHDKL(idHD, maNV, tenKH, maGG);
+   }
 
 }

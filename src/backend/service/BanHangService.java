@@ -37,8 +37,8 @@ public class BanHangService {
         return repo.searchHD(tuKhoa);
     }
     
-    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan){
-        return repo.searchCBBSP(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
+    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, String gia){
+        return repo.searchCBBSP(danhmuc, xuatxu, nsx, gia);
     }
     
     public List<BHSPViewModel> getOneSP(int idSPCT){

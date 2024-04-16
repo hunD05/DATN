@@ -120,7 +120,7 @@
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="224" y="84" width="100" height="20" uuid="2a7f87bd-3668-4ad7-a6b6-caf07900c104"/>
+				<reportElement x="234" y="84" width="90" height="20" uuid="2a7f87bd-3668-4ad7-a6b6-caf07900c104"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{mahd}]]></textFieldExpression>
 			</textField>
@@ -248,7 +248,7 @@
 				<textFieldExpression><![CDATA[$F{tensp}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="222" y="0" width="75" height="20" uuid="ba7733ba-ab97-4e0c-954c-811c1b62f26a"/>
+				<reportElement x="222" y="0" width="111" height="20" uuid="ba7733ba-ab97-4e0c-954c-811c1b62f26a"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.75"/>
@@ -272,41 +272,17 @@
 				<textFieldExpression><![CDATA[$F{soluong}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="444" y="0" width="76" height="20" uuid="baeef631-cd65-4b66-9b83-d0c5c076d80e"/>
+				<reportElement x="444" y="0" width="111" height="20" uuid="baeef631-cd65-4b66-9b83-d0c5c076d80e"/>
 				<box>
-					<pen lineWidth="0.0"/>
+					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
 					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{tong}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="298" y="0" width="35" height="20" uuid="ae32dae3-96b2-4195-9b82-200fb2d8ac8e"/>
-				<box>
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[VND]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="520" y="0" width="35" height="20" uuid="8fb1b332-f84a-41fc-a9ec-b17b9827ae0e"/>
-				<box>
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[VND]]></text>
-			</staticText>
 		</band>
 	</detail>
 	<summary>
@@ -323,11 +299,6 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{tongtien}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="222" y="0" width="35" height="20" uuid="be819f2c-8249-4116-9f86-ab104b63f0c5"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[VND]]></text>
-			</staticText>
 		</band>
 	</summary>
 </jasperReport>

@@ -30,5 +30,17 @@ public class HDCTService {
     public boolean addHDCT(int idHD, int idSPCT, int soLuongMua, double giaBan){
         return repoHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
     }
+    
+    public boolean updateHDCT(int idHD, int soLuong, int idCTSP){
+        return repoHDCT.updateHDCT(idHD, soLuong,idCTSP);
+    }
+    
+    public List<HDCTViewModel> searchCBBSP(int idHD, String mauSac, String size, String chatLieu, String thuongHieu, String gia){
+        return repo.searchCBBSP(idHD, mauSac, size, chatLieu, thuongHieu, gia);
+    }
+    
+    public boolean deleteHDCT(int idHD,int soLuong, int idCTSP){
+        return repoHDCT.deleteHDCT(idHD, soLuong, idCTSP);
+    }
 
 }

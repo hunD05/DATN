@@ -48,4 +48,8 @@ public class PhieuGiamGiaService {
     public List<PhieuGiamGiaViewModel> sortGG() {
         return repo.sortGG();
     }
+    
+    public boolean updateAfter(String tenGG){
+        return repo.updateAfter(tenGG);
+    }
 }

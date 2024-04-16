@@ -16,26 +16,25 @@ import java.sql.ResultSet;
  * @author HOME
  */
 public class KhachHangRepository {
-    
+
     public List<KhachHangEntity> getAll() {
         List<KhachHangEntity> listkhachhang = new ArrayList<>();
         String sql = """
-                     SELECT 
-                     ROW_NUMBER() OVER (ORDER BY Updated_At DESC) AS STT,
-                     [ID],
-                     [MaKhachHang],
-                     [TenKhachHang],
-                     [GioiTinh],
-                     [SoDienThoai],
-                     [DiaChi]
-                     FROM 
-                     [dbo].[KhachHang]
-                     WHERE
-                     Deleted = 0
-                     ORDER BY 
-                     Updated_At DESC;
-                              
-                    """;
+                 SELECT 
+                 ROW_NUMBER() OVER (ORDER BY Updated_At DESC) AS STT,
+                 [ID],
+                 [MaKhachHang],
+                 [TenKhachHang],
+                 [GioiTinh],
+                 [SoDienThoai],
+                 [DiaChi]
+                 FROM 
+                 [dbo].[KhachHang]
+                 WHERE
+                 Deleted = 0 AND ID != 1
+                 ORDER BY 
+                 Updated_At DESC;
+                """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -54,7 +53,7 @@ public class KhachHangRepository {
         }
         return listkhachhang;
     }
-    
+
     public boolean Add(KhachHangEntity khachhang) {
         int check = 0;
         String sql = """
@@ -78,7 +77,7 @@ public class KhachHangRepository {
         }
         return check > 0;
     }
-    
+
     public boolean Update(KhachHangEntity khachhang, String Manew) {
         int check = 0;
         String sql = """
@@ -102,7 +101,7 @@ public class KhachHangRepository {
         }
         return check > 0;
     }
-    
+
     public boolean Delete(String Ma) {
         int check = 0;
         String sql = """
@@ -117,7 +116,7 @@ public class KhachHangRepository {
         }
         return check > 0;
     }
-    
+
     public List<KhachHangEntity> Tim(String ten) {
         List<KhachHangEntity> listkhachhang = new ArrayList<>();
         String sql = """
@@ -157,14 +156,14 @@ public class KhachHangRepository {
         }
         return listkhachhang;
     }
-    
+
     public static void main(String[] args) {
         List<KhachHangEntity> khachhang = new KhachHangRepository().getAll();
         for (KhachHangEntity khachHangEntity : khachhang) {
             System.out.println(khachHangEntity.toString());
         }
     }
-    
+
 //    public List<KhachHangEntity> getMT(int idKH) {
 //        List<KhachHangEntity> listkhachhang = new ArrayList<>();
 //        String sql = """

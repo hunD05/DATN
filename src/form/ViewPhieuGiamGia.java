@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import raven.toast.Notifications;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.management.Notification;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -244,6 +247,36 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
         txtSoPhanTram.setText("");
         txtGiamToiDa.setText("");
         cbbTrangThai.setSelectedIndex(0);
+    }
+
+    private void capNhatTrangThai() {
+        LocalDate ngayHienTai = LocalDate.now();
+        for (PhieuGiamGiaViewModel pgg : lists) {
+            LocalDate ngayBatDau = pgg.getNgayBatDau().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate ngayKetThuc = pgg.getNgayKetThuc().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            String trangThai;
+            if (ngayHienTai.isBefore(ngayBatDau)) {
+                trangThai = "Chưa diễn ra";
+            } else if (ngayHienTai.isAfter(ngayKetThuc)) {
+                trangThai = "Kết thúc";
+            } else {
+                trangThai = "Đang diễn ra";
+            }
+            pgg.setTrangThai(trangThai);
+        }
+        showDataTable(lists);
+    }
+
+    private void startAutoUpdateTimer() {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> capNhatTrangThai());
+            }
+        };
+        // Thiết lập lịch trình cho timer (ví dụ: cập nhật mỗi 1 phút)
+        timer.scheduleAtFixedRate(task, 0, 60000); // 60000 milliseconds = 1 phút
     }
 
     /**

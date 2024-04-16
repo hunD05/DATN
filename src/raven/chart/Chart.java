@@ -26,7 +26,7 @@ public class Chart extends javax.swing.JPanel {
     DecimalFormat df = new DecimalFormat("#,##0.##");
     private List<ModelLegend> legends = new ArrayList<>();
     private List<ModelChart> model = new ArrayList<>();
-    private final int seriesSize = 50; // Điều chỉnh kích thước của mỗi cột
+    private final int seriesSize = 15; // Điều chỉnh kích thước của mỗi cột
     private final int seriesSpace = 5; // Điều chỉnh khoảng cách giữa các cột
     private final Animator animator;
     private float animate;

@@ -221,7 +221,7 @@ public class PhieuGiamGiaRepo {
         }
         return listSearch;
     }
-    
+
     public List<PhieuGiamGiaViewModel> searchTT(String tenGG) {
         List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
         String sql = """
@@ -256,15 +256,15 @@ public class PhieuGiamGiaRepo {
         }
         return listPGG;
     }
-    
-        public List<PhieuGiamGiaViewModel> sortGG() {
+
+    public List<PhieuGiamGiaViewModel> sortGG() {
         List<PhieuGiamGiaViewModel> listPGG = new ArrayList<>();
         String sql = """
                     SELECT dbo.PhieuGiamGia.ID, dbo.PhieuGiamGia.MaGiamGia, dbo.PhieuGiamGia.TenGiamGia, dbo.PhieuGiamGia.NgayBatDau, dbo.PhieuGiamGia.NgayKetThuc, dbo.PhieuGiamGia.SoLuong, dbo.PhieuGiamGia.HoaDonToiThieu, 
                            dbo.PhieuGiamGia.SoPhanTramGiam, dbo.PhieuGiamGia.GiamToiDa, dbo.NhanVien.ID AS Expr1, dbo.NhanVien.SoDienThoai, dbo.NhanVien.NgaySinh, dbo.PhieuGiamGia.TrangThai
                     FROM   dbo.NhanVien INNER JOIN
                            dbo.PhieuGiamGia ON dbo.NhanVien.ID = dbo.PhieuGiamGia.IDNhanVien
-                    WHERE dbo.PhieuGiamGia.Deleted = 0 
+                    WHERE dbo.PhieuGiamGia.Deleted = 0 AND dbo.PhieuGiamGia.TrangThai LIKE N'Đang diễn ra'
                     ORDER BY  dbo.PhieuGiamGia.GiamToiDa DESC, dbo.PhieuGiamGia.Created_at DESC
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -291,7 +291,25 @@ public class PhieuGiamGiaRepo {
         }
         return listPGG;
     }
-        
+
+    public boolean updateAfter(String tenGG) {
+        int check = 0;
+        String sql = """
+                     UPDATE [dbo].[PhieuGiamGia]
+                        SET [SoLuong] = [SoLuong] - 1,
+                            [Updated_at] = CURRENT_TIMESTAMP
+                      WHERE ID = (SELECT TOP 1 ID FROM PhieuGiamGia WHERE TenGiamGia = ?)
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setObject(1, tenGG);
+            check = ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
 //                    txtSoDT.setText("");
 //            txtTenKH.setText("");
 //            txtTenKH2.setText("");

@@ -68,6 +68,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBox;
@@ -263,41 +264,45 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 //
 //            }
 //        });
+        cbbDanhMuc.addActionListener(e -> performSearch());
+        cbbXuatXu.addActionListener(e -> performSearch());
+        cbbNSX.addActionListener(e -> performSearch());
+        cbbGia.addActionListener(e -> performSearch());
     }
 
     public void showcbbDanhMuc(List<DanhMuc> danhMucs) {
         dcbmDanhMuc.removeAllElements();
-        dcbmDanhMuc.addElement("Tất cả");
+        dcbmDanhMuc.addElement(null);
         for (DanhMuc danhMuc : danhMucs) {
             dcbmDanhMuc.addElement(danhMuc.getTenDanhMuc());
         }
-        cbbDanhMuc.setSelectedItem("Tất cả");
+//        cbbDanhMuc.setSelectedItem("Tất cả");
     }
 
     public void showcbbNSX(List<NSX> nsxs) {
         dcbmNSX.removeAllElements();
         // Thêm một mục null đầu tiên
-        dcbmNSX.addElement("Tất cả");
+        dcbmNSX.addElement(null);
         for (NSX nsx1 : nsxs) {
             dcbmNSX.addElement(nsx1.getTenNSX());
         }
-        cbbDanhMuc.setSelectedItem("Tất cả");
+//        cbbDanhMuc.setSelectedItem("Tất cả");
     }
 
     public void showcbbXuatXu(List<XuatXu> xuatXus) {
         dcbmXuatXu.removeAllElements();
         // Thêm một mục null đầu tiên
-        dcbmXuatXu.addElement("Tất cả");
+        dcbmXuatXu.addElement(null);
         for (XuatXu xuatXu : xuatXus) {
             dcbmXuatXu.addElement(xuatXu.getTenXuatXu());
         }
-        cbbDanhMuc.setSelectedItem("Tất cả");
+        cbbDanhMuc.setSelectedItem(null);
     }
 
     public void showcbbGia(List<SanPhamChiTietViewModel> chiTietSanPhamsz) {
         dcbmGia.removeAllElements();
         // Thêm các lựa chọn cho combobox
-        dcbmGia.addElement("Tất cả");
+        dcbmGia.addElement(null);
         dcbmGia.addElement("Giá từ thấp đến cao");
         dcbmGia.addElement("Giá từ cao đến thấp");
         cbbDanhMuc.setSelectedItem("Tất cả");
@@ -389,6 +394,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 
     public void showDataTable(List<SanPhamChiTietViewModel> sanPhamChiTietViewModels) {
         dtm.setRowCount(0);
+        int stt = 1;
         for (SanPhamChiTietViewModel sanPhamChiTietViewModel : sanPhamChiTietViewModels) {
             // Định dạng giá bán
             BigDecimal giaBan = sanPhamChiTietViewModel.getGiaBan();
@@ -396,7 +402,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 
             dtm.addRow(new Object[]{
                 false, // Thêm một cột checkbox với giá trị mặc định là false
-                sanPhamChiTietViewModel.getSTT(),
+                stt++,
                 sanPhamChiTietViewModel.getTenSanPham(),
                 sanPhamChiTietViewModel.getTenDanhMuc(),
                 sanPhamChiTietViewModel.getTenXuatXu(),
@@ -414,7 +420,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
                 sanPhamChiTietViewModel.getSoLuong()
             });
         }
-        
+
         tblChiTietSanPham.setRowHeight(40);
         tblChiTietSanPham.getColumnModel().getColumn(0).setMaxWidth(50);
 
@@ -435,9 +441,22 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
         checkboxColumn.setCellRenderer(new CheckBoxRenderer());
     }
 
+    private BigDecimal extractNumericValue(String formattedPrice) {
+        DecimalFormatSymbols symbols = ((DecimalFormat) NumberFormat.getCurrencyInstance(Locale.forLanguageTag("vi-VN"))).getDecimalFormatSymbols();
+        String currencySymbol = "" + symbols.getCurrencySymbol();
+
+        String numericValue = formattedPrice.replaceAll("[^\\d.,]", "").replace(currencySymbol, "");
+
+        try {
+            return new BigDecimal(numericValue);
+        } catch (NumberFormatException e) {
+            System.out.println("Không thể chuyển đổi chuỗi thành số BigDecimal.");
+            return BigDecimal.ZERO; // hoặc một giá trị mặc định khác
+        }
+    }
+
     private String formatGiaBan(BigDecimal giaBan) {
         DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.forLanguageTag("vi-VN"));
-        System.out.println(giaBan);
         return formatter.format(giaBan);
     }
 
@@ -463,7 +482,20 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
     public backend.entity.ChiTietSanPham getFormData() {
         try {
             String sp = cbbSanPham.getSelectedItem().toString();
-            BigDecimal gia = new BigDecimal(txtGiaBan.getText());
+            BigDecimal gia;
+            try {
+                String giaText = txtGiaBan.getText().replaceAll("[^\\d.]", "");
+                if (!giaText.isEmpty()) {
+                    gia = new BigDecimal(giaText);
+                } else {
+                    gia = BigDecimal.ZERO; // hoặc giá trị mặc định khác nếu cần
+                }
+            } catch (NumberFormatException e) {
+                // Xử lý ngoại lệ khi chuỗi không chứa số hợp lệ
+                System.out.println("Không thể chuyển đổi chuỗi thành số BigDecimal.");
+                gia = BigDecimal.ZERO; // hoặc một giá trị mặc định khác
+            }
+
             String soLuong = txtSoLuong.getText();
             String moTa = txtMoTa.getText();
             String danhMuc = cbbDanhMucz.getSelectedItem().toString();
@@ -644,18 +676,18 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 //
 //        QRCodeResultWindow resultWindow = new QRCodeResultWindow(chitietsanpham.toString());
 //    }
-    private void filterCTSP() {
-
-        String nsx = (String) cbbDanhMuc.getSelectedItem();
-        String pin = (String) cbbXuatXu.getSelectedItem();
-        String manHinh = (String) cbbNSX.getSelectedItem();
-
-
-        // Kiểm tra xem giá trị được chọn từ combobox có null không
-        boolean sapXepGiaTangDan = "Giá Tăng Dần".equals(cbbGia.getSelectedItem());
-
-        locCTSP = chiTietSanPhamService.SearchCbb(manHinh, pin, manHinh, sapXepGiaTangDan);
-        showDataTable(locCTSP);
+//    private void filterCTSP() {
+//
+//        String nsx = (String) cbbDanhMuc.getSelectedItem();
+//        String pin = (String) cbbXuatXu.getSelectedItem();
+//        String manHinh = (String) cbbNSX.getSelectedItem();
+//
+//
+//        // Kiểm tra xem giá trị được chọn từ combobox có null không
+//        boolean sapXepGiaTangDan = "Giá Tăng Dần".equals(cbbGia.getSelectedItem());
+//
+//        locCTSP = chiTietSanPhamService.SearchCbb(manHinh, pin, manHinh, sapXepGiaTangDan);
+//        showDataTable(locCTSP);
 //        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem();
 //        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
 //        String selectedNSX = (String) cbbNSX.getSelectedItem();
@@ -679,6 +711,23 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 //            List<SanPhamChiTietViewModel> allData = chiTietSanPhamService.getAll();
 //            showDataTable(allData);
 //        }
+//    }
+    private void performSearch() {
+        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem();
+        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
+        String selectedNSX = (String) cbbNSX.getSelectedItem();
+        String selectedGia = (String) cbbGia.getSelectedItem();
+        if ("Giá từ thấp đến cao".equals((String) cbbGia.getSelectedItem())) {
+            selectedGia = "GiaBan ASC";
+        } else if ("Giá từ cao đến thấp".equals((String) cbbGia.getSelectedItem())) {
+            selectedGia = "GiaBan DESC";
+        } else {
+            selectedGia = "Created_at DESC";
+        }
+        chitietsanpham = chiTietSanPhamService.search(selectedDanhMuc, selectedXuatXu, selectedNSX, selectedGia);
+        System.out.println(cbbXuatXu.getSelectedItem());
+        // Hiển thị dữ liệu đã lọc
+        showDataTable(chitietsanpham);
     }
 
     /**
@@ -880,6 +929,11 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
         });
 
         txtTimKiem.setLabelText("Tìm kiếm");
+        txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimKiemActionPerformed(evt);
+            }
+        });
 
         btnTim.setText("Tìm");
         btnTim.addActionListener(new java.awt.event.ActionListener() {
@@ -901,7 +955,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
                 .addComponent(cbbNSX, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbbGia, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTim, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -912,6 +966,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtTimKiem, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(btnTim, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
@@ -920,8 +975,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
                                 .addComponent(cbbNSX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(cbbXuatXu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(cbbGia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(txtTimKiem, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -1324,98 +1378,23 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
-        chitietsanpham = chiTietSanPhamService.Search(txtTimKiem.getText());
+        chitietsanpham = chiTietSanPhamService.searchKey(txtTimKiem.getText());
         showDataTable(chitietsanpham);
     }//GEN-LAST:event_btnTimActionPerformed
 
     private void cbbDanhMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbDanhMucActionPerformed
-        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem(); // Lấy tên danh mục được chọn
-//        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
-//        String selectedNSX = (String) cbbNSX.getSelectedItem();
-//        String selectedGia = (String) cbbGia.getSelectedItem();
-//        List<SanPhamChiTietViewModel> data;
-//
-//        if (selectedDanhMuc == "Tất cả" || selectedDanhMuc.isEmpty()) {
-//            // Nếu không có danh mục nào được chọn, lấy tất cả dữ liệu
-//            data = chiTietSanPhamService.getAll(); // Thay thế `getAll()` bằng phương thức lấy tất cả dữ liệu của bạn
-//        } else {
-//            // Ngược lại, lấy dữ liệu từ danh mục đã chọn
-//            filterCTSP();
-//        }
-//
-//        showDataTable(chitietsanpham);
-        if (selectedDanhMuc == "Tất cả" || selectedDanhMuc.isEmpty()) {
-            // Nếu không có danh mục nào được chọn, lấy tất cả dữ liệu
-            showDataTable(chitietsanpham);
-        } else {
-            // Ngược lại, lấy dữ liệu từ danh mục đã chọn
-            filterCTSP();
-        }
 
     }//GEN-LAST:event_cbbDanhMucActionPerformed
 
     private void cbbXuatXuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbXuatXuActionPerformed
-//        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem(); // Lấy tên danh mục được chọn
-        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
-//        String selectedNSX = (String) cbbNSX.getSelectedItem();
-//        String selectedGia = (String) cbbGia.getSelectedItem();
-//        List<SanPhamChiTietViewModel> data;
-//
-        if (selectedXuatXu == "Tất cả" || selectedXuatXu.isEmpty()) {
-            // Nếu không có danh mục nào được chọn, lấy tất cả dữ liệu
-            showDataTable(chitietsanpham);
-        } else {
-            // Ngược lại, lấy dữ liệu từ danh mục đã chọn
-            filterCTSP();
-        }
-//
-//        showDataTable(chitietsanpham);
-
 
     }//GEN-LAST:event_cbbXuatXuActionPerformed
 
     private void cbbNSXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbNSXActionPerformed
-//        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem(); // Lấy tên danh mục được chọn
-//        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
-        String selectedNSX = (String) cbbNSX.getSelectedItem();
-//        String selectedGia = (String) cbbGia.getSelectedItem();
-//        List<SanPhamChiTietViewModel> data;
-//
-        if (selectedNSX == "Tất cả" || selectedNSX.isEmpty()) {
-            // Nếu không có danh mục nào được chọn, lấy tất cả dữ liệu
-            showDataTable(chitietsanpham);
-        } else {
-            // Ngược lại, lấy dữ liệu từ danh mục đã chọn
-            filterCTSP();
-        }
-//
-//        showDataTable(chitietsanpham);
-        filterCTSP();
+
     }//GEN-LAST:event_cbbNSXActionPerformed
 
     private void cbbGiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbGiaActionPerformed
-//        String selectedDanhMuc = (String) cbbDanhMuc.getSelectedItem(); // Lấy tên danh mục được chọn
-//        String selectedXuatXu = (String) cbbXuatXu.getSelectedItem();
-//        String selectedNSX = (String) cbbNSX.getSelectedItem();
-        String selectedGia = (String) cbbGia.getSelectedItem();
-//
-//        // Khởi tạo giá trị min và max mặc định để lấy tất cả sản phẩm
-//        // Kiểm tra lựa chọn của combobox
-        if (selectedGia.equals("Tất cả")) {
-            // Nếu chọn "Tất cả", hiển thị tất cả sản phẩm
-            List<SanPhamChiTietViewModel> data = chiTietSanPhamService.getAll();
-            chitietsanpham = data;
-            showDataTable(data);
-        } else if (selectedGia.equals("Giá từ thấp đến cao")) {
-            // Nếu chọn "Giá từ thấp đến cao", sắp xếp dữ liệu theo giá tăng dần
-            filterCTSP();
-        } else if (selectedGia.equals("Giá từ cao đến thấp")) {
-            // Nếu chọn "Giá từ cao đến thấp", sắp xếp dữ liệu theo giá giảm dần
-            filterCTSP();
-        } else {
-            // Xử lý các trường hợp còn lại (nếu có)
-        }
-
 
     }//GEN-LAST:event_cbbGiaActionPerformed
 
@@ -1587,6 +1566,13 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
             int row = tblChiTietSanPham.getSelectedRow();
             SanPhamChiTietViewModel sanPhamChiTietViewModel = chitietsanpham.get(row);
             backend.entity.ChiTietSanPham chiTietSanPham = getFormData();
+
+            if (chiTietSanPham == null) {
+                // Có lỗi xảy ra khi lấy dữ liệu từ form
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi lấy dữ liệu từ form");
+                return;
+            }
+
             chiTietSanPhamService.update(chiTietSanPham, sanPhamChiTietViewModel.getId());
             chitietsanpham = chiTietSanPhamService.getAll();
             showDataTable(chitietsanpham);
@@ -1630,32 +1616,62 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
             Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã hủy lưu mã QR.");
         }
     }//GEN-LAST:event_btnTaiMaQRjButton5ActionPerformed
+
+    private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTimKiemActionPerformed
     private boolean validateFormData() {
-        try {
-            // Kiểm tra các ô nhập liệu có trống không
-            if (cbbSanPham.getSelectedItem() == null || cbbDanhMuc.getSelectedItem() == null
-                    || cbbNSX.getSelectedItem() == null || cbbXuatXu.getSelectedItem() == null
-                    || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
-                    || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
-                    || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
-                    || cbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
-                    || txtSoLuong.getText().isEmpty() || txtGiaBan.getText().isEmpty()
-                    || txtMoTa.getText().isEmpty()) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                return false;
-            }
-
-            // Kiểm tra các ô nhập số
-            Long.parseLong(txtSoLuong.getText());
-            new BigDecimal(txtGiaBan.getText());
-
-            // Kiểm tra ô trạng thái
-        } catch (NumberFormatException ex) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập 2 trường số lượng và giá là số");
+    try {
+        // Kiểm tra các ô nhập liệu có trống không
+        if (cbbSanPham.getSelectedItem() == null || cbbDanhMucz.getSelectedItem() == null
+                || cbbNSXz.getSelectedItem() == null || cbbXuatXuZ.getSelectedItem() == null
+                || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
+                || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
+                || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
+                || cbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
+                || txtSoLuong.getText().isEmpty() || txtGiaBan.getText().isEmpty()
+                || txtMoTa.getText().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return false;
         }
-        return true;
+
+        // Kiểm tra các ô nhập số
+        try {
+            int soLuong = Integer.parseInt(txtSoLuong.getText());
+            if (soLuong <= 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số dương");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số nguyên");
+            return false;
+        }
+
+        try {
+            String giaText = txtGiaBan.getText().replaceAll("[^\\d.]", "");
+            BigDecimal gia = new BigDecimal(giaText);
+            if (gia.compareTo(BigDecimal.ZERO) <= 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số dương");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số");
+            return false;
+        }
+
+        // Kiểm tra ô trạng thái
+        // (Bạn cần thêm kiểm tra ô trạng thái ở đây nếu cần)
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi kiểm tra dữ liệu");
+        return false;
     }
+    return true;
+}
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnQuetQR;
     private javax.swing.JButton btnResetBoLoc;

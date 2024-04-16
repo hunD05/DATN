@@ -20,46 +20,139 @@ import java.util.Locale;
  */
 public class ChiTietSanPhamRespository {
 
+    public List<SanPhamChiTietViewModel> search(String danhMuc, String xuatXu, String nsx, String gia) {
+        List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
+        String sql = """
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY ctsp.Created_at DESC) AS RowNumber,
+        sp.TenSanPham, 
+        ctsp.GiaBan, 
+        ctsp.SoLuong, 
+        dm.TenDanhMuc, 
+        xx.TenXuatXu, 
+        nsx.TenNSX, 
+        ms.TenMauSac, 
+        sz.TenSize, 
+        th.TenThuongHieu, 
+        cl.TenChatLieu, 
+        ca.TenCoAo, 
+        da.TenDuoiAo, 
+        ta.TenTayAo, 
+        dangao.TenDangAo,
+        ctsp.ID,
+        ctsp.MoTa,
+        ctsp.TrangThai
+    FROM 
+        dbo.ChatLieu cl 
+    INNER JOIN dbo.ChiTietSanPham ctsp ON cl.ID = ctsp.IDChatLieu 
+    INNER JOIN dbo.DanhMuc dm ON ctsp.IDDanhMuc = dm.ID 
+    INNER JOIN dbo.XuatXu xx ON ctsp.IDXuatXu = xx.ID
+    INNER JOIN dbo.NSX nsx ON ctsp.IDNsx = nsx.ID 
+    INNER JOIN dbo.SanPham sp ON ctsp.IDSanPham = sp.ID 
+    INNER JOIN dbo.Size sz ON ctsp.IDSize = sz.ID 
+    INNER JOIN dbo.ThuongHieu th ON ctsp.IDThuongHieu = th.ID 
+    INNER JOIN dbo.MauSac ms ON ctsp.IDMauSac = ms.ID 
+    INNER JOIN dbo.CoAo ca ON ctsp.IDCoAo = ca.ID 
+    INNER JOIN dbo.DuoiAo da ON ctsp.IDDuoiAo = da.ID 
+    INNER JOIN dbo.TayAo ta ON ctsp.IDTayAo = ta.ID 
+    INNER JOIN dbo.DangAo dangao ON ctsp.IDDangAo = dangao.ID 
+    WHERE 
+        ctsp.Deleted = 0
+    """;
+
+        if (xuatXu != null && !xuatXu.isEmpty()) {
+            sql += " AND xx.TenXuatXu = N'" + xuatXu + "'";
+        }
+        if (danhMuc != null && !danhMuc.isEmpty()) {
+            sql += " AND dm.TenDanhMuc = '" + danhMuc + "'";
+        }
+        if (nsx != null && !nsx.isEmpty()) {
+            sql += " AND nsx.TenNSX = '" + nsx + "'";
+        }
+        if ("GiaBan ASC".equals(gia)) {
+            sql += " ORDER BY ctsp.GiaBan ASC";
+        } else if ("GiaBan DESC".equals(gia)) {
+            sql += " ORDER BY ctsp.GiaBan DESC";
+        } else {
+            sql += " ORDER BY ctsp.Created_at DESC";
+        }
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
+                sanPhamChiTietViewModel.setSTT(rs.getInt("RowNumber"));
+                sanPhamChiTietViewModel.setTenSanPham(rs.getString("TenSanPham"));
+
+                // Định dạng giá bán
+                sanPhamChiTietViewModel.setGiaBan(rs.getBigDecimal("GiaBan"));
+
+                sanPhamChiTietViewModel.setSoLuong(rs.getInt("SoLuong"));
+                sanPhamChiTietViewModel.setTenDanhMuc(rs.getString("TenDanhMuc"));
+                sanPhamChiTietViewModel.setTenXuatXu(rs.getString("TenXuatXu"));
+                sanPhamChiTietViewModel.setTenNSX(rs.getString("TenNSX"));
+                sanPhamChiTietViewModel.setTenMauSac(rs.getString("TenMauSac"));
+                sanPhamChiTietViewModel.setTenSize(rs.getString("TenSize"));
+                sanPhamChiTietViewModel.setTenThuongHieu(rs.getString("TenThuongHieu"));
+                sanPhamChiTietViewModel.setTenChatLieu(rs.getString("TenChatLieu"));
+                sanPhamChiTietViewModel.setTenCoAo(rs.getString("TenCoAo"));
+                sanPhamChiTietViewModel.setMaDuoiAo(rs.getString("TenDuoiAo"));
+                sanPhamChiTietViewModel.setMaTayAo(rs.getString("TenTayAo"));
+                sanPhamChiTietViewModel.setTenDangAo(rs.getString("TenDangAo"));
+                sanPhamChiTietViewModel.setId(rs.getString("ID"));
+                sanPhamChiTietViewModel.setMota(rs.getString("MoTa"));
+                sanPhamChiTietViewModel.setTrangThai(rs.getString("TrangThai"));
+                sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
+            }
+            if (!rs.next()) {
+                System.out.println("Không có dữ liệu phù hợp với điều kiện.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sanPhamChiTietViewModels;
+    }
+
     public List<SanPhamChiTietViewModel> getAll() {
         List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
         String sql = """
         SELECT 
-            ROW_NUMBER() OVER (ORDER BY ctsp.Created_at DESC) AS RowNumber,
-            sp.TenSanPham, 
-            ctsp.GiaBan, 
-            ctsp.SoLuong, 
-            dm.TenDanhMuc, 
-            xx.TenXuatXu, 
-            nsx.TenNSX, 
-            ms.TenMauSac, 
-            sz.TenSize, 
-            th.TenThuongHieu, 
-            cl.TenChatLieu, 
-            ca.TenCoAo, 
-            da.TenDuoiAo, 
-            ta.TenTayAo, 
-            dangao.TenDangAo,
-            ctsp.ID,
-            ctsp.MoTa,
-            ctsp.TrangThai
-        FROM 
-            dbo.ChatLieu cl 
-        INNER JOIN dbo.ChiTietSanPham ctsp ON cl.ID = ctsp.IDChatLieu 
-        INNER JOIN dbo.ChucVu cv ON cl.ID = cv.ID INNER JOIN dbo.CoAo ca ON ctsp.IDCoAo = ca.ID 
-        INNER JOIN dbo.DangAo dangao ON ctsp.IDDangAo = dangao.ID 
-        INNER JOIN dbo.DanhMuc dm ON ctsp.IDDanhMuc = dm.ID 
-        INNER JOIN dbo.DuoiAo da ON ctsp.IDDuoiAo = da.ID 
-        INNER JOIN dbo.MauSac ms ON ctsp.IDMauSac = ms.ID 
-        INNER JOIN dbo.NSX nsx ON ctsp.IDNsx = nsx.ID 
-        INNER JOIN dbo.SanPham sp ON ctsp.IDSanPham = sp.ID 
-        INNER JOIN dbo.Size sz ON ctsp.IDSize = sz.ID 
-        INNER JOIN dbo.TayAo ta ON ctsp.IDTayAo = ta.ID 
-        INNER JOIN dbo.ThuongHieu th ON ctsp.IDThuongHieu = th.ID 
-        INNER JOIN dbo.XuatXu xx ON ctsp.IDXuatXu = xx.ID
-        WHERE 
-            ctsp.Deleted = 0
-        ORDER BY 
-            ctsp.Created_at DESC;
+                    ROW_NUMBER() OVER (ORDER BY ctsp.Created_at DESC) AS RowNumber,
+                    sp.TenSanPham, 
+                    ctsp.GiaBan, 
+                    ctsp.SoLuong, 
+                    dm.TenDanhMuc, 
+                    xx.TenXuatXu, 
+                    nsx.TenNSX, 
+                    ms.TenMauSac, 
+                    sz.TenSize, 
+                    th.TenThuongHieu, 
+                    cl.TenChatLieu, 
+                    ca.TenCoAo, 
+                    da.TenDuoiAo, 
+                    ta.TenTayAo, 
+                    dangao.TenDangAo,
+                    ctsp.ID,
+                    ctsp.MoTa,
+                    ctsp.TrangThai
+                FROM 
+                    dbo.ChatLieu cl 
+                INNER JOIN dbo.ChiTietSanPham ctsp ON cl.ID = ctsp.IDChatLieu 
+                INNER JOIN dbo.DanhMuc dm ON ctsp.IDDanhMuc = dm.ID 
+                INNER JOIN dbo.XuatXu xx ON ctsp.IDXuatXu = xx.ID
+                INNER JOIN dbo.NSX nsx ON ctsp.IDNsx = nsx.ID 
+                INNER JOIN dbo.SanPham sp ON ctsp.IDSanPham = sp.ID 
+                INNER JOIN dbo.Size sz ON ctsp.IDSize = sz.ID 
+                INNER JOIN dbo.ThuongHieu th ON ctsp.IDThuongHieu = th.ID 
+                INNER JOIN dbo.MauSac ms ON ctsp.IDMauSac = ms.ID 
+                INNER JOIN dbo.CoAo ca ON ctsp.IDCoAo = ca.ID 
+                INNER JOIN dbo.DuoiAo da ON ctsp.IDDuoiAo = da.ID 
+                INNER JOIN dbo.TayAo ta ON ctsp.IDTayAo = ta.ID 
+                INNER JOIN dbo.DangAo dangao ON ctsp.IDDangAo = dangao.ID 
+                WHERE 
+                    ctsp.Deleted = 0
+            		ORDER BY 
+                        ctsp.Created_at DESC;
     """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
@@ -769,7 +862,7 @@ public class ChiTietSanPhamRespository {
         return sanPhamChiTietViewModels;
     }
 
-    public List<SanPhamChiTietViewModel> Search(String keyword) {
+    public List<SanPhamChiTietViewModel> searchKey(String keyword) {
         List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
         String sql = """
         SELECT 
@@ -1219,9 +1312,9 @@ SELECT
     }
 
     public List<SanPhamChiTietViewModel> getTop10BestSellingProducts() {
-    List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
-    String sql = """
-        SELECT TOP 10
+        List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
+        String sql = """
+        SELECT TOP 5
             ROW_NUMBER() OVER (ORDER BY ctsp.SoLuong DESC) AS RowNumber,
             sp.TenSanPham, 
             ctsp.GiaBan, 
@@ -1260,40 +1353,37 @@ SELECT
         ORDER BY 
             ctsp.SoLuong DESC;
     """;
-    try (Connection con = DBConnect.getConnection();  
-         PreparedStatement ps = con.prepareStatement(sql);  
-         ResultSet rs = ps.executeQuery()) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
-        while (rs.next()) {
-            SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
-            sanPhamChiTietViewModel.setSTT(rs.getInt("RowNumber"));
-            sanPhamChiTietViewModel.setTenSanPham(rs.getString("TenSanPham"));
+            while (rs.next()) {
+                SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
+                sanPhamChiTietViewModel.setSTT(rs.getInt("RowNumber"));
+                sanPhamChiTietViewModel.setTenSanPham(rs.getString("TenSanPham"));
 
-            // Định dạng giá bán
-            sanPhamChiTietViewModel.setGiaBan(rs.getBigDecimal("GiaBan"));
+                // Định dạng giá bán
+                sanPhamChiTietViewModel.setGiaBan(rs.getBigDecimal("GiaBan"));
 
-            sanPhamChiTietViewModel.setSoLuong(rs.getInt("SoLuong"));
-            sanPhamChiTietViewModel.setTenDanhMuc(rs.getString("TenDanhMuc"));
-            sanPhamChiTietViewModel.setTenXuatXu(rs.getString("TenXuatXu"));
-            sanPhamChiTietViewModel.setTenNSX(rs.getString("TenNSX"));
-            sanPhamChiTietViewModel.setTenMauSac(rs.getString("TenMauSac"));
-            sanPhamChiTietViewModel.setTenSize(rs.getString("TenSize"));
-            sanPhamChiTietViewModel.setTenThuongHieu(rs.getString("TenThuongHieu"));
-            sanPhamChiTietViewModel.setTenChatLieu(rs.getString("TenChatLieu"));
-            sanPhamChiTietViewModel.setTenCoAo(rs.getString("TenCoAo"));
-            sanPhamChiTietViewModel.setMaDuoiAo(rs.getString("TenDuoiAo"));
-            sanPhamChiTietViewModel.setMaTayAo(rs.getString("TenTayAo"));
-            sanPhamChiTietViewModel.setTenDangAo(rs.getString("TenDangAo"));
-            sanPhamChiTietViewModel.setId(rs.getString("ID"));
-            sanPhamChiTietViewModel.setMota(rs.getString("MoTa"));
-            sanPhamChiTietViewModel.setTrangThai(rs.getString("TrangThai"));
-            sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
+                sanPhamChiTietViewModel.setSoLuong(rs.getInt("SoLuong"));
+                sanPhamChiTietViewModel.setTenDanhMuc(rs.getString("TenDanhMuc"));
+                sanPhamChiTietViewModel.setTenXuatXu(rs.getString("TenXuatXu"));
+                sanPhamChiTietViewModel.setTenNSX(rs.getString("TenNSX"));
+                sanPhamChiTietViewModel.setTenMauSac(rs.getString("TenMauSac"));
+                sanPhamChiTietViewModel.setTenSize(rs.getString("TenSize"));
+                sanPhamChiTietViewModel.setTenThuongHieu(rs.getString("TenThuongHieu"));
+                sanPhamChiTietViewModel.setTenChatLieu(rs.getString("TenChatLieu"));
+                sanPhamChiTietViewModel.setTenCoAo(rs.getString("TenCoAo"));
+                sanPhamChiTietViewModel.setMaDuoiAo(rs.getString("TenDuoiAo"));
+                sanPhamChiTietViewModel.setMaTayAo(rs.getString("TenTayAo"));
+                sanPhamChiTietViewModel.setTenDangAo(rs.getString("TenDangAo"));
+                sanPhamChiTietViewModel.setId(rs.getString("ID"));
+                sanPhamChiTietViewModel.setMota(rs.getString("MoTa"));
+                sanPhamChiTietViewModel.setTrangThai(rs.getString("TrangThai"));
+                sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return sanPhamChiTietViewModels;
     }
-    return sanPhamChiTietViewModels;
-}
-
 
 }

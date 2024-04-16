@@ -16,14 +16,17 @@ import java.util.List;
  * @author leanb
  */
 public class ChiTietSanPhamService {
+
     ChiTietSanPhamRespository respository = new ChiTietSanPhamRespository();
+
     public List<SanPhamChiTietViewModel> getAll() {
         return respository.getAll();
     }
+
     public SanPhamChiTietViewModel getById(long id) {
         return respository.getById(id);
     }
-    
+
     public List<SanPhamChiTietViewModel> DanhMuc(String danhMuc) {
         return respository.DanhMuc(danhMuc);
     }
@@ -31,63 +34,71 @@ public class ChiTietSanPhamService {
     public List<SanPhamChiTietViewModel> NSX(String danhMuc) {
         return respository.NSX(danhMuc);
     }
-    
+
     public List<SanPhamChiTietViewModel> XuatXu(String danhMuc) {
         return respository.XuatXu(danhMuc);
     }
-    
+
     public List<SanPhamChiTietViewModel> giaBan(String sortOrder) {
         return respository.giaBan(sortOrder);
     }
-    public List<SanPhamChiTietViewModel> Search(String keyword) {
-        return respository.Search(keyword);
+
+    public List<SanPhamChiTietViewModel> searchKey(String keyword) {
+        return respository.searchKey(keyword);
     }
+
     public List<ChiTietSanPham> ConHang() {
         return respository.ConHang();
     }
-    
+
     public List<ChiTietSanPham> HetHang() {
         return respository.HetHang();
     }
-    
+
     public boolean add(ChiTietSanPham chiTietSanPham) {
         return respository.add(chiTietSanPham);
     }
+
     public List<SanPhamChiTietViewModel> filterData(String danhMuc, String xuatXu, String nsx, String giaBanSortOrder) {
         return respository.filterData(danhMuc, xuatXu, nsx, giaBanSortOrder);
     }
+
     public boolean update(ChiTietSanPham chiTietSanPham, String id) {
         return respository.update(chiTietSanPham, id);
     }
-    
+
     public boolean delete(String maSP) {
         return respository.delete(maSP);
     }
+
     public List<SanPhamChiTietViewModel> SearchCbb(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan) {
         return respository.SearchCbb(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
     }
-    
+
     public List<SanPhamChiTietViewModel> getSP(String tenSP) {
         return respository.getSP(tenSP);
     }
-    
+
     public List<SanPhamChiTietViewModel> getSanPhamHetHang() {
-    List<SanPhamChiTietViewModel> sanPhamHetHang = new ArrayList<>();
-    // Thực hiện truy vấn hoặc xử lý để lấy danh sách các sản phẩm có số lượng hàng dưới 10
-    // Ví dụ:
-    List<SanPhamChiTietViewModel> allSanPham = getAll(); // Sử dụng phương thức getAll() của bạn hoặc tương tự
-    for (SanPhamChiTietViewModel sp : allSanPham) {
-        if (sp.getSoLuong() < 10) {
-            sanPhamHetHang.add(sp);
+        List<SanPhamChiTietViewModel> sanPhamHetHang = new ArrayList<>();
+        // Thực hiện truy vấn hoặc xử lý để lấy danh sách các sản phẩm có số lượng hàng dưới 10
+        // Ví dụ:
+        List<SanPhamChiTietViewModel> allSanPham = getAll(); // Sử dụng phương thức getAll() của bạn hoặc tương tự
+        for (SanPhamChiTietViewModel sp : allSanPham) {
+            if (sp.getSoLuong() < 10) {
+                sanPhamHetHang.add(sp);
+            }
         }
+        return sanPhamHetHang;
     }
-    return sanPhamHetHang;
-}
-    
+
     public List<SanPhamChiTietViewModel> getTopProducts() {
         return respository.getTop10BestSellingProducts();
     }
 
+    public List<SanPhamChiTietViewModel> search(String danhMuc, String xuatXu, String nsx, String gia) {
+        return respository.search(danhMuc, xuatXu, nsx, gia);
+    }
 //    public List<SanPhamChiTietViewModel> getAllz(Long masp) {
 //        return respository.getAllz(masp);
 //    }

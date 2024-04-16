@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import raven.toast.Notifications;
 
 /**
  *
@@ -44,49 +45,77 @@ public class ThuongHieuRespository {
     }
 
     public boolean add(ThuongHieu chiTietSanPham) {
-        int check = 0;
-        String sql = """
-                 INSERT INTO [dbo].[ThuongHieu]
-                            (
-                            [TenThuongHieu])
-                      VALUES
-                            (?)
-                 """;
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM ThuongHieu WHERE TenThuongHieu = ?";
+    String sqlInsert = "INSERT INTO [dbo].[ThuongHieu] ([TenThuongHieu]) VALUES (?)";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            if (chiTietSanPham != null) {
-                ps.setObject(1, chiTietSanPham.getTenThuongHieu());
-                check = ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+
+        // Kiểm tra xem tên ThuongHieu đã tồn tại hay chưa
+        psCheckName.setString(1, chiTietSanPham.getTenThuongHieu());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên ThuongHieu đã tồn tại, không thể thêm mới
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Tên ThuongHieu chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
+        psInsert.setString(1, chiTietSanPham.getTenThuongHieu());
+        check = psInsert.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
     }
+
+    return check > 0;
+}
+
 
     public boolean update(ThuongHieu thuongHieu, String id) {
-        int check = 0;
-        String sql = """
-                     UPDATE [dbo].[ThuongHieu]
-                        SET 
-                           [TenThuongHieu] = ?
-                      WHERE ID = ?
-                     """;
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM ThuongHieu WHERE TenThuongHieu = ?";
+    String sqlUpdate = "UPDATE [dbo].[ThuongHieu] SET [TenThuongHieu] = ? WHERE ID = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            if (thuongHieu != null) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
 
-                ps.setObject(1, thuongHieu.getTenThuongHieu());
-                ps.setObject(2, id);
-                check = ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Kiểm tra xem tên Thương Hiệu đã tồn tại hay chưa
+        psCheckName.setString(1, thuongHieu.getTenThuongHieu());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên Thương Hiệu đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin Thương Hiệu vào cơ sở dữ liệu
+        psUpdate.setObject(1, thuongHieu.getTenThuongHieu());
+        psUpdate.setObject(2, id);
+        check = psUpdate.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;

@@ -37,6 +37,7 @@ public class HDViewModelRepo {
                                                  dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
                                                  dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
                                                  dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
+                        WHERE dbo.HoaDon.Deleted = 0
                         GROUP BY dbo.HoaDon.ID, 
                                  dbo.HoaDon.MaHoaDon, 
                                  dbo.HoaDon.NgayTao, 
@@ -47,7 +48,7 @@ public class HDViewModelRepo {
                                  dbo.HoaDon.SoDienThoai, 
                                  dbo.HoaDon.TrangThai,
                                  dbo.PhuongThucThanhToan.TenKieuThanhToan
-                        ORDER BY dbo.HoaDon.NgayTao DESC;
+                        ORDER BY dbo.HoaDon.NgayThanhToan DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -92,13 +93,13 @@ public class HDViewModelRepo {
                                                                      dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
                                                                      dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
                                                                      dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
-                    WHERE dbo.HoaDon.MaHoaDon LIKE ?
+                    WHERE dbo.HoaDon.Deleted = 0 AND (dbo.HoaDon.MaHoaDon LIKE ?
                        OR dbo.KhachHang.TenKhachHang LIKE ?
                        OR dbo.HoaDon.DiaChi LIKE ?
                        OR dbo.HoaDon.SoDienThoai LIKE ?
                        OR dbo.NhanVien.MaNhanVien LIKE ?
                        OR dbo.KhachHang.TenKhachHang LIKE ?
-                       OR dbo.HoaDon.NgayThanhToan LIKE ?
+                       OR dbo.HoaDon.NgayThanhToan LIKE ?)
                     GROUP BY dbo.HoaDon.ID, 
                                                      dbo.HoaDon.MaHoaDon, 
                                                      dbo.HoaDon.NgayTao, 
@@ -109,7 +110,7 @@ public class HDViewModelRepo {
                                                      dbo.HoaDon.SoDienThoai, 
                                                      dbo.HoaDon.TrangThai,
                                                      dbo.PhuongThucThanhToan.TenKieuThanhToan
-                     ORDER BY dbo.HoaDon.NgayTao DESC;
+                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, '%' + tuKhoa + '%');
@@ -161,6 +162,7 @@ public class HDViewModelRepo {
                              dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
                              dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
                              dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
+                    WHERE dbo.HoaDon.Deleted = 0
                     GROUP BY 
                         dbo.HoaDon.ID, 
                         dbo.HoaDon.MaHoaDon, 
@@ -174,7 +176,8 @@ public class HDViewModelRepo {
                         dbo.HoaDon.TrangThai,
                         dbo.PhuongThucThanhToan.TenKieuThanhToan
                     HAVING 
-                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) BETWEEN ? AND ?;
+                        SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) BETWEEN ? AND ?
+                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, min);
@@ -221,7 +224,7 @@ public class HDViewModelRepo {
                                                                                                  dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
                                                                                                  dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
                                                                                                  dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
-                                                                 WHERE dbo.HoaDon.TrangThai LIKE ?
+                                                                 WHERE dbo.HoaDon.TrangThai LIKE ? AND dbo.HoaDon.Deleted = 0
                                                                  GROUP BY dbo.HoaDon.ID, 
                                                                           dbo.HoaDon.MaHoaDon, 
                                                                           dbo.HoaDon.NgayTao, 
@@ -232,7 +235,8 @@ public class HDViewModelRepo {
                                                                                          dbo.HoaDon.DiaChi, 
                                                                                          dbo.HoaDon.SoDienThoai, 
                                                                                          dbo.HoaDon.TrangThai,
-                                                                                         dbo.PhuongThucThanhToan.TenKieuThanhToan;
+                                                                                         dbo.PhuongThucThanhToan.TenKieuThanhToan
+                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, trangThai);
@@ -278,7 +282,7 @@ public class HDViewModelRepo {
                                                                                                                          dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID INNER JOIN
                                                                                                                          dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID INNER JOIN
                                                                                                                          dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
-                                 WHERE dbo.HoaDon.ID LIKE ?
+                                 WHERE dbo.HoaDon.ID LIKE ? AND dbo.HoaDon.Deleted = 0
                                  GROUP BY dbo.HoaDon.ID, 
                                           dbo.HoaDon.MaHoaDon, 
                                           dbo.HoaDon.NgayTao, 
@@ -288,7 +292,8 @@ public class HDViewModelRepo {
                                           dbo.HoaDon.DiaChi, 
                                           dbo.HoaDon.SoDienThoai, 
                                           dbo.HoaDon.TrangThai,
-                                          dbo.PhuongThucThanhToan.TenKieuThanhToan;
+                                          dbo.PhuongThucThanhToan.TenKieuThanhToan
+                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);

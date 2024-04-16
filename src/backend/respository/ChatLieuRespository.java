@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import raven.toast.Notifications;
 
 /**
  *
@@ -49,63 +50,78 @@ public class ChatLieuRespository {
         return ctspList;
     }
 
-
-
     public boolean add(ChatLieu chiTietSanPham) {
-        int check = 0;
-        String sqlCheck = "SELECT COUNT(*) FROM ChatLieu WHERE MaChatLieu = ?";
-        String sqlInsert = "INSERT INTO [dbo].[ChatLieu] ([TenChatLieu]) VALUES ( ?)";
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM ChatLieu WHERE TenChatLieu = ?";
+    String sqlInsert = "INSERT INTO [dbo].[ChatLieu] ([TenChatLieu]) VALUES (?)";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheck = con.prepareStatement(sqlCheck);  PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
 
-            // Kiểm tra xem mã thuộc tính đã tồn tại hay chưa
-            psCheck.setString(1, chiTietSanPham.getMaChatLieu());
-            ResultSet rs = psCheck.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                // Mã thuộc tính đã tồn tại, không thể thêm mới
-                JOptionPane.showMessageDialog(null, "Mã thuộc tính đã tồn tại. Không thể thêm mới.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-
-            // Mã thuộc tính chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
-            psInsert.setString(1, chiTietSanPham.getTenChatLieu());
-            check = psInsert.executeUpdate();
-
-            if (check > 0) {
-                JOptionPane.showMessageDialog(null, "Thêm mới thành công.", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Thêm mới thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi thêm mới.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        // Kiểm tra xem tên thuộc tính đã tồn tại hay chưa
+        psCheckName.setString(1, chiTietSanPham.getTenChatLieu());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên thuộc tính đã tồn tại, không thể thêm mới
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Tên thuộc tính chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
+        psInsert.setString(1, chiTietSanPham.getTenChatLieu());
+        check = psInsert.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
     }
+
+    return check > 0;
+}
+
 
     public boolean update(ChatLieu chatLieu, String id) {
-        int check = 0;
-        String sql = """
-                     UPDATE [dbo].[ChatLieu]
-                        SET 
-                           [TenChatLieu] = ?
-                      WHERE ID = ?
-                     """;
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM ChatLieu WHERE TenChatLieu = ?";
+    String sqlUpdate = "UPDATE [dbo].[ChatLieu] SET [TenChatLieu] = ? WHERE ID = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            if (chatLieu != null) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
 
-                ps.setObject(1, chatLieu.getTenChatLieu());
-                ps.setObject(2, id);
-                check = ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Kiểm tra xem tên ChatLieu đã tồn tại hay chưa
+        psCheckName.setString(1, chatLieu.getTenChatLieu());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên ChatLieu đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin ChatLieu vào cơ sở dữ liệu
+        psUpdate.setObject(1, chatLieu.getTenChatLieu());
+        psUpdate.setObject(2, id);
+        check = psUpdate.executeUpdate();
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;
