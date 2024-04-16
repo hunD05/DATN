@@ -1276,31 +1276,40 @@ public class ThemSanPhamChiTiet extends javax.swing.JPanel {
     }//GEN-LAST:event_cbbTrangThaiActionPerformed
 
     private boolean validateFormData() {
-        try {
-            // Kiểm tra các ô nhập liệu có trống không
-            if (cbbSanPham.getSelectedItem() == null || cbbDanhMuc.getSelectedItem() == null
-                    || cbbNSX.getSelectedItem() == null || cbbXuatXu.getSelectedItem() == null
-                    || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
-                    || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
-                    || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
-                    || CbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
-                    || txtSoLuong.getText().isEmpty() || txtGia.getText().isEmpty()
-                    || txtMoTa.getText().isEmpty()) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                return false;
-            }
-
-            // Kiểm tra các ô nhập số
-            Long.parseLong(txtSoLuong.getText());
-            new BigDecimal(txtGia.getText());
-
-            // Kiểm tra ô trạng thái
-        } catch (NumberFormatException ex) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập 2 trường số lượng và giá là số");
+    try {
+        // Kiểm tra các ô nhập liệu có trống không
+        if (cbbSanPham.getSelectedItem() == null || cbbDanhMuc.getSelectedItem() == null
+                || cbbNSX.getSelectedItem() == null || cbbXuatXu.getSelectedItem() == null
+                || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
+                || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
+                || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
+                || CbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
+                || txtSoLuong.getText().isEmpty() || txtGia.getText().isEmpty()
+                || txtMoTa.getText().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return false;
         }
-        return true;
+
+        // Kiểm tra các ô nhập số
+        int soLuong = Integer.parseInt(txtSoLuong.getText());
+        BigDecimal gia = new BigDecimal(txtGia.getText());
+
+        // Kiểm tra số lượng và giá có là số dương không
+        if (soLuong <= 0 || gia.compareTo(BigDecimal.ZERO) <= 0) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng và giá là số dương");
+            return false;
+        }
+
+        // Kiểm tra ô trạng thái
+        // (Bạn cần thêm kiểm tra ô trạng thái ở đây nếu cần)
+
+    } catch (NumberFormatException ex) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng và giá là số");
+        return false;
     }
+    return true;
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private combobox.Combobox CbbTayAo;

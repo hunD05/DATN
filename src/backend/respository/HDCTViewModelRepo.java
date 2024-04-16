@@ -30,6 +30,7 @@ public class HDCTViewModelRepo {
                                                      dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN
                                                      dbo.ThuongHieu ON dbo.ChiTietSanPham.IDThuongHieu = dbo.ThuongHieu.ID
                                                         WHERE dbo.HoaDonChiTiet.IDHoaDon = ? AND dbo.HoaDonChiTiet.Deleted = 0
+                                                        ORDER BY HoaDonChiTiet.Updated_at DESC;
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);
@@ -66,6 +67,7 @@ public class HDCTViewModelRepo {
                                                                       dbo.Size ON dbo.ChiTietSanPham.IDSize = dbo.Size.ID INNER JOIN
                                                                       dbo.ThuongHieu ON dbo.ChiTietSanPham.IDThuongHieu = dbo.ThuongHieu.ID
                                                                          WHERE dbo.HoaDonChiTiet.IDHoaDon = ? AND dbo.HoaDonChiTiet.Deleted = 0
+                     ORDER BY HoaDonChiTiet.Updated_at DESC;
                  """;
         if (mauSac != null && !mauSac.isEmpty()) {
             sql += " AND dbo.MauSac.TenMauSac = N'" + mauSac + "'";

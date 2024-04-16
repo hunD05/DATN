@@ -105,31 +105,22 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         danhMucService.update(danhMuc, danhMuc1.getId() + "");
                         danhMucs = danhMucService.getAll();
                         showDataTableDanhMuc(danhMucs);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa danh mục thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoXuatXu.isSelected()) {
                     XuatXu xuatXu = getFormDataXuatXu();
                     if (xuatXu != null) {
-                        XuatXu danhMuc1 = xuatXus.get(row);
-                        xuatXuService.update(xuatXu, danhMuc1.getId() + "");
+                        XuatXu xuatXu1 = xuatXus.get(row);
+                        xuatXuService.update(xuatXu, xuatXu1.getId() + "");
                         xuatXus = xuatXuService.getAll();
                         showDataTableXuatXu(xuatXus);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa xuất xứ thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoNSX.isSelected()) {
                     NSX nsx = getFormDataNSX();
                     if (nsx != null) {
-                        NSX nsxz = nsxs.get(row);
-                        nsxService.update(nsx, nsxz.getId() + "");
+                        NSX nsx1 = nsxs.get(row);
+                        nsxService.update(nsx, nsx1.getId() + "");
                         nsxs = nsxService.getAll();
                         showDataTableNSX(nsxs);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa nhà sản xuất thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoMauSac.isSelected()) {
                     MauSac mauSac = getFormDataMauSac();
@@ -138,9 +129,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         mauSacService.update(mauSac, mauSac1.getId() + "");
                         mausac = mauSacService.getAll();
                         ShowDataTableMauSac(mausac);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa màu sắc thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoSize.isSelected()) {
                     Size size = getFormDataSize();
@@ -149,9 +137,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         sizeService.update(size, size1.getId() + "");
                         sizes = sizeService.getAll();
                         showDataTableSize(sizes);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa size thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoThuongHieu.isSelected()) {
                     ThuongHieu thuongHieu = getFormDataThuongHieu();
@@ -160,9 +145,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         thuongHieuService.update(thuongHieu, thuongHieu1.getId() + "");
                         thuongHieus = thuongHieuService.getAll();
                         showDataTableThuongHieu(thuongHieus);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa thương hiệu thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoCoAo.isSelected()) {
                     CoAo coAo = getFormDataCoAo();
@@ -171,9 +153,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         coAoService.update(coAo, coAo1.getId() + "");
                         coAos = coAoService.getAll();
                         showDataTableCoAo(coAos);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa cổ áo thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoDuoiAo.isSelected()) {
                     DuoiAo duoiAo = getFormDataDuoiAo();
@@ -182,9 +161,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         duoiAoService.update(duoiAo, duoiAo1.getId() + "");
                         duoiAos = duoiAoService.getAll();
                         showDataTableDuoiAo(duoiAos);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa dưới áo thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoTayAo.isSelected()) {
                     TayAo tayAo = getFormDataTayAo();
@@ -193,20 +169,14 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         tayAoService.update(tayAo, tayAo1.getId() + "");
                         tayAos = tayAoService.getAll();
                         showDataTableTayAo(tayAos);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa tay áo thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoDangAo.isSelected()) {
                     DangAo dangAo = getFormDataDangAo();
-                    if (dangAo != null) {;
+                    if (dangAo != null) {
                         DangAo dangAo1 = dangAos.get(row);
                         dangAoService.update(dangAo, dangAo1.getId() + "");
                         dangAos = dangAoService.getAll();
                         showDataTableDangAo(dangAos);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa dáng áo thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 } else if (rdoChatLieu.isSelected()) {
                     ChatLieu chatLieu = getFormDataChatLieu();
@@ -215,9 +185,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                         chatLieuService.update(chatLieu, chatLieu1.getId() + "");
                         chatLieus = chatLieuService.getAll();
                         showDataTableChatLieu(chatLieus);
-                        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa chất liệu thành công");
-                    } else {
-                        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                     }
                 }
             }
@@ -352,7 +319,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
             @Override
             public void onView(int row) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                System.out.println("View row : " + row);
             }
         };
         tblThuocTinh.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
@@ -361,88 +328,99 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
     public void ShowDataTableMauSac(List<MauSac> mauSacs) {
         dtmMauSac.setRowCount(0);
+        int i=1;
         for (MauSac mauSac : mauSacs) {
-            dtmMauSac.addRow(new Object[]{mauSac.getSTT(), mauSac.getMaMauSac(), mauSac.getTenMauSac()});
+            dtmMauSac.addRow(new Object[]{i++, mauSac.getMaMauSac(), mauSac.getTenMauSac()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableChatLieu(List<ChatLieu> chatLieus) {
         dtmChatLieu.setRowCount(0);
+        int i = 1;
         for (ChatLieu chatLieu : chatLieus) {
-            dtmChatLieu.addRow(new Object[]{chatLieu.getSTT(), chatLieu.getMaChatLieu(), chatLieu.getTenChatLieu()});
+            dtmChatLieu.addRow(new Object[]{i++, chatLieu.getMaChatLieu(), chatLieu.getTenChatLieu()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableXuatXu(List<XuatXu> xuatXus) {
         dtmXuatXu.setRowCount(0);
+        int i = 1;
         for (XuatXu xuatXu : xuatXus) {
-            dtmXuatXu.addRow(new Object[]{xuatXu.getSTT(), xuatXu.getMaXuatXu(), xuatXu.getTenXuatXu()});
+            dtmXuatXu.addRow(new Object[]{i++, xuatXu.getMaXuatXu(), xuatXu.getTenXuatXu()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableSize(List<Size> sizes) {
         dtmSize.setRowCount(0);
+        int i =1;
         for (Size size : sizes) {
-            dtmSize.addRow(new Object[]{size.getSTT(), size.getMaSize(), size.getTenSize()});
+            dtmSize.addRow(new Object[]{i++, size.getMaSize(), size.getTenSize()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableNSX(List<NSX> nsxs) {
         dtmNSX.setRowCount(0);
+        int i = 1;
         for (NSX nsx : nsxs) {
-            dtmNSX.addRow(new Object[]{nsx.getSTT(), nsx.getMaNSX(), nsx.getTenNSX()});
+            dtmNSX.addRow(new Object[]{i++, nsx.getMaNSX(), nsx.getTenNSX()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableThuongHieu(List<ThuongHieu> thuongHieus) {
         dtmThuongHieu.setRowCount(0);
+        int i =1;
         for (ThuongHieu thuongHieu : thuongHieus) {
-            dtmThuongHieu.addRow(new Object[]{thuongHieu.getSTT(), thuongHieu.getMaThuongHieu(), thuongHieu.getTenThuongHieu()});
+            dtmThuongHieu.addRow(new Object[]{i++, thuongHieu.getMaThuongHieu(), thuongHieu.getTenThuongHieu()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableDanhMuc(List<DanhMuc> danhMucs) {
         dtmDanhMuc.setRowCount(0);
+        int i = 1;
         for (DanhMuc danhMuc : danhMucs) {
-            dtmDanhMuc.addRow(new Object[]{danhMuc.getSTT(), danhMuc.getMaDanhMuc(), danhMuc.getTenDanhMuc()});
+            dtmDanhMuc.addRow(new Object[]{i++, danhMuc.getMaDanhMuc(), danhMuc.getTenDanhMuc()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableCoAo(List<CoAo> coAos) {
         dtmCoAo.setRowCount(0);
+        int i = 1;
         for (CoAo coAo : coAos) {
-            dtmCoAo.addRow(new Object[]{coAo.getSTT(), coAo.getMaCoAo(), coAo.getTenCoAo()});
+            dtmCoAo.addRow(new Object[]{i++, coAo.getMaCoAo(), coAo.getTenCoAo()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableDuoiAo(List<DuoiAo> duoiAos) {
         dtmDuoiAo.setRowCount(0);
+        int i = 1;
         for (DuoiAo duoiAo1 : duoiAos) {
-            dtmDuoiAo.addRow(new Object[]{duoiAo1.getSTT(), duoiAo1.getMaDuoiAo(), duoiAo1.getTenDuoiAo()});
+            dtmDuoiAo.addRow(new Object[]{i++, duoiAo1.getMaDuoiAo(), duoiAo1.getTenDuoiAo()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableTayAo(List<TayAo> tayAos) {
+        int i = 1;
         dtmTayAo.setRowCount(0);
         for (TayAo tayAo : tayAos) {
-            dtmTayAo.addRow(new Object[]{tayAo.getSTT(), tayAo.getMaTayAo(), tayAo.getTenTayAo()});
+            dtmTayAo.addRow(new Object[]{i++, tayAo.getMaTayAo(), tayAo.getTenTayAo()});
         }
         tblThuocTinh.setRowHeight(40);
     }
 
     public void showDataTableDangAo(List<DangAo> dangAos) {
         dtmDangAo.setRowCount(0);
+        int i =1;
         for (DangAo dangAo1 : dangAos) {
-            dtmDangAo.addRow(new Object[]{dangAo1.getSTT(), dangAo1.getMaDangAo(), dangAo1.getTenDangAo()});
+            dtmDangAo.addRow(new Object[]{i++, dangAo1.getMaDangAo(), dangAo1.getTenDangAo()});
         }
         tblThuocTinh.setRowHeight(40);
     }
@@ -463,7 +441,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
@@ -480,7 +458,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
             return null;
         }
 
-        return new XuatXu( ten);
+        return new XuatXu(ten);
     }
 
     public Size getFormDataSize() {
@@ -492,14 +470,14 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
             return null;
         }
 
-        return new Size( ten);
+        return new Size(ten);
     }
 
     public NSX getFormDataNSX() {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
@@ -511,7 +489,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
@@ -523,7 +501,7 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
@@ -540,26 +518,26 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
             return null;
         }
 
-        return new CoAo( ten);
+        return new CoAo(ten);
     }
 
     public DuoiAo getFormDataDuoiAo() {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new DuoiAo( ten);
+        return new DuoiAo(ten);
     }
 
     public TayAo getFormDataTayAo() {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
@@ -571,12 +549,12 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
         String ten = txtTenThuocTinh.getText().trim();
 
-        if ( ten.isEmpty()) {
+        if (ten.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
             return null;
         }
 
-        return new DangAo( ten);
+        return new DangAo(ten);
     }
 
     /**
@@ -1037,159 +1015,120 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         int confirmation = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn thêm dữ liệu không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
 
-        if (confirmation == JOptionPane.YES_OPTION) {
-            if (rdoDanhMuc.isSelected()) {
-                DanhMuc danhMuc = getFormDataDanhMuc();
-                if (danhMuc != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    DanhMuc danhMuc1 = danhMucs.get(row);
-                    danhMucService.update(danhMuc, danhMuc1.getId() + "");
-                    danhMucs = danhMucService.getAll();
-                    showDataTableDanhMuc(danhMucs);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa danh mục thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoXuatXu.isSelected()) {
-                XuatXu xuatXu = getFormDataXuatXu();
-                if (xuatXu != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    XuatXu danhMuc1 = xuatXus.get(row);
-                    xuatXuService.update(xuatXu, danhMuc1.getId() + "");
-                    xuatXus = xuatXuService.getAll();
-                    showDataTableXuatXu(xuatXus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa xuất xứ thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoNSX.isSelected()) {
-                NSX nsx = getFormDataNSX();
-                if (nsx != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    NSX nsxz = nsxs.get(row);
-                    nsxService.update(nsx, nsxz.getId() + "");
-                    nsxs = nsxService.getAll();
-                    showDataTableNSX(nsxs);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa nhà sản xuất thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoMauSac.isSelected()) {
-                MauSac mauSac = getFormDataMauSac();
-                if (mauSac != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    MauSac mauSac1 = mausac.get(row);
-                    mauSacService.update(mauSac, mauSac1.getId() + "");
-                    mausac = mauSacService.getAll();
-                    ShowDataTableMauSac(mausac);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa màu sắc thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoSize.isSelected()) {
-                Size size = getFormDataSize();
-                if (size != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    Size size1 = sizes.get(row);
-                    sizeService.update(size, size1.getId() + "");
-                    sizes = sizeService.getAll();
-                    showDataTableSize(sizes);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa size thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoThuongHieu.isSelected()) {
-                ThuongHieu thuongHieu = getFormDataThuongHieu();
-                if (thuongHieu != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    ThuongHieu thuongHieu1 = thuongHieus.get(row);
-                    thuongHieuService.update(thuongHieu, thuongHieu1.getId() + "");
-                    thuongHieus = thuongHieuService.getAll();
-                    showDataTableThuongHieu(thuongHieus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa thương hiệu thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoCoAo.isSelected()) {
-                CoAo coAo = getFormDataCoAo();
-                if (coAo != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    CoAo coAo1 = coAos.get(row);
-                    coAoService.update(coAo, coAo1.getId() + "");
-                    coAos = coAoService.getAll();
-                    showDataTableCoAo(coAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa cổ áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoDuoiAo.isSelected()) {
-                DuoiAo duoiAo = getFormDataDuoiAo();
-                if (duoiAo != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    DuoiAo duoiAo1 = this.duoiAos.get(row);
-                    duoiAoService.update(duoiAo, duoiAo1.getId() + "");
-                    this.duoiAos = duoiAoService.getAll();
-                    showDataTableDuoiAo(this.duoiAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa dưới áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoTayAo.isSelected()) {
-                TayAo tayAo = getFormDataTayAo();
-                if (tayAo != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    TayAo tayAo1 = tayAos.get(row);
-                    tayAoService.update(tayAo, tayAo1.getId() + "");
-                    tayAos = tayAoService.getAll();
-                    showDataTableTayAo(tayAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa tay áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoDangAo.isSelected()) {
-                DangAo dangAo = getFormDataDangAo();
-                if (dangAo != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    DangAo dangAo1 = dangAos.get(row);
-                    dangAoService.update(dangAo, dangAo1.getId() + "");
-                    dangAos = dangAoService.getAll();
-                    showDataTableDangAo(dangAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa dáng áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
-            } else if (rdoChatLieu.isSelected()) {
-                ChatLieu chatLieu = getFormDataChatLieu();
-                if (chatLieu != null) {
-                    int row = tblThuocTinh.getSelectedRow();
-                    ChatLieu chatLieu1 = chatLieus.get(row);
-                    chatLieuService.update(chatLieu, chatLieu1.getId() + "");
-                    chatLieus = chatLieuService.getAll();
-                    showDataTableChatLieu(chatLieus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa chất liệu thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-                }
+    if (confirmation == JOptionPane.YES_OPTION) {
+        if (rdoDanhMuc.isSelected()) {
+            DanhMuc danhMuc = getFormDataDanhMuc();
+            if (danhMuc != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                DanhMuc danhMuc1 = danhMucs.get(row);
+                danhMucService.update(danhMuc, danhMuc1.getId() + "");
+                danhMucs = danhMucService.getAll();
+                showDataTableDanhMuc(danhMucs);
+            }
+        } else if (rdoXuatXu.isSelected()) {
+            XuatXu xuatXu = getFormDataXuatXu();
+            if (xuatXu != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                XuatXu danhMuc1 = xuatXus.get(row);
+                xuatXuService.update(xuatXu, danhMuc1.getId() + "");
+                xuatXus = xuatXuService.getAll();
+                showDataTableXuatXu(xuatXus);
+            }
+        } else if (rdoNSX.isSelected()) {
+            NSX nsx = getFormDataNSX();
+            if (nsx != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                NSX nsxz = nsxs.get(row);
+                nsxService.update(nsx, nsxz.getId() + "");
+                nsxs = nsxService.getAll();
+                showDataTableNSX(nsxs);
+            }
+        } else if (rdoMauSac.isSelected()) {
+            MauSac mauSac = getFormDataMauSac();
+            if (mauSac != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                MauSac mauSac1 = mausac.get(row);
+                mauSacService.update(mauSac, mauSac1.getId() + "");
+                mausac = mauSacService.getAll();
+                ShowDataTableMauSac(mausac);
+            }
+        } else if (rdoSize.isSelected()) {
+            Size size = getFormDataSize();
+            if (size != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                Size size1 = sizes.get(row);
+                sizeService.update(size, size1.getId() + "");
+                sizes = sizeService.getAll();
+                showDataTableSize(sizes);
+            }
+        } else if (rdoThuongHieu.isSelected()) {
+            ThuongHieu thuongHieu = getFormDataThuongHieu();
+            if (thuongHieu != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                ThuongHieu thuongHieu1 = thuongHieus.get(row);
+                thuongHieuService.update(thuongHieu, thuongHieu1.getId() + "");
+                thuongHieus = thuongHieuService.getAll();
+                showDataTableThuongHieu(thuongHieus);
+            }
+        } else if (rdoCoAo.isSelected()) {
+            CoAo coAo = getFormDataCoAo();
+            if (coAo != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                CoAo coAo1 = coAos.get(row);
+                coAoService.update(coAo, coAo1.getId() + "");
+                coAos = coAoService.getAll();
+                showDataTableCoAo(coAos);
+            }
+        } else if (rdoDuoiAo.isSelected()) {
+            DuoiAo duoiAo = getFormDataDuoiAo();
+            if (duoiAo != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                DuoiAo duoiAo1 = this.duoiAos.get(row);
+                duoiAoService.update(duoiAo, duoiAo1.getId() + "");
+                this.duoiAos = duoiAoService.getAll();
+                showDataTableDuoiAo(this.duoiAos);
+            }
+        } else if (rdoTayAo.isSelected()) {
+            TayAo tayAo = getFormDataTayAo();
+            if (tayAo != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                TayAo tayAo1 = tayAos.get(row);
+                tayAoService.update(tayAo, tayAo1.getId() + "");
+                tayAos = tayAoService.getAll();
+                showDataTableTayAo(tayAos);
+            }
+        } else if (rdoDangAo.isSelected()) {
+            DangAo dangAo = getFormDataDangAo();
+            if (dangAo != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                DangAo dangAo1 = dangAos.get(row);
+                dangAoService.update(dangAo, dangAo1.getId() + "");
+                dangAos = dangAoService.getAll();
+                showDataTableDangAo(dangAos);
+            }
+        } else if (rdoChatLieu.isSelected()) {
+            ChatLieu chatLieu = getFormDataChatLieu();
+            if (chatLieu != null) {
+                int row = tblThuocTinh.getSelectedRow();
+                ChatLieu chatLieu1 = chatLieus.get(row);
+                chatLieuService.update(chatLieu, chatLieu1.getId() + "");
+                chatLieus = chatLieuService.getAll();
+                showDataTableChatLieu(chatLieus);
             }
         }
-
-
+    }
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         int confirmation = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn thêm dữ liệu không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
 
         if (confirmation == JOptionPane.YES_OPTION) {
-
             if (rdoDanhMuc.isSelected()) {
                 DanhMuc danhMuc = getFormDataDanhMuc();
                 if (danhMuc != null) {
                     danhMucService.add(danhMuc);
                     danhMucs = danhMucService.getAll();
                     showDataTableDanhMuc(danhMucs);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm danh mục thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoXuatXu.isSelected()) {
                 XuatXu xuatXu = getFormDataXuatXu();
@@ -1197,9 +1136,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     xuatXuService.add(xuatXu);
                     xuatXus = xuatXuService.getAll();
                     showDataTableXuatXu(xuatXus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm xuất xứ thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoNSX.isSelected()) {
                 NSX nsx = getFormDataNSX();
@@ -1207,9 +1143,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     nsxService.add(nsx);
                     nsxs = nsxService.getAll();
                     showDataTableNSX(nsxs);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm nhà sản xuất thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoMauSac.isSelected()) {
                 MauSac mauSac = getFormDataMauSac();
@@ -1217,9 +1150,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     mauSacService.add(mauSac);
                     mausac = mauSacService.getAll();
                     ShowDataTableMauSac(mausac);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm màu sắc thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoSize.isSelected()) {
                 Size size = getFormDataSize();
@@ -1227,9 +1157,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     sizeService.add(size);
                     sizes = sizeService.getAll();
                     showDataTableSize(sizes);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm size thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoThuongHieu.isSelected()) {
                 ThuongHieu thuongHieu = getFormDataThuongHieu();
@@ -1237,9 +1164,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     thuongHieuService.add(thuongHieu);
                     thuongHieus = thuongHieuService.getAll();
                     showDataTableThuongHieu(thuongHieus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm thương hiệu thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoCoAo.isSelected()) {
                 CoAo coAo = getFormDataCoAo();
@@ -1247,9 +1171,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     coAoService.add(coAo);
                     coAos = coAoService.getAll();
                     showDataTableCoAo(coAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm cổ áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoDuoiAo.isSelected()) {
                 DuoiAo duoiAo = getFormDataDuoiAo();
@@ -1257,9 +1178,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     duoiAoService.add(duoiAo);
                     duoiAos = duoiAoService.getAll();
                     showDataTableDuoiAo(duoiAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm dưới áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoTayAo.isSelected()) {
                 TayAo tayAo = getFormDataTayAo();
@@ -1267,9 +1185,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     tayAoService.add(tayAo);
                     tayAos = tayAoService.getAll();
                     showDataTableTayAo(tayAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm tay áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoDangAo.isSelected()) {
                 DangAo dangAo = getFormDataDangAo();
@@ -1277,9 +1192,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     dangAoService.add(dangAo);
                     dangAos = dangAoService.getAll();
                     showDataTableDangAo(dangAos);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm dáng áo thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             } else if (rdoChatLieu.isSelected()) {
                 ChatLieu chatLieu = getFormDataChatLieu();
@@ -1287,9 +1199,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
                     chatLieuService.add(chatLieu);
                     chatLieus = chatLieuService.getAll();
                     showDataTableChatLieu(chatLieus);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm chất liệu thành công");
-                } else {
-                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 }
             }
         } else {

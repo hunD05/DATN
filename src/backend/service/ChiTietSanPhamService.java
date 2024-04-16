@@ -43,24 +43,12 @@ public class ChiTietSanPhamService {
         return respository.giaBan(sortOrder);
     }
 
-    public List<SanPhamChiTietViewModel> searchKey(String keyword) {
-        return respository.searchKey(keyword);
-    }
-
-    public List<ChiTietSanPham> ConHang() {
-        return respository.ConHang();
-    }
-
-    public List<ChiTietSanPham> HetHang() {
-        return respository.HetHang();
+    public List<SanPhamChiTietViewModel> Search(String keyword) {
+        return respository.Search(keyword);
     }
 
     public boolean add(ChiTietSanPham chiTietSanPham) {
         return respository.add(chiTietSanPham);
-    }
-
-    public List<SanPhamChiTietViewModel> filterData(String danhMuc, String xuatXu, String nsx, String giaBanSortOrder) {
-        return respository.filterData(danhMuc, xuatXu, nsx, giaBanSortOrder);
     }
 
     public boolean update(ChiTietSanPham chiTietSanPham, String id) {
@@ -69,10 +57,6 @@ public class ChiTietSanPhamService {
 
     public boolean delete(String maSP) {
         return respository.delete(maSP);
-    }
-
-    public List<SanPhamChiTietViewModel> SearchCbb(String danhmuc, String xuatxu, String nsx, boolean sapXepGiaTangDan) {
-        return respository.SearchCbb(danhmuc, xuatxu, nsx, sapXepGiaTangDan);
     }
 
     public List<SanPhamChiTietViewModel> getSP(String tenSP) {
@@ -99,7 +83,5 @@ public class ChiTietSanPhamService {
     public List<SanPhamChiTietViewModel> search(String danhMuc, String xuatXu, String nsx, String gia) {
         return respository.search(danhMuc, xuatXu, nsx, gia);
     }
-//    public List<SanPhamChiTietViewModel> getAllz(Long masp) {
-//        return respository.getAllz(masp);
-//    }
+
 }

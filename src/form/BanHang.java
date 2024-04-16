@@ -140,17 +140,15 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     private int selectedRowIndex = -1; // Khởi tạo giá trị ban đầu là -1 để đại diện cho việc không có hàng nào được chọn
     private double tienKhachThua = 0.0;
 
-    private boolean isCbbPGGSelected = false;
-
-    private static volatile boolean qrCodeReceived = false;
+    private boolean isCbbPGGSelected1 = false;
+    
+    private boolean isCbbPGGSelected2 = false;
 
     private String trangThai = "";
 
     private int indexTab = 0;
 
-    private LocalDateTime now = LocalDateTime.now();
-
-    private static BanHang instance;
+    private BHHDViewModel currentHoaDon;
 
 //    private String tenKhachHang = "";
 //    private String diaChi = "";
@@ -199,7 +197,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    isCbbPGGSelected = true;
+                    isCbbPGGSelected1 = true;
                     int index = selectedRowIndex;
                     System.out.println("Đang xử lý phần tử thứ " + index);
 
@@ -247,7 +245,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    isCbbPGGSelected = true;
+                    isCbbPGGSelected2 = true;
                     int index = selectedRowIndex;
                     System.out.println("Đang xử lý phần tử thứ " + index);
 
@@ -511,7 +509,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             cbbTT.setSelectedItem(selectedTT);
 
 // Hiển thị phiếu giảm giá hợp lệ nếu cbbPGG chưa được chọn
-            if (!isCbbPGGSelected && cbbPGG.getSelectedItem() == null) {
+            if (!isCbbPGGSelected1 && cbbPGG.getSelectedItem() == null) {
                 double tongTien = hd1.getTongTien();
                 hienThiPhieuGiamGiaHopLe(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
             }
@@ -557,9 +555,9 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             cbbTTDH.setSelectedItem(selectedTT);
 
 // Hiển thị phiếu giảm giá hợp lệ nếu cbbPGG chưa được chọn
-            if (!isCbbPGGSelected && cbbPGG.getSelectedItem() == null) {
+            if (!isCbbPGGSelected2 && cbbPGG2.getSelectedItem() == null) {
                 double tongTien = hd1.getTongTien();
-                hienThiPhieuGiamGiaHopLe(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
+                hienThiPhieuGiamGiaHopLe2(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
             }
 
         } else {
@@ -799,42 +797,43 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         txtMaNVDH.setText("");
         txtTenNV.setText("");
         txtSDTNV.setText("");
+        txtDiaChi.setText("");
     }
 
     private void hienThiPhieuGiamGiaHopLe(double tongTienHoaDon) {
-        if (indexTab == 0) {
-            // Xóa tất cả các phần tử cũ trong combo box
-            dcbmPGG.removeAllElements();
+        // Xóa tất cả các phần tử cũ trong combo box
+        dcbmPGG.removeAllElements();
 
-            BHHDViewModel hd = listHD.get(selectedRowIndex);
+        BHHDViewModel hd = listHD.get(selectedRowIndex);
 
-            dcbmPGG.addElement(null);
-            // Duyệt qua danh sách phiếu giảm giá
-            for (PhieuGiamGiaViewModel phieuGiamGia : listPGG) {
-                double hoaDonToiThieu = phieuGiamGia.getHoaDonToiThieu();
+        dcbmPGG.addElement(null);
+        // Duyệt qua danh sách phiếu giảm giá
+        for (PhieuGiamGiaViewModel phieuGiamGia : listPGG) {
+            double hoaDonToiThieu = phieuGiamGia.getHoaDonToiThieu();
 
-                // Nếu tổng tiền của hóa đơn lớn hơn hoặc bằng giá trị hóa đơn tối thiểu
-                if (tongTienHoaDon >= hoaDonToiThieu) {
-                    // Thêm tên phiếu giảm giá vào combo box
-                    dcbmPGG.addElement(phieuGiamGia.getTenGiamGia());
-                }
+            // Nếu tổng tiền của hóa đơn lớn hơn hoặc bằng giá trị hóa đơn tối thiểu
+            if (tongTienHoaDon >= hoaDonToiThieu) {
+                // Thêm tên phiếu giảm giá vào combo box
+                dcbmPGG.addElement(phieuGiamGia.getTenGiamGia());
             }
-        } else if (indexTab == 1) {
-            // Xóa tất cả các phần tử cũ trong combo box
-            dcbmPGG2.removeAllElements();
+        }
+    }
 
-            BHHDViewModel hd = listHD.get(selectedRowIndex);
+    private void hienThiPhieuGiamGiaHopLe2(double tongTienHoaDon) {
+        // Xóa tất cả các phần tử cũ trong combo box
+        dcbmPGG2.removeAllElements();
 
-            dcbmPGG2.addElement(null);
-            // Duyệt qua danh sách phiếu giảm giá
-            for (PhieuGiamGiaViewModel phieuGiamGia : listPGG) {
-                double hoaDonToiThieu = phieuGiamGia.getHoaDonToiThieu();
+        BHHDViewModel hd = listHD.get(selectedRowIndex);
 
-                // Nếu tổng tiền của hóa đơn lớn hơn hoặc bằng giá trị hóa đơn tối thiểu
-                if (tongTienHoaDon >= hoaDonToiThieu) {
-                    // Thêm tên phiếu giảm giá vào combo box
-                    dcbmPGG2.addElement(phieuGiamGia.getTenGiamGia());
-                }
+        dcbmPGG2.addElement(null);
+        // Duyệt qua danh sách phiếu giảm giá
+        for (PhieuGiamGiaViewModel phieuGiamGia : listPGG) {
+            double hoaDonToiThieu = phieuGiamGia.getHoaDonToiThieu();
+
+            // Nếu tổng tiền của hóa đơn lớn hơn hoặc bằng giá trị hóa đơn tối thiểu
+            if (tongTienHoaDon >= hoaDonToiThieu) {
+                // Thêm tên phiếu giảm giá vào combo box
+                dcbmPGG2.addElement(phieuGiamGia.getTenGiamGia());
             }
         }
     }
@@ -951,8 +950,8 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
     public void printHD() {
         try {
-            if (selectedRowIndex >= 0) {
-                BHHDViewModel hd = listHD.get(selectedRowIndex);
+            if (currentHoaDon != null) {
+                BHHDViewModel hd = currentHoaDon;
                 dtmHDCT = (DefaultTableModel) tblGH.getModel();
                 listHDCT = srHDCT.getAll(hd.getId());
                 showDataHDCT(listHDCT);
@@ -971,7 +970,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                 // Kiểm tra nếu có dữ liệu để tạo báo cáo
                 if (!fields.isEmpty()) {
                     // Tạo mã QR Code
-                    InputStream qrCodeStream = generateQrcode(String.valueOf(selectedRowIndex));
+                    InputStream qrCodeStream = generateQrcode(String.valueOf(hd.getId()));
                     if (qrCodeStream != null) {
                         // Tạo tham số để in báo cáo
                         ParameterReportPayment dataPrint = new ParameterReportPayment(
@@ -990,7 +989,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                     JOptionPane.showMessageDialog(this, "Không có dữ liệu để tạo báo cáo.");
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Bạn chưa chọn hóa đơn để in ra.");
+                JOptionPane.showMessageDialog(this, "Không có hóa đơn nào được chọn để in.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1176,6 +1175,10 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         } else if (indexTab == 1) {
             showDetailHDGH(selectedRowIndex);
         }
+    }
+
+    private void setCurrentHoaDon(BHHDViewModel hoaDon) {
+        this.currentHoaDon = hoaDon;
     }
 
     /**
@@ -1679,6 +1682,8 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             }
         });
 
+        txtTienThua.setEnabled(false);
+
         javax.swing.GroupLayout roundPanel6Layout = new javax.swing.GroupLayout(roundPanel6);
         roundPanel6.setLayout(roundPanel6Layout);
         roundPanel6Layout.setHorizontalGroup(
@@ -1994,6 +1999,8 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             }
         });
         roundPanel11.add(txtTienCKDH, new org.netbeans.lib.awtextra.AbsoluteConstraints(135, 346, 180, -1));
+
+        txtTienThuaDH.setEnabled(false);
         roundPanel11.add(txtTienThuaDH, new org.netbeans.lib.awtextra.AbsoluteConstraints(135, 387, 180, -1));
 
         jLabel58.setForeground(new java.awt.Color(255, 255, 255));
@@ -2095,7 +2102,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                 .addComponent(roundPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(roundPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Đặt Hàng", jPanel1);
@@ -2328,55 +2335,49 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }//GEN-LAST:event_btnChonKHDHActionPerformed
 
     private void btnTToanDHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTToanDHActionPerformed
-        if (checkKHDH()) {
-            int rowIndexHD = selectedRowIndex;
-            if (rowIndexHD >= 0) {
-                BHHDViewModel hd = listHD.get(rowIndexHD);
-                int idHD = hd.getId();
-                String maNV = txtMaNVDH.getText().trim();
-                String soDT = txtSoDTDH.getText().trim();
-                String maGG = cbbPGG2.getSelectedItem() != null ? cbbPGG2.getSelectedItem().toString() : null;
-                Date ngayNhan = jdcNgayNhan.getDate();
+        if (selectedRowIndex >= 0) {
+            currentHoaDon = listHD.get(selectedRowIndex); // Lưu trữ hóa đơn hiện tại
+            String maNV = txtMaNVDH.getText().trim();
+            String soDT = txtSoDTDH.getText().trim();
+            String maGG = cbbPGG2.getSelectedItem() != null ? cbbPGG2.getSelectedItem().toString() : null;
+            Date ngayNhan = jdcNgayNhan.getDate();
 
-                String tenKTT = "";
-                double chuyenKhoan = 0.0;
-                double tienMat = 0.0;
-                if (cbbTTDH.getSelectedItem() != null) {
-                    tenKTT = cbbTTDH.getSelectedItem().toString();
-                }
-                if (!txtTienCKDH.getText().isEmpty()) {
-                    chuyenKhoan = Double.parseDouble(txtTienCKDH.getText().trim());
-                }
-                if (!txtTienDuaDH.getText().isEmpty()) {
-                    tienMat = Double.parseDouble(txtTienDuaDH.getText().trim());
-                }
-
-                // Kiểm tra xem tiền thừa có lớn hơn hoặc bằng 0 không
-                if (tienKhachThua >= 0) {
-                    srHD.giaoHang(idHD, maNV, soDT, maGG, ngayNhan);
-                    listHD = srBH.getHD();
-                    showDataHD(listHD);
-                    dtmHDCT = (DefaultTableModel) tblGH.getModel();
-                    dtmHDCT.setRowCount(0); // Xóa dữ liệu trong bảng giỏ hàng
-
-                    srHTTT.addHTTT(idHD, tenKTT, chuyenKhoan, tienMat);
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thanh toán thành công");
-
-                    // Hỏi người dùng có muốn in hóa đơn không
-                    int result = JOptionPane.showConfirmDialog(this, "Bạn có muốn in hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        // Gọi phương thức in hóa đơn và truyền thông tin hóa đơn trước khi xóa dữ liệu
-                        printHD();
-                    } else {
-                        // Nếu người dùng chọn "Không", thực hiện các hành động khác ở đây (nếu có)
-                    }
-
-                    resetDH();
-                } else {
-                    // Hiển thị thông báo lỗi nếu tiền thừa là số âm
-                    JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
+            String tenKTT = "";
+            double chuyenKhoan = 0.0;
+            double tienMat = 0.0;
+            if (cbbTTDH.getSelectedItem() != null) {
+                tenKTT = cbbTTDH.getSelectedItem().toString();
             }
+            if (!txtTienCKDH.getText().isEmpty()) {
+                chuyenKhoan = Double.parseDouble(txtTienCKDH.getText().trim());
+            }
+            if (!txtTienDuaDH.getText().isEmpty()) {
+                tienMat = Double.parseDouble(txtTienDuaDH.getText().trim());
+            }
+
+            // Kiểm tra xem tiền thừa có lớn hơn hoặc bằng 0 không
+            if (tienKhachThua >= 0) {
+                srHD.giaoHang(currentHoaDon.getId(), maNV, soDT, maGG, ngayNhan); // Thanh toán hóa đơn
+                listHD = srBH.getHD();
+                showDataHD(listHD);
+                dtmHDCT = (DefaultTableModel) tblGH.getModel();
+                dtmHDCT.setRowCount(0); // Xóa dữ liệu trong bảng giỏ hàng
+
+                srHTTT.addHTTT(currentHoaDon.getId(), tenKTT, chuyenKhoan, tienMat); // Thêm thông tin thanh toán
+
+                // Hiển thị thông báo và in hóa đơn
+                int result = JOptionPane.showConfirmDialog(this, "Thanh toán thành công. Bạn có muốn in hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    printHD(); // In hóa đơn
+                }
+
+                resetDH();
+            } else {
+                // Hiển thị thông báo lỗi nếu tiền thừa là số âm
+                JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để thanh toán.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnTToanDHActionPerformed
 
@@ -2399,9 +2400,11 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
         if (jTabbedPane1.getSelectedIndex() == 1) { // Kiểm tra xem tab hiện tại có phải là tab đặt hàng không
             trangThai = "Chờ Giao"; // Cập nhật trạng thái
             indexTab = 1;
+            selectedRowIndex = -1;
         } else if (jTabbedPane1.getSelectedIndex() == 0) {
             trangThai = "Chưa Thanh Toán";
             indexTab = 0;
+            selectedRowIndex = -1;
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
 

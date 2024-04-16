@@ -101,11 +101,11 @@ public class HDRepository {
         String sql = """
                      UPDATE [dbo].[HoaDon]
                         SET [NgayThanhToan] = ?
-                           ,[IDNhanVien] = (SElECT ID FROM NhanVien WHERE MaNhanVien LIKE ?)
-                           ,[IDKhachHang] = (SElECT ID FROM KhachHang WHERE SoDienThoai LIKE ?)
-                           ,[IDPhieuGG] = (SElECT ID FROM PhieuGiamGia WHERE TenGiamGia LIKE ?)
-                           ,[DiaChi] = (SElECT DiaChi FROM KhachHang WHERE SoDienThoai LIKE ?)
-                           ,[SoDienThoai] = (SElECT SoDienThoai FROM KhachHang WHERE SoDienThoai LIKE ?)
+                           ,[IDNhanVien] = (SElECT TOP 1 ID FROM NhanVien WHERE MaNhanVien LIKE ?)
+                           ,[IDKhachHang] = (SElECT TOP 1 ID FROM KhachHang WHERE SoDienThoai LIKE ?)
+                           ,[IDPhieuGG] = (SElECT TOP 1 ID FROM PhieuGiamGia WHERE TenGiamGia LIKE ?)
+                           ,[DiaChi] = (SElECT TOP 1 DiaChi FROM KhachHang WHERE SoDienThoai LIKE ?)
+                           ,[SoDienThoai] = (SElECT TOP 1 SoDienThoai FROM KhachHang WHERE SoDienThoai LIKE ?)
                      	  ,[TrangThai] = N'Đang Giao'
                      	  ,[Updated_at] = CURRENT_TIMESTAMP
                       WHERE ID = ?
@@ -141,6 +141,23 @@ public class HDRepository {
             ps.setObject(2, diaChi);
             ps.setObject(3, soDT);
             ps.setObject(4, idHD);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
+    public boolean updateHDDG(int idHD) {
+        int check = 0;
+        String sql = """
+             UPDATE [dbo].[HoaDon]
+             SET [TrangThai] = N'Đã Thanh Toán'
+                 ,[Updated_at] = CURRENT_TIMESTAMP
+             WHERE ID = ?
+             """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, idHD);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

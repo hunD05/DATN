@@ -24,6 +24,7 @@ public class LSHDViewModelRepo {
                                              dbo.LichSuHoaDon ON dbo.HoaDon.ID = dbo.LichSuHoaDon.IDHoaDon INNER JOIN
                                              dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID AND dbo.LichSuHoaDon.IDNhanVien = dbo.NhanVien.ID
                             WHERE dbo.LichSuHoaDon.IDHoaDon = ?
+                            ORDER BY dbo.LichSuHoaDon.Updated_at DESC;
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);

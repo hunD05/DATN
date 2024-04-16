@@ -47,8 +47,9 @@ public class HDViewModelRepo {
                                  dbo.HoaDon.DiaChi, 
                                  dbo.HoaDon.SoDienThoai, 
                                  dbo.HoaDon.TrangThai,
-                                 dbo.PhuongThucThanhToan.TenKieuThanhToan
-                        ORDER BY dbo.HoaDon.NgayThanhToan DESC;
+                                 dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                                 dbo.HoaDon.Updated_at
+                        ORDER BY dbo.HoaDon.Updated_at DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -109,8 +110,9 @@ public class HDViewModelRepo {
                                                      dbo.HoaDon.DiaChi, 
                                                      dbo.HoaDon.SoDienThoai, 
                                                      dbo.HoaDon.TrangThai,
-                                                     dbo.PhuongThucThanhToan.TenKieuThanhToan
-                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
+                                                     dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                     dbo.HoaDon.Updated_at
+                     ORDER BY dbo.HoaDon.Updated_at DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, '%' + tuKhoa + '%');
@@ -174,10 +176,11 @@ public class HDViewModelRepo {
                         dbo.HoaDon.DiaChi, 
                         dbo.HoaDon.SoDienThoai, 
                         dbo.HoaDon.TrangThai,
-                        dbo.PhuongThucThanhToan.TenKieuThanhToan
+                        dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                     dbo.HoaDon.Updated_at
                     HAVING 
                         SUM(dbo.HoaDonChiTiet.SoLuong * dbo.HoaDonChiTiet.GiaBan) BETWEEN ? AND ?
-                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
+                     ORDER BY dbo.HoaDon.Updated_at DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, min);
@@ -235,8 +238,9 @@ public class HDViewModelRepo {
                                                                                          dbo.HoaDon.DiaChi, 
                                                                                          dbo.HoaDon.SoDienThoai, 
                                                                                          dbo.HoaDon.TrangThai,
-                                                                                         dbo.PhuongThucThanhToan.TenKieuThanhToan
-                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
+                                                                                         dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                     dbo.HoaDon.Updated_at
+                     ORDER BY dbo.HoaDon.Updated_at DESC;
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, trangThai);
@@ -292,8 +296,9 @@ public class HDViewModelRepo {
                                           dbo.HoaDon.DiaChi, 
                                           dbo.HoaDon.SoDienThoai, 
                                           dbo.HoaDon.TrangThai,
-                                          dbo.PhuongThucThanhToan.TenKieuThanhToan
-                     ORDER BY dbo.HoaDon.NgayThanhToan DESC;
+                                          dbo.PhuongThucThanhToan.TenKieuThanhToan,
+                     dbo.HoaDon.Updated_at
+                     ORDER BY dbo.HoaDon.Updated_at DESC;
                  """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);

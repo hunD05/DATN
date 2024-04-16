@@ -8,6 +8,7 @@ import backend.entity.ChatLieu;
 import backend.entity.MauSac;
 import backend.entity.Size;
 import backend.entity.ThuongHieu;
+import backend.qrcodeBH.quetQR;
 import backend.service.ChatLieuService;
 import backend.service.HDCTService;
 import backend.service.HoaDonService;
@@ -16,6 +17,8 @@ import backend.service.MauSacService;
 import backend.service.QLHDService;
 import backend.service.SizeService;
 import backend.service.ThuonHieuService;
+import backend.viewmodel.BHHDViewModel;
+import backend.viewmodel.BHSPViewModel;
 import backend.viewmodel.HDCTViewModel;
 import backend.viewmodel.HoaDonViewModel;
 import backend.viewmodel.LSHDViewModel;
@@ -49,15 +52,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import javax.swing.table.TableColumn;
-import qrcode.qrcode;
-import qrcode.qrcode.QRCodeListener;
+
+import raven.toast.Notifications;
 
 /**
  *
  * @author leanb
  */
-public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
+public class HoaDon extends javax.swing.JPanel {
 
     private DefaultTableModel dtmHD = new DefaultTableModel();
     private List<HoaDonViewModel> listHD = new ArrayList<>();
@@ -105,7 +107,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
      */
     public HoaDon() {
         initComponents();
-        dtmHD = (DefaultTableModel) jTable1.getModel();
+        dtmHD = (DefaultTableModel) tblHD.getModel();
         listHD = srHD.getAll();
         showDataTable1(listHD);
 
@@ -243,19 +245,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
     public void showDataTable1(List<HoaDonViewModel> listHD) {
         dtmHD.setRowCount(0);
-// Lấy đối tượng TableColumn của cột "STT" từ JTable
-        TableColumn columnSTT = jTable1.getColumnModel().getColumn(0);
-
-        // Đặt kích cỡ chiều rộng mong muốn và giới hạn chiều rộng
-        columnSTT.setMinWidth(50);
-        columnSTT.setMaxWidth(70);
-
-        // Cập nhật lại JTable để áp dụng thay đổi
-        jTable1.repaint();
-
         int i = 1;
+
         for (HoaDonViewModel hd : listHD) {
-            // Loại bỏ chữ 'T' từ chuỗi ngày thời gian
             String ngayThanhToan = hd.getNgayThanhToan().format(formatter);
             dtmHD.addRow(new Object[]{
                 i++, hd.getMaHD(),
@@ -264,10 +256,8 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 hd.getSoDT(),
                 currencyFormat.format(hd.getGiaTien()),
                 hd.getHinhThucThanhToan(),
-                hd.getTrangThai()
-            });
+                hd.getTrangThai(),});
         }
-
     }
 
     public void showDataTable2(List<HDCTViewModel> listHDCT) {
@@ -347,16 +337,16 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
     public void printHD() {
         try {
-            int rowIndex = jTable1.getSelectedRow();
+            int rowIndex = tblHD.getSelectedRow();
             if (rowIndex >= 0) {
                 HoaDonViewModel hd = listHD.get(rowIndex);
-                dtmHDCT = (DefaultTableModel) jTable2.getModel();
+                dtmHDCT = (DefaultTableModel) tblHDCT.getModel();
                 listHDCT = srHDCT.getAll(hd.getId());
                 showDataTable2(listHDCT);
                 List<FieldReportPayment> fields = new ArrayList<>();
 
                 // Lặp qua các hàng trong bảng jTable2 để lấy thông tin chi tiết
-                for (int i = 0; i < jTable2.getRowCount(); i++) {
+                for (int i = 0; i < tblHDCT.getRowCount(); i++) {
                     // Lấy dữ liệu từ mỗi hàng
                     HDCTViewModel hdct = listHDCT.get(i);
                     String tenSP = hdct.getTenSP();
@@ -454,28 +444,6 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         showcbbGia();
     }
 
-    @Override
-    public void onQRCodeScanned(int result) {
-        // Xử lý giá trị QR Code tại đây, bạn có thể làm gì đó với giá trị này
-        System.out.println("Nhận được giá trị QR Code trong HoaDon: " + result);
-
-        // Gọi phương thức để cập nhật dữ liệu hóa đơn tương ứng với giá trị QRCode
-        listHD = srHD.getOne(result);
-        showDataTable1(listHD);
-        showCbbHDCT();
-
-        // Cập nhật dữ liệu cho HDCT
-        dtmHDCT = (DefaultTableModel) jTable2.getModel();
-        listHDCT = srHDCT.getAll(result);
-        showDataTable2(listHDCT);
-
-        // Cập nhật dữ liệu cho LSHD
-        dtmLSHD = (DefaultTableModel) jTable3.getModel();
-        listLSHD = srLSHD.getAll(result);
-        showDataTable3(listLSHD);
-
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -493,13 +461,14 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         txtMin = new textfield.TextField();
         txtMax = new textfield.TextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblHD = new javax.swing.JTable();
         btnPrint = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
+        btnDaGiao = new javax.swing.JButton();
         roundPanel2 = new swing.RoundPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblHDCT = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         cbbMau = new combobox.Combobox();
         cbbSize = new combobox.Combobox();
@@ -509,7 +478,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         txtSearch1 = new textfield.TextField();
         roundPanel3 = new swing.RoundPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        tblLSHD = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
 
         setOpaque(false);
@@ -537,7 +506,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
         txtMax.setLabelText("Đến");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblHD.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -548,14 +517,14 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 "STT", "Mã hóa đơn", "Ngày thanh toán", "Mã nhân viên", "Tên khách hàng", "Địa chỉ", "SĐT", "Tổng tiền", "Hình thức thanh toán", "Trạng thái"
             }
         ));
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblHD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTable1MouseClicked(evt);
+                tblHDMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(50);
+        jScrollPane1.setViewportView(tblHD);
+        if (tblHD.getColumnModel().getColumnCount() > 0) {
+            tblHD.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
         btnPrint.setText("In hóa đơn");
@@ -576,6 +545,13 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddActionPerformed(evt);
+            }
+        });
+
+        btnDaGiao.setText("Đã giao xong");
+        btnDaGiao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDaGiaoActionPerformed(evt);
             }
         });
 
@@ -609,6 +585,8 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                         .addGap(5, 5, 5))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnDaGiao)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnPrint)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnExport)
@@ -635,11 +613,12 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnPrint)
-                    .addComponent(btnExport))
+                    .addComponent(btnExport)
+                    .addComponent(btnDaGiao))
                 .addContainerGap())
         );
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblHDCT.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -650,9 +629,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 "STT", "Mã SPCT", "Tên SP", "Màu sắc", "Size", "Chất liệu", "Thương hiệu", "Số lượng", "Đơn giá", "Tổng tiền"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setMaxWidth(50);
+        jScrollPane2.setViewportView(tblHDCT);
+        if (tblHDCT.getColumnModel().getColumnCount() > 0) {
+            tblHDCT.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
         jLabel2.setFont(new java.awt.Font("Roboto", 1, 13)); // NOI18N
@@ -738,7 +717,7 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 .addContainerGap())
         );
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblLSHD.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -749,9 +728,9 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
                 "STT", "Người tác động", "Ngày cập nhật", "Hành động"
             }
         ));
-        jScrollPane3.setViewportView(jTable3);
-        if (jTable3.getColumnModel().getColumnCount() > 0) {
-            jTable3.getColumnModel().getColumn(0).setMaxWidth(50);
+        jScrollPane3.setViewportView(tblLSHD);
+        if (tblLSHD.getColumnModel().getColumnCount() > 0) {
+            tblLSHD.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
         jLabel3.setFont(new java.awt.Font("Roboto", 1, 13)); // NOI18N
@@ -814,33 +793,60 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
 
     }//GEN-LAST:event_cbbTrangThaiActionPerformed
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        int rowIndex = jTable1.getSelectedRow();
+    private void tblHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHDMouseClicked
+        int rowIndex = tblHD.getSelectedRow();
         HoaDonViewModel hd = listHD.get(rowIndex);
         selectedInvoiceId = String.valueOf(hd.getId());
         showCbbHDCT();
 
-        dtmHDCT = (DefaultTableModel) jTable2.getModel();
+        dtmHDCT = (DefaultTableModel) tblHDCT.getModel();
         listHDCT = srHDCT.getAll(hd.getId());
         showDataTable2(listHDCT);
 
-        dtmLSHD = (DefaultTableModel) jTable3.getModel();
+        dtmLSHD = (DefaultTableModel) tblLSHD.getModel();
         listLSHD = srLSHD.getAll(hd.getId());
         showDataTable3(listLSHD);
-    }//GEN-LAST:event_jTable1MouseClicked
+    }//GEN-LAST:event_tblHDMouseClicked
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        srQLHD.exportToExcel();
+        int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xuất Excel?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            srQLHD.exportToExcel();
+        }
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        printHD();
+        int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn in hóa đơn?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            printHD();
+            String hanhDong = "In hóa đơn";
+            srLSHD.addLSHD(hanhDong);
+        }
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQRActionPerformed
-        qrcode qrScannerFrame = new qrcode();
-        qrScannerFrame.setQRCodeListener(this);
-        qrScannerFrame.setVisible(true);
+        quetQR quet = new quetQR();
+        quet.setQRCodeListener(new quetQR.codeQR() {
+            @Override
+            public void onQRCodeScanned(int result) {
+                System.out.println(result);
+                listHD = srHD.getOne(result);
+                showDataTable1(listHD);
+                showCbbHDCT();
+
+                // Cập nhật dữ liệu cho HDCT
+                dtmHDCT = (DefaultTableModel) tblHDCT.getModel();
+                listHDCT = srHDCT.getAll(result);
+                showDataTable2(listHDCT);
+
+                // Cập nhật dữ liệu cho LSHD
+                dtmLSHD = (DefaultTableModel) tblLSHD.getModel();
+                listLSHD = srLSHD.getAll(result);
+                showDataTable3(listLSHD);
+                quet.closeQRFrame();
+            }
+        });
+        quet.openWebcam();
     }//GEN-LAST:event_btnQRActionPerformed
 
     private void cbbMauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbMauActionPerformed
@@ -863,9 +869,35 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbbGiaTienActionPerformed
 
+    private void btnDaGiaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDaGiaoActionPerformed
+        int index = tblHD.getSelectedRow();
+        if (index >= 0) {
+            HoaDonViewModel hd = listHD.get(index);
+            if (hd.getTrangThai().equals("Đang Giao")) {
+                int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn đánh dấu hóa đơn đã giao?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    int idHD = hd.getId();
+                    srHD.updateHDDG(idHD);
+                    listHD = srHD.getAll();
+                    showDataTable1(listHD);
+                    listHDCT = srHDCT.getAll(idHD);
+                    showDataTable2(listHDCT);
+                    listLSHD = srLSHD.getAll(idHD);
+                    showDataTable3(listLSHD);
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã giao xong đơn hàng này!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Hóa đơn không ở trạng thái 'Đang Giao'.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để đánh dấu đang giao.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnDaGiaoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDaGiao;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnQR;
@@ -881,12 +913,12 @@ public class HoaDon extends javax.swing.JPanel implements QRCodeListener {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private swing.RoundPanel roundPanel1;
     private swing.RoundPanel roundPanel2;
     private swing.RoundPanel roundPanel3;
+    private javax.swing.JTable tblHD;
+    private javax.swing.JTable tblHDCT;
+    private javax.swing.JTable tblLSHD;
     private textfield.TextField txtMax;
     private textfield.TextField txtMin;
     private textfield.TextField txtSearch;

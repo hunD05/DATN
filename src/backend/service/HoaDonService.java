@@ -61,4 +61,7 @@ public class HoaDonService {
        return repoHD.updateHDKL(idHD, maNV, tenKH, maGG);
    }
 
+   public boolean updateHDDG(int idHD){
+       return repoHD.updateHDDG(idHD);
+   }
 }

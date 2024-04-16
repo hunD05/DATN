@@ -52,4 +52,8 @@ public class PhieuGiamGiaService {
     public boolean updateAfter(String tenGG){
         return repo.updateAfter(tenGG);
     }
+    
+    public boolean updateTrangThai(String trangThai, int id) {
+        return repo.updateTrangThai(trangThai, id);
+    }
 }

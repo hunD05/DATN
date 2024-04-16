@@ -126,7 +126,7 @@ public class SanPhamz extends javax.swing.JPanel {
 
             @Override
             public void onView(int row) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                System.out.println("View row : " + row);
             }
         };
         tblSanPham.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
@@ -149,8 +149,9 @@ public class SanPhamz extends javax.swing.JPanel {
 
     public void showDataTable(List<SanPhamViewModel> sanPhams) {
         dtm.setRowCount(0);
+        int rowz = 1;
         for (SanPhamViewModel sanPham : sanPhams) {
-            dtm.addRow(new Object[]{sanPham.getStt(), sanPham.getMaSanPham(), sanPham.getTenSanPham(), sanPham.getSoLuong(), sanPham.getTrangThai()});
+            dtm.addRow(new Object[]{rowz++, sanPham.getMaSanPham(), sanPham.getTenSanPham(), sanPham.getSoLuong(), sanPham.getTrangThai()});
         }
         tblSanPham.setRowHeight(40);
         tblSanPham.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -236,9 +237,8 @@ public class SanPhamz extends javax.swing.JPanel {
 
             @Override
             public void onView(int row) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                System.out.println("View row : " + row);
             }
-
         };
         tblSanPham.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
         tblSanPham.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));

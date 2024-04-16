@@ -25,7 +25,7 @@ public class XuatXuRespository {
                  SELECT ROW_NUMBER() OVER (ORDER BY [ID]) AS STT, [ID]
                        ,[MaXuatXu]
                        ,[TenXuatXu]
-                   FROM [dbo].[XuatXu]where deleted = 0 ORder by Created_at desc
+                   FROM [dbo].[XuatXu]where deleted = 0 ORder by Updated_at desc
                  """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
@@ -79,41 +79,38 @@ public class XuatXuRespository {
     }
 
     public boolean update(XuatXu xuatXu, String id) {
-    int check = 0;
-    String sqlCheckName = "SELECT COUNT(*) FROM XuatXu WHERE TenXuatXu = ?";
-    String sqlUpdate = "UPDATE [dbo].[XuatXu] SET [TenXuatXu] = ? WHERE ID = ?";
+        int check = 0;
+        String sqlCheckName = "SELECT COUNT(*) FROM XuatXu WHERE TenXuatXu = ?";
+        String sqlUpdate = "UPDATE [dbo].[XuatXu] SET [TenXuatXu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
 
-        // Kiểm tra xem tên XuatXu đã tồn tại hay chưa
-        psCheckName.setString(1, xuatXu.getTenXuatXu());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên XuatXu đã tồn tại, không thể cập nhật
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
+            // Kiểm tra xem tên XuatXu đã tồn tại hay chưa
+            psCheckName.setString(1, xuatXu.getTenXuatXu());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên XuatXu đã tồn tại, không thể cập nhật
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+                return false;
+            }
+
+            // Cập nhật thông tin XuatXu vào cơ sở dữ liệu
+            psUpdate.setObject(1, xuatXu.getTenXuatXu());
+            psUpdate.setObject(2, id);
+            check = psUpdate.executeUpdate();
+
+            if (check > 0) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
         }
 
-        // Cập nhật thông tin XuatXu vào cơ sở dữ liệu
-        psUpdate.setObject(1, xuatXu.getTenXuatXu());
-        psUpdate.setObject(2, id);
-        check = psUpdate.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        return check > 0;
     }
-
-    return check > 0;
-}
-
 
     public boolean delete(String id) {
         int check = 0;

@@ -27,7 +27,7 @@ public class DuoiAoRespository {
                      [ID]
                        ,[MaDuoiAo]
                        ,[TenDuoiAo]
-                   FROM [dbo].[DuoiAo]where deleted = 0 ORder by Created_at desc
+                   FROM [dbo].[DuoiAo]where deleted = 0 ORder by Updated_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -47,77 +47,71 @@ public class DuoiAoRespository {
     }
 
     public boolean add(DuoiAo chiTietSanPham) {
-    int check = 0;
-    String sqlCheckName = "SELECT COUNT(*) FROM DuoiAo WHERE TenDuoiAo = ?";
-    String sqlInsert = "INSERT INTO [dbo].[DuoiAo] ([TenDuoiAo]) VALUES (?)";
+        int check = 0;
+        String sqlCheckName = "SELECT COUNT(*) FROM DuoiAo WHERE TenDuoiAo = ?";
+        String sqlInsert = "INSERT INTO [dbo].[DuoiAo] ([TenDuoiAo]) VALUES (?)";
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
 
-        // Kiểm tra xem tên dưới áo đã tồn tại hay chưa
-        psCheckName.setString(1, chiTietSanPham.getTenDuoiAo());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên dưới áo đã tồn tại, không thể thêm mới
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
+            // Kiểm tra xem tên dưới áo đã tồn tại hay chưa
+            psCheckName.setString(1, chiTietSanPham.getTenDuoiAo());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên dưới áo đã tồn tại, không thể thêm mới
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+                return false;
+            }
+
+            // Tên dưới áo chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
+            psInsert.setString(1, chiTietSanPham.getTenDuoiAo());
+            check = psInsert.executeUpdate();
+
+            if (check > 0) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
         }
 
-        // Tên dưới áo chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
-        psInsert.setString(1, chiTietSanPham.getTenDuoiAo());
-        check = psInsert.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
+        return check > 0;
     }
-
-    return check > 0;
-}
-
 
     public boolean update(DuoiAo duoiAo, String id) {
-    int check = 0;
-    String sqlCheckName = "SELECT COUNT(*) FROM DuoiAo WHERE TenDuoiAo = ?";
-    String sqlUpdate = "UPDATE [dbo].[DuoiAo] SET [TenDuoiAo] = ? WHERE ID = ?";
+        int check = 0;
+        String sqlCheckName = "SELECT COUNT(*) FROM DuoiAo WHERE TenDuoiAo = ?";
+        String sqlUpdate = "UPDATE [dbo].[DuoiAo] SET [TenDuoiAo] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
 
-        // Kiểm tra xem tên DuoiAo đã tồn tại hay chưa
-        psCheckName.setString(1, duoiAo.getTenDuoiAo());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên DuoiAo đã tồn tại, không thể cập nhật
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
+            // Kiểm tra xem tên DuoiAo đã tồn tại hay chưa
+            psCheckName.setString(1, duoiAo.getTenDuoiAo());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên DuoiAo đã tồn tại, không thể cập nhật
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+                return false;
+            }
+
+            // Cập nhật thông tin DuoiAo vào cơ sở dữ liệu
+            psUpdate.setObject(1, duoiAo.getTenDuoiAo());
+            psUpdate.setObject(2, id);
+            check = psUpdate.executeUpdate();
+
+            if (check > 0) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
         }
 
-        // Cập nhật thông tin DuoiAo vào cơ sở dữ liệu
-        psUpdate.setObject(1, duoiAo.getTenDuoiAo());
-        psUpdate.setObject(2, id);
-        check = psUpdate.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        return check > 0;
     }
-
-    return check > 0;
-}
-
 
     public boolean delete(String id) {
         int check = 0;

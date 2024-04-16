@@ -2,12 +2,10 @@ package form;
 
 import backend.respository.DBConnect;
 import backend.service.ChiTietSanPhamService;
-import backend.service.HoaDonService;
 import backend.service.ThongKeService;
 import backend.viewmodel.SanPhamChiTietViewModel;
 import card.ModelCard;
 import com.raven.chart.ModelChart;
-import com.toedter.calendar.JYearChooser;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -15,29 +13,20 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -128,6 +117,7 @@ public class ThongKe extends javax.swing.JPanel {
             chart.addData(new ModelChart(formattedDate, new double[]{revenue.doubleValue()}));
             chart.start();
         });
+        
         chsYear.addPropertyChangeListener("year", evt -> {
             // Khi người dùng chọn một năm mới, lấy giá trị năm
             int selectedYear = chsYear.getYear();

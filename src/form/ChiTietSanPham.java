@@ -1378,7 +1378,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
-        chitietsanpham = chiTietSanPhamService.searchKey(txtTimKiem.getText());
+        chitietsanpham = chiTietSanPhamService.Search(txtTimKiem.getText());
         showDataTable(chitietsanpham);
     }//GEN-LAST:event_btnTimActionPerformed
 

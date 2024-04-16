@@ -310,14 +310,23 @@ public class PhieuGiamGiaRepo {
         return check > 0;
     }
 
-//                    txtSoDT.setText("");
-//            txtTenKH.setText("");
-//            txtTenKH2.setText("");
-//            cbbPGG.setSelectedItem(null);
-//            txtMaHD.setText("");
-//            txtNTao.setText("");
-//            txtNTToan.setText("");
-//            txtMaNV.setText("");
-//            txtTongTien.setText("");
-//        [255,51,51]
+    public boolean updateTrangThai(String trangThai, int id) {
+        int check = 0;
+
+        String sql = """
+               UPDATE [dbo].[PhieuGiamGia]
+                  SET 
+                     [TrangThai] = ?
+                WHERE ID = ?
+               """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setObject(1, trangThai);
+            ps.setInt(2, id);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
 }

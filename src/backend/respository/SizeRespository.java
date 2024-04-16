@@ -18,6 +18,7 @@ import raven.toast.Notifications;
  * @author leanb
  */
 public class SizeRespository {
+
     public List<Size> getAll() {
         List<Size> ctspList = new ArrayList<>();
         String sql = """
@@ -25,7 +26,7 @@ public class SizeRespository {
                      [ID]
                        ,[MaSize]
                        ,[TenSize]
-                   FROM [dbo].[Size]where deleted = 0 ORder by Created_at desc
+                   FROM [dbo].[Size]where deleted = 0 ORder by Updated_at desc
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -43,79 +44,73 @@ public class SizeRespository {
 
         return ctspList;
     }
-    
+
     public boolean add(Size chiTietSanPham) {
-    int check = 0;
-    String sqlCheckName = "SELECT COUNT(*) FROM Size WHERE TenSize = ?";
-    String sqlInsert = "INSERT INTO [dbo].[Size] ([TenSize]) VALUES (?)";
+        int check = 0;
+        String sqlCheckName = "SELECT COUNT(*) FROM Size WHERE TenSize = ?";
+        String sqlInsert = "INSERT INTO [dbo].[Size] ([TenSize]) VALUES (?)";
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
 
-        // Kiểm tra xem tên Size đã tồn tại hay chưa
-        psCheckName.setString(1, chiTietSanPham.getTenSize());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên Size đã tồn tại, không thể thêm mới
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
+            // Kiểm tra xem tên Size đã tồn tại hay chưa
+            psCheckName.setString(1, chiTietSanPham.getTenSize());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên Size đã tồn tại, không thể thêm mới
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+                return false;
+            }
+
+            // Tên Size chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
+            psInsert.setString(1, chiTietSanPham.getTenSize());
+            check = psInsert.executeUpdate();
+
+            if (check > 0) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
         }
 
-        // Tên Size chưa tồn tại, tiến hành thêm mới vào cơ sở dữ liệu
-        psInsert.setString(1, chiTietSanPham.getTenSize());
-        check = psInsert.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm mới thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm mới thất bại");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi thêm mới");
+        return check > 0;
     }
 
-    return check > 0;
-}
-
-    
     public boolean update(Size size, String id) {
-    int check = 0;
-    String sqlCheckName = "SELECT COUNT(*) FROM Size WHERE TenSize = ?";
-    String sqlUpdate = "UPDATE [dbo].[Size] SET [TenSize] = ? WHERE ID = ?";
+        int check = 0;
+        String sqlCheckName = "SELECT COUNT(*) FROM Size WHERE TenSize = ?";
+        String sqlUpdate = "UPDATE [dbo].[Size] SET [TenSize] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
 
-        // Kiểm tra xem tên Size đã tồn tại hay chưa
-        psCheckName.setString(1, size.getTenSize());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên Size đã tồn tại, không thể cập nhật
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
+            // Kiểm tra xem tên Size đã tồn tại hay chưa
+            psCheckName.setString(1, size.getTenSize());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên Size đã tồn tại, không thể cập nhật
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+                return false;
+            }
+
+            // Cập nhật thông tin Size vào cơ sở dữ liệu
+            psUpdate.setObject(1, size.getTenSize());
+            psUpdate.setObject(2, id);
+            check = psUpdate.executeUpdate();
+
+            if (check > 0) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
         }
 
-        // Cập nhật thông tin Size vào cơ sở dữ liệu
-        psUpdate.setObject(1, size.getTenSize());
-        psUpdate.setObject(2, id);
-        check = psUpdate.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        return check > 0;
     }
-
-    return check > 0;
-}
-
 
     public boolean delete(String id) {
         int check = 0;
@@ -126,7 +121,7 @@ public class SizeRespository {
                       WHERE ID = ?
                      """;
 
-        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setObject(1, id);
             check = ps.executeUpdate();
         } catch (Exception e) {

@@ -24,14 +24,16 @@ public class ChatLieuRespository {
         List<ChatLieu> ctspList = new ArrayList<>();
         String sql = """
                  SELECT 
-                                      ROW_NUMBER() OVER (ORDER BY [ID]) AS STT,
-                                      [ID],
-                                      [MaChatLieu],
-                                      [TenChatLieu]
-                                  FROM 
-                                      [dbo].[ChatLieu]
-                                      where deleted = 0 
-                                      ORder by Created_at desc
+                     ROW_NUMBER() OVER (ORDER BY [ID]) AS STT,
+                     [ID],
+                     [MaChatLieu],
+                     [TenChatLieu]
+                 FROM 
+                     [dbo].[ChatLieu]
+                 WHERE 
+                     deleted = 0 
+                 ORDER BY 
+                     Updated_at DESC
                  """;
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -89,7 +91,8 @@ public class ChatLieuRespository {
     public boolean update(ChatLieu chatLieu, String id) {
     int check = 0;
     String sqlCheckName = "SELECT COUNT(*) FROM ChatLieu WHERE TenChatLieu = ?";
-    String sqlUpdate = "UPDATE [dbo].[ChatLieu] SET [TenChatLieu] = ? WHERE ID = ?";
+String sqlUpdate = "UPDATE [dbo].[ChatLieu] SET [TenChatLieu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+
 
     try (Connection con = DBConnect.getConnection();
          PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);

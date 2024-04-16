@@ -262,6 +262,11 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
             } else {
                 trangThai = "Đang diễn ra";
             }
+            // Cập nhật trạng thái trong cơ sở dữ liệu
+            boolean success = service.updateTrangThai(trangThai, pgg.getId()); // Chỉnh sửa phương thức updateTrangThai để chấp nhận thêm ID của phiếu giảm giá
+            if (!success) {
+                System.out.println("Không thể cập nhật trạng thái cho ID: " + pgg.getId());
+            }
             pgg.setTrangThai(trangThai);
         }
         showDataTable(lists);
