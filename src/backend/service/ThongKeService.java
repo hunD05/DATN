@@ -54,6 +54,14 @@ public class ThongKeService {
     public int countPaidHoaDon() {
         return repoHD.countPaidHoaDon();
     }
+    
+    public int countUnpaidHoaDonDG(){
+        return repoHD.countUnpaidHoaDonDG();
+    }
+    
+    public int countUnppaidHoaDonCG(){
+        return repoHD.countUnppaidHoaDonCG();
+    }
 //    private int countHoaDonByTrangThai(String trangThai) {
 //        return hoaDonRespository.by
 //    }

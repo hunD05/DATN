@@ -115,6 +115,7 @@ public class ThongKe extends javax.swing.JPanel {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             String formattedDate = formatter.format(java.sql.Date.valueOf(date));
             chart.addData(new ModelChart(formattedDate, new double[]{revenue.doubleValue()}));
+            System.out.println(revenue);
             chart.start();
         });
         
@@ -134,7 +135,7 @@ public class ThongKe extends javax.swing.JPanel {
 
         card1.setData(new ModelCard(null, null, null, formatGiaBan(sr.calculateTotalRevenueFromPaidHoaDonChiTiet()), "Doanh thu"));
         card2.setData(new ModelCard(null, null, null, String.valueOf(sr.countPaidHoaDon()) + " Hóa đơn", "Số hóa đơn đã thanh toán"));
-        card3.setData(new ModelCard(null, null, null, String.valueOf(sr.countUnpaidHoaDon()) + " Hóa đơn", "Số hóa đơn chưa thanh toán"));
+        card3.setData(new ModelCard(null, null, null, String.valueOf(sr.countUnpaidHoaDon() + sr.countUnpaidHoaDonDG() + sr.countUnppaidHoaDonCG()) + " Hóa đơn", "Số hóa đơn chưa thanh toán"));
         card4.setData(new ModelCard(null, null, null, String.valueOf(sr.countUniqueKhachHangInHoaDon() + " Khách hàng"), "Số khách hàng"));
 
         chartSanPhamHetHang.addLegend("Sản phẩm sắp hết hàng", new Color(220, 20, 60), new Color(255, 100, 100));

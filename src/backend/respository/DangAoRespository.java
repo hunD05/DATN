@@ -82,38 +82,50 @@ public class DangAoRespository {
     }
 
     public boolean update(DangAo dangAo, String id) {
-        int check = 0;
-        String sqlCheckName = "SELECT COUNT(*) FROM DangAo WHERE TenDangAo = ?";
-        String sqlUpdate = "UPDATE [dbo].[DangAo] SET [TenDangAo] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM DangAo WHERE TenDangAo = ?";
+    String sqlUpdateDangAo = "UPDATE [dbo].[DangAo] SET [TenDangAo] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChiTietSanPham = "UPDATE [dbo].[ChiTietSanPham] SET [IDDangAo] = (select top 1 id from DangAo where TenDangAo = ?) WHERE IDDangAo = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdateDangAo = con.prepareStatement(sqlUpdateDangAo);
+         PreparedStatement psUpdateChiTietSanPham = con.prepareStatement(sqlUpdateChiTietSanPham)) {
 
-            // Kiểm tra xem tên DangAo đã tồn tại hay chưa
-            psCheckName.setString(1, dangAo.getTenDangAo());
-            ResultSet rsName = psCheckName.executeQuery();
-            if (rsName.next() && rsName.getInt(1) > 0) {
-                // Tên DangAo đã tồn tại, không thể cập nhật
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-                return false;
-            }
-
-            // Cập nhật thông tin DangAo vào cơ sở dữ liệu
-            psUpdate.setObject(1, dangAo.getTenDangAo());
-            psUpdate.setObject(2, id);
-            check = psUpdate.executeUpdate();
-
-            if (check > 0) {
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-            } else {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        // Kiểm tra xem tên DangAo đã tồn tại hay chưa
+        psCheckName.setString(1, dangAo.getTenDangAo());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên DangAo đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin DangAo vào cơ sở dữ liệu
+        psUpdateDangAo.setObject(1, dangAo.getTenDangAo());
+        psUpdateDangAo.setObject(2, id);
+        check = psUpdateDangAo.executeUpdate();
+
+        // Cập nhật tên DangAo trong bảng ChiTietSanPham
+        if (check > 0) {
+            psUpdateChiTietSanPham.setObject(1, dangAo.getTenDangAo());
+            psUpdateChiTietSanPham.setObject(2, id);
+            psUpdateChiTietSanPham.executeUpdate();
+        }
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;

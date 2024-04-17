@@ -78,38 +78,49 @@ public class MauSacRespository {
     }
 
     public boolean update(MauSac mauSac, String id) {
-        int check = 0;
-        String sqlCheckName = "SELECT COUNT(*) FROM MauSac WHERE TenMauSac = ?";
-        String sqlUpdate = "UPDATE [dbo].[MauSac] SET [TenMauSac] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM MauSac WHERE TenMauSac = ?";
+    String sqlUpdateMauSac = "UPDATE [dbo].[MauSac] SET [TenMauSac] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChiTietSanPham = "UPDATE [dbo].[ChiTietSanPham] SET [IDMauSac] = (select top 1 id from MauSac where TenMauSac = ?) WHERE IDSanPham = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdateMauSac = con.prepareStatement(sqlUpdateMauSac);
+         PreparedStatement psUpdateChiTietSanPham = con.prepareStatement(sqlUpdateChiTietSanPham)) {
 
-            // Kiểm tra xem tên MauSac đã tồn tại hay chưa
-            psCheckName.setString(1, mauSac.getTenMauSac());
-            ResultSet rsName = psCheckName.executeQuery();
-            if (rsName.next() && rsName.getInt(1) > 0) {
-                // Tên MauSac đã tồn tại, không thể cập nhật
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-                return false;
-            }
-
-            // Cập nhật thông tin MauSac vào cơ sở dữ liệu
-            psUpdate.setObject(1, mauSac.getTenMauSac());
-            psUpdate.setObject(2, id);
-            check = psUpdate.executeUpdate();
-
-            if (check > 0) {
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-            } else {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        // Kiểm tra xem tên MauSac đã tồn tại hay chưa
+        psCheckName.setString(1, mauSac.getTenMauSac());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên MauSac đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin MauSac vào cơ sở dữ liệu
+        psUpdateMauSac.setObject(1, mauSac.getTenMauSac());
+        psUpdateMauSac.setObject(2, id);
+        check = psUpdateMauSac.executeUpdate();
+
+        // Cập nhật tên MauSac trong bảng ChiTietSanPham
+        if (check > 0) {
+            psUpdateChiTietSanPham.setObject(1, mauSac.getTenMauSac());
+            psUpdateChiTietSanPham.setObject(2, id);
+            psUpdateChiTietSanPham.executeUpdate();
+        }
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
 
     public boolean delete(String id) {
         int check = 0;

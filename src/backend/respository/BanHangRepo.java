@@ -101,12 +101,49 @@ public class BanHangRepo {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[ChiTietSanPham]
-                        SET [SoLuong] = ?
+                        SET [SoLuong] = ?,
+                            [Updated_at] = CURRENT_TIMESTAMP
                         WHERE ID = ?
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
-            ps.setObject(2, idSPCT);
             ps.setObject(1, soLuongConLai);
+            ps.setObject(2, idSPCT);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
+    public boolean increaseSoLuong(int soLuongMoi, int idCTSP) {
+        int check = 0;
+        String sql = """
+                    UPDATE [dbo].[ChiTietSanPham]
+                                             SET [SoLuong] = [SoLuong] + ?,
+                                                 [Updated_at] = CURRENT_TIMESTAMP
+                                             WHERE ID = ?
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, soLuongMoi);
+            ps.setObject(2, idCTSP);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
+    public boolean decreaseSoLuong(int soLuongMoi, int idCTSP) {
+        int check = 0;
+        String sql = """
+                    UPDATE [dbo].[ChiTietSanPham]
+                                             SET [SoLuong] = [SoLuong] - ?,
+                                                 [Updated_at] = CURRENT_TIMESTAMP
+                                             WHERE ID = ?
+                     """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, soLuongMoi);
+            ps.setObject(2, idCTSP);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -91,39 +91,59 @@ public class ChatLieuRespository {
     public boolean update(ChatLieu chatLieu, String id) {
     int check = 0;
     String sqlCheckName = "SELECT COUNT(*) FROM ChatLieu WHERE TenChatLieu = ?";
-String sqlUpdate = "UPDATE [dbo].[ChatLieu] SET [TenChatLieu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChatLieu = "UPDATE [dbo].[ChatLieu] SET [TenChatLieu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+String sqlUpdateChiTietSanPham = "UPDATE [dbo].[ChiTietSanPham] SET [IDChatLieu] = (select top 1 id from ChatLieu where TenChatLieu = ?) WHERE IDChatLieu = ?";
+    
+    try (Connection con = DBConnect.getConnection()) {
+        con.setAutoCommit(false);  // Tắt chế độ tự động commit
+        
+        try (PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+             PreparedStatement psUpdateChatLieu = con.prepareStatement(sqlUpdateChatLieu);
+             PreparedStatement psUpdateChiTietSanPham = con.prepareStatement(sqlUpdateChiTietSanPham)) {
 
+            // Kiểm tra xem tên ChatLieu đã tồn tại hay chưa
+            psCheckName.setString(1, chatLieu.getTenChatLieu());
+            ResultSet rsName = psCheckName.executeQuery();
+            if (rsName.next() && rsName.getInt(1) > 0) {
+                // Tên ChatLieu đã tồn tại, không thể cập nhật
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên chất liệu đã tồn tại");
+                return false;
+            }
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
-         PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+            // Cập nhật thông tin ChatLieu vào cơ sở dữ liệu
+            psUpdateChatLieu.setObject(1, chatLieu.getTenChatLieu());
+            psUpdateChatLieu.setObject(2, id);
+            check = psUpdateChatLieu.executeUpdate();
 
-        // Kiểm tra xem tên ChatLieu đã tồn tại hay chưa
-        psCheckName.setString(1, chatLieu.getTenChatLieu());
-        ResultSet rsName = psCheckName.executeQuery();
-        if (rsName.next() && rsName.getInt(1) > 0) {
-            // Tên ChatLieu đã tồn tại, không thể cập nhật
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-            return false;
-        }
+            // Cập nhật tên chất liệu trong bảng ChiTietSanPham
+            if (check > 0) {
+                psUpdateChiTietSanPham.setObject(1, chatLieu.getTenChatLieu());
+                psUpdateChiTietSanPham.setObject(2, id);
+                psUpdateChiTietSanPham.executeUpdate();
+            }
 
-        // Cập nhật thông tin ChatLieu vào cơ sở dữ liệu
-        psUpdate.setObject(1, chatLieu.getTenChatLieu());
-        psUpdate.setObject(2, id);
-        check = psUpdate.executeUpdate();
-
-        if (check > 0) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+            if (check > 0) {
+                con.commit();  // Xác nhận các thay đổi
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+            } else {
+                con.rollback();  // Hủy bỏ các thay đổi nếu có lỗi
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+            }
+        } catch (Exception e) {
+            con.rollback();  // Hủy bỏ các thay đổi khi có lỗi
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        } finally {
+            con.setAutoCommit(true);  // Bật lại chế độ tự động commit
         }
     } catch (Exception e) {
         e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể kết nối đến cơ sở dữ liệu");
     }
 
     return check > 0;
 }
+
 
 
     public boolean delete(String id) {

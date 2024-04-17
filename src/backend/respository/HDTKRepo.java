@@ -59,6 +59,14 @@ public class HDTKRepo {
     public int countPaidHoaDon() {
         return countHoaDonByTrangThai("Đã Thanh Toán");
     }
+    
+    public int countUnppaidHoaDonCG() {
+        return countHoaDonByTrangThai("Chờ Giao");
+    }
+    
+    public int countUnpaidHoaDonDG() {
+        return countHoaDonByTrangThai("Đang Giao");
+    }
 
     private int countHoaDonByTrangThai(String trangThai) {
         int count = 0;

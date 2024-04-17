@@ -141,7 +141,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     private double tienKhachThua = 0.0;
 
     private boolean isCbbPGGSelected1 = false;
-    
+
     private boolean isCbbPGGSelected2 = false;
 
     private String trangThai = "";
@@ -671,6 +671,11 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             return false;
         }
 
+        if (cbbTT.getSelectedItem() == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Chưa chọn phương thức thanh toán");
+            return false;
+        }
+
         if (txtTenKH2.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khách hàng trống");
             return false;
@@ -728,6 +733,11 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
         if (ngayNhan.isBefore(ngayHomNay)) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày nhận không được nhỏ hơn ngày hôm nay");
+            return false;
+        }
+
+        if (cbbTTDH.getSelectedItem() == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Chưa chọn phương thức thanh toán");
             return false;
         }
 
@@ -862,89 +872,94 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }
 
     private void mouseClickSP() {
-        if (selectedRowIndex >= 0) {
-            BHHDViewModel hd = listHD.get(selectedRowIndex);
-            int idHD = hd.getId();
+        // Kiểm tra xem listSP có được khởi tạo và có dữ liệu không
+        if (listSP != null && !listSP.isEmpty()) {
+            if (selectedRowIndex >= 0) {
+                BHHDViewModel hd = listHD.get(selectedRowIndex);
+                int idHD = hd.getId();
 
-            int rowIndexSP = tblSP.getSelectedRow();
-            if (rowIndexSP >= 0) {
-                BHSPViewModel sp = listSP.get(rowIndexSP);
-                int idSPCT = sp.getMaSPCT();
-                double giaBan = sp.getGiaBan();
+                int rowIndexSP = tblSP.getSelectedRow();
+                if (rowIndexSP >= 0) {
+                    BHSPViewModel sp = listSP.get(rowIndexSP);
+                    int idSPCT = sp.getMaSPCT();
+                    double giaBan = sp.getGiaBan();
 
-                int soLuongHienCo = (int) tblSP.getValueAt(rowIndexSP, 7);
+                    int soLuongHienCo = (int) tblSP.getValueAt(rowIndexSP, 7);
 
-                String input = JOptionPane.showInputDialog(this, "Nhập số lượng muốn mua:");
-                if (input != null && !input.isEmpty()) {
-                    try {
-                        int soLuongMua = Integer.parseInt(input);
+                    String input = JOptionPane.showInputDialog(this, "Nhập số lượng muốn mua:");
+                    if (input != null && !input.isEmpty()) {
+                        try {
+                            int soLuongMua = Integer.parseInt(input);
 
-                        if (soLuongMua > 0) {
-                            if (soLuongMua > soLuongHienCo) {
-                                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua vượt quá số lượng hiện có!");
-                            } else {
-                                int soLuongConLai = soLuongHienCo - soLuongMua;
-                                // Cập nhật số lượng còn lại vào cơ sở dữ liệu
-                                srBH.updateSP(sp.getMaSPCT(), soLuongConLai);
-
-                                // Lấy lại danh sách sản phẩm sau khi cập nhật
-                                listSP = srBH.getSP();
-                                showDataSP(listSP);
-
-                                // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-                                boolean isProductExist = false;
-                                int index = -1;
-                                for (int i = 0; i < listHDCT.size(); i++) {
-                                    if (listHDCT.get(i).getMaSPCT() == idSPCT) {
-                                        isProductExist = true;
-                                        index = i;
-                                        break;
-                                    }
-                                }
-
-                                // Nếu sản phẩm đã tồn tại trong giỏ hàng
-                                if (isProductExist) {
-                                    // Cộng dồn số lượng mua vào số lượng hiện có
-                                    int soLuongCu = listHDCT.get(index).getSoLuong();
-                                    int soLuongMoi = soLuongCu + soLuongMua;
-                                    listHDCT.get(index).setSoLuong(soLuongMoi);
-
-                                    // Cập nhật lại thông tin trong bảng và cơ sở dữ liệu
-                                    srHDCT.updateHDCT(listHDCT.get(index).getId(), soLuongMoi, listHDCT.get(index).getMaSPCT());
-
+                            if (soLuongMua > 0) {
+                                if (soLuongMua > soLuongHienCo) {
+                                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua vượt quá số lượng hiện có!");
                                 } else {
-                                    // Nếu sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
-                                    srHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
+                                    int soLuongConLai = soLuongHienCo - soLuongMua;
+                                    // Cập nhật số lượng còn lại vào cơ sở dữ liệu
+                                    srBH.updateSP(sp.getMaSPCT(), soLuongConLai);
+
+                                    // Lấy lại danh sách sản phẩm sau khi cập nhật
+                                    listSP = srBH.getSP();
+                                    showDataSP(listSP);
+
+                                    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+                                    boolean isProductExist = false;
+                                    int index = -1;
+                                    for (int i = 0; i < listHDCT.size(); i++) {
+                                        if (listHDCT.get(i).getMaSPCT() == idSPCT) {
+                                            isProductExist = true;
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+
+                                    // Nếu sản phẩm đã tồn tại trong giỏ hàng
+                                    if (isProductExist) {
+                                        // Cộng dồn số lượng mua vào số lượng hiện có
+                                        int soLuongCu = listHDCT.get(index).getSoLuong();
+                                        int soLuongMoi = soLuongCu + soLuongMua;
+                                        listHDCT.get(index).setSoLuong(soLuongMoi);
+
+                                        // Cập nhật lại thông tin trong bảng và cơ sở dữ liệu
+                                        srHDCT.updateHDCT(listHDCT.get(index).getId(), soLuongMoi, listHDCT.get(index).getMaSPCT());
+
+                                    } else {
+                                        // Nếu sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
+                                        srHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
+                                    }
+
+                                    listHD = srBH.getHD();
+                                    showDataHD(listHD);
+                                    // Cập nhật lại danh sách hóa đơn chi tiết sau khi thêm mới hoặc cập nhật
+                                    listHDCT = srHDCT.getAll(idHD);
+                                    showDataHDCT(listHDCT);
+                                    refreshCart();
+
+                                    if (indexTab == 0) {
+                                        showDetailHD(selectedRowIndex);
+                                        txtTenKH.setText("Khách lẻ");
+                                        txtTenKH2.setText("Khách lẻ");
+                                    } else if (indexTab == 1) {
+                                        showDetailHDGH(selectedRowIndex);
+                                    }
+
+                                    // Hiển thị thông báo và cập nhật giỏ hàng hiển thị
+                                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm sản phẩm vào giỏ hàng!");
                                 }
-
-                                listHD = srBH.getHD();
-                                showDataHD(listHD);
-                                // Cập nhật lại danh sách hóa đơn chi tiết sau khi thêm mới hoặc cập nhật
-                                listHDCT = srHDCT.getAll(idHD);
-                                showDataHDCT(listHDCT);
-                                refreshCart();
-
-                                if (indexTab == 0) {
-                                    showDetailHD(selectedRowIndex);
-                                    txtTenKH.setText("Khách lẻ");
-                                    txtTenKH2.setText("Khách lẻ");
-                                } else if (indexTab == 1) {
-                                    showDetailHDGH(selectedRowIndex);
-                                }
-
-                                // Hiển thị thông báo và cập nhật giỏ hàng hiển thị
-                                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm sản phẩm vào giỏ hàng!");
+                            } else {
+                                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua phải lớn hơn 0!");
                             }
-                        } else {
-                            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng mua phải lớn hơn 0!");
+                        } catch (NumberFormatException e) {
+                            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng nhập vào một số nguyên dương!");
                         }
-                    } catch (NumberFormatException e) {
-                        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng nhập vào một số nguyên dương!");
                     }
                 }
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Bạn chưa chọn hóa đơn!");
             }
         } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Bạn chưa chọn hóa đơn!");
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Danh sách sản phẩm trống hoặc chưa được khởi tạo!");
         }
     }
 
@@ -1113,7 +1128,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
     public void refreshGioHang() {
         // Get the selected row index from your table
-        int rowIndex = tblHD.getSelectedRow();
+        int rowIndex = selectedRowIndex;
 
         // Check if a row is selected
         if (rowIndex >= 0 && rowIndex < listHD.size()) {
@@ -1122,7 +1137,7 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
             listHD = srBH.getHD();
             showDataHD(listHD);
 
-            // Get the new data for listHDCT
+            dtmHDCT = (DefaultTableModel) tblGH.getModel();
             listHDCT = srHDCT.getAll(hd.getId());
 
             // Show the updated data in the table
@@ -1145,7 +1160,6 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                 break;
             }
         }
-
         // Nếu sản phẩm đã tồn tại trong giỏ hàng
         if (isProductExist) {
             // Cộng dồn số lượng mua vào số lượng hiện có
@@ -2369,6 +2383,8 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
                 int result = JOptionPane.showConfirmDialog(this, "Thanh toán thành công. Bạn có muốn in hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     printHD(); // In hóa đơn
+                    String hanhDong = "In hóa đơn";
+                    srLSHD.addLSHD(hanhDong);
                 }
 
                 resetDH();

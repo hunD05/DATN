@@ -16,7 +16,7 @@ import java.util.List;
 public class HDCTService {
 
     private HDCTViewModelRepo repo = new HDCTViewModelRepo();
-    
+
     private HDCTRepository repoHDCT = new HDCTRepository();
 
     public List<HDCTViewModel> getAll(int idHD) {
@@ -26,20 +26,19 @@ public class HDCTService {
 //    public void inHDCT(int idHD) {
 //        repo.inHDCT(idHD);
 //    }
-    
-    public boolean addHDCT(int idHD, int idSPCT, int soLuongMua, double giaBan){
+    public boolean addHDCT(int idHD, int idSPCT, int soLuongMua, double giaBan) {
         return repoHDCT.addHDCT(idHD, idSPCT, soLuongMua, giaBan);
     }
-    
-    public boolean updateHDCT(int idHD, int soLuong, int idCTSP){
-        return repoHDCT.updateHDCT(idHD, soLuong,idCTSP);
+
+    public boolean updateHDCT(int idHD, int soLuong, int idCTSP) {
+        return repoHDCT.updateHDCT(idHD, soLuong, idCTSP);
     }
-    
-    public List<HDCTViewModel> searchCBBSP(int idHD, String mauSac, String size, String chatLieu, String thuongHieu, String gia){
+
+    public List<HDCTViewModel> searchCBBSP(int idHD, String mauSac, String size, String chatLieu, String thuongHieu, String gia) {
         return repo.searchCBBSP(idHD, mauSac, size, chatLieu, thuongHieu, gia);
     }
-    
-    public boolean deleteHDCT(int idHD,int soLuong, int idCTSP){
+
+    public boolean deleteHDCT(int idHD, int soLuong, int idCTSP) {
         return repoHDCT.deleteHDCT(idHD, soLuong, idCTSP);
     }
 

@@ -81,38 +81,50 @@ public class DanhMucRespository {
     }
 
     public boolean update(DanhMuc danhMuc, String id) {
-        int check = 0;
-        String sqlCheckName = "SELECT COUNT(*) FROM DanhMuc WHERE TenDanhMuc = ?";
-        String sqlUpdate = "UPDATE [dbo].[DanhMuc] SET [TenDanhMuc] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM DanhMuc WHERE TenDanhMuc = ?";
+    String sqlUpdateDanhMuc = "UPDATE [dbo].[DanhMuc] SET [TenDanhMuc] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChiTietSanPham = "UPDATE [dbo].[ChiTietSanPham] SET [IDDanhMuc] = (select top 1 id from DanhMuc where TenDanhMuc = ?) WHERE IDSanPham = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdateDanhMuc = con.prepareStatement(sqlUpdateDanhMuc);
+         PreparedStatement psUpdateChiTietSanPham = con.prepareStatement(sqlUpdateChiTietSanPham)) {
 
-            // Kiểm tra xem tên DanhMuc đã tồn tại hay chưa
-            psCheckName.setString(1, danhMuc.getTenDanhMuc());
-            ResultSet rsName = psCheckName.executeQuery();
-            if (rsName.next() && rsName.getInt(1) > 0) {
-                // Tên DanhMuc đã tồn tại, không thể cập nhật
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-                return false;
-            }
-
-            // Cập nhật thông tin DanhMuc vào cơ sở dữ liệu
-            psUpdate.setObject(1, danhMuc.getTenDanhMuc());
-            psUpdate.setObject(2, id);
-            check = psUpdate.executeUpdate();
-
-            if (check > 0) {
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-            } else {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        // Kiểm tra xem tên DanhMuc đã tồn tại hay chưa
+        psCheckName.setString(1, danhMuc.getTenDanhMuc());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên DanhMuc đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin DanhMuc vào cơ sở dữ liệu
+        psUpdateDanhMuc.setObject(1, danhMuc.getTenDanhMuc());
+        psUpdateDanhMuc.setObject(2, id);
+        check = psUpdateDanhMuc.executeUpdate();
+
+        // Cập nhật tên DanhMuc trong bảng ChiTietSanPham
+        if (check > 0) {
+            psUpdateChiTietSanPham.setObject(1, danhMuc.getTenDanhMuc());
+            psUpdateChiTietSanPham.setObject(2, id);
+            psUpdateChiTietSanPham.executeUpdate();
+        }
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;

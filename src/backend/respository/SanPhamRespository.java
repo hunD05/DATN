@@ -170,36 +170,39 @@ public class SanPhamRespository {
 //        return check > 0;
 //    }
     public boolean update(SanPham sanPham, String ID) {
-        int check = 0;
-        String sqlUpdateSanPham = "UPDATE [dbo].[SanPham] SET [TenSanPham] = ?, Updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
-        String sqlUpdateChiTiet = "UPDATE [dbo].[ChiTietSanPham] SET [IDSanPham] = ?, Updated_at = CURRENT_TIMESTAMP WHERE IDSanPham = ?";
+    int check = 0;
+    String sqlUpdateSanPham = "UPDATE [dbo].[SanPham] SET [TenSanPham] = ?, Updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChiTiet = "UPDATE [dbo].[ChiTietSanPham] SET [IDSanPham] = (SELECT TOP 1 ID FROM [dbo].[SanPham] WHERE [TenSanPham] = ?), Updated_at = CURRENT_TIMESTAMP WHERE IDSanPham = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psUpdateSanPham = con.prepareStatement(sqlUpdateSanPham);  PreparedStatement psUpdateChiTiet = con.prepareStatement(sqlUpdateChiTiet)) {
+    try (Connection con = DBConnect.getConnection(); 
+         PreparedStatement psUpdateSanPham = con.prepareStatement(sqlUpdateSanPham);  
+         PreparedStatement psUpdateChiTiet = con.prepareStatement(sqlUpdateChiTiet)) {
 
-            con.setAutoCommit(false); // Tắt chế độ tự động commit
+        con.setAutoCommit(false); // Tắt chế độ tự động commit
 
-            // Thực hiện cập nhật tên sản phẩm trong bảng SanPham
-            psUpdateSanPham.setObject(1, sanPham.getTenSanPham());
-            psUpdateSanPham.setObject(2, ID);
-            check = psUpdateSanPham.executeUpdate();
+        // Thực hiện cập nhật tên sản phẩm trong bảng SanPham
+        psUpdateSanPham.setObject(1, sanPham.getTenSanPham());
+        psUpdateSanPham.setObject(2, ID);
+        check = psUpdateSanPham.executeUpdate();
 
-            // Thực hiện cập nhật IDSanPham trong bảng ChiTietSanPham
-            psUpdateChiTiet.setObject(1, ID);
-            psUpdateChiTiet.setObject(2, ID);
-            psUpdateChiTiet.executeUpdate();
+        // Thực hiện cập nhật ID sản phẩm trong bảng ChiTietSanPham
+        psUpdateChiTiet.setObject(1, sanPham.getTenSanPham());
+        psUpdateChiTiet.setObject(2, ID);
+        psUpdateChiTiet.executeUpdate();
 
-            con.commit(); // Commit thay đổi
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                Connection con = DBConnect.getConnection();
-                con.rollback(); // Rollback nếu có lỗi
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        con.commit(); // Commit thay đổi
+    } catch (Exception e) {
+        e.printStackTrace();
+        try {
+            Connection con = DBConnect.getConnection();
+            con.rollback(); // Rollback nếu có lỗi
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return check > 0;
     }
+    return check > 0;
+}
+
 
     public boolean isTenSanPhamExisted(String tenSanPham) {
         String sql = "SELECT COUNT(*) FROM dbo.SanPham WHERE TenSanPham = ?";

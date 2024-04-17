@@ -4,7 +4,10 @@
  */
 package form;
 
+import backend.service.BanHangService;
 import backend.service.HDCTService;
+import backend.viewmodel.BHHDViewModel;
+import backend.viewmodel.BHSPViewModel;
 import backend.viewmodel.HDCTViewModel;
 import java.awt.Window;
 import java.text.DecimalFormat;
@@ -31,6 +34,9 @@ public class SuaGioHang extends javax.swing.JPanel {
     private NumberFormat currencyFormat = new DecimalFormat("###,###,### VND");
     private int idHD;
     private BanHang parentBanHang;
+
+    private BanHangService srBH = new BanHangService();
+    private List<BHSPViewModel> listSP = new ArrayList<>();
 
     public SuaGioHang(BanHang parentBanHang, int idHD) {
         initComponents();
@@ -136,6 +142,9 @@ public class SuaGioHang extends javax.swing.JPanel {
         }
         if (parentBanHang != null) {
             parentBanHang.refreshGioHang();
+            listGH = srGH.getAll(idHD); // Cập nhật lại dữ liệu từ cơ sở dữ liệu
+            listSP = srBH.getSP();//
+            parentBanHang.showDataSP(listSP);
         }
     }//GEN-LAST:event_btnXacNhanActionPerformed
 
@@ -143,6 +152,24 @@ public class SuaGioHang extends javax.swing.JPanel {
         int selectedRow = tblGH.getSelectedRow();
         HDCTViewModel hdct = listGH.get(selectedRow);
         int idSPCT = hdct.getMaSPCT();
+
+        BHSPViewModel sp = null;
+        listSP = srBH.getSP();
+        int soLuongSPDangCo = 0;
+        // Tìm kiếm sản phẩm trong danh sách sản phẩm
+        for (BHSPViewModel item : listSP) {
+            if (item.getMaSPCT() == idSPCT) {
+                sp = item;
+                soLuongSPDangCo = item.getSoLuong();
+                break;
+            }
+        }
+
+        if (sp == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin sản phẩm.");
+            return;
+        }
+
         if (selectedRow != -1) { // Kiểm tra xem có hàng nào được chọn không
             String currentQuantityStr = dtmGH.getValueAt(selectedRow, 7).toString(); // Lấy số lượng hiện tại từ cột số lượng (cột thứ 7)
             int currentQuantity = Integer.parseInt(currentQuantityStr); // Chuyển đổi số lượng hiện tại từ chuỗi sang số nguyên
@@ -150,19 +177,44 @@ public class SuaGioHang extends javax.swing.JPanel {
             String newQuantityStr = JOptionPane.showInputDialog(this, "Nhập số lượng mới:"); // Hiển thị hộp thoại đầu vào và lấy số lượng mới từ người dùng
             if (newQuantityStr != null && !newQuantityStr.isEmpty()) { // Kiểm tra xem người dùng đã nhập số lượng mới hay không
                 try {
-                    int newQuantity = Integer.parseInt(newQuantityStr); // Chuyển đổi số lượng mới từ chuỗi sang số nguyên
-                    if (newQuantity == 0) { // Kiểm tra xem số lượng mới có hợp lệ không
-                        srGH.deleteHDCT(idHD,newQuantity, idSPCT);
+                    int newQuantity = Integer.parseInt(newQuantityStr);
+                    if (newQuantity < 0) {
+                        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0."); // Thông báo lỗi nếu số lượng mới nhỏ hơn hoặc bằng 0
+                        return; // Không tiếp tục xử lý dữ liệu
+                        // Chuyển đổi số lượng mới từ chuỗi sang số nguyên
+                    }
+
+                    if (newQuantity > soLuongSPDangCo + currentQuantity) {
+                        JOptionPane.showMessageDialog(this, "Số lượng nhập không được vượt quá số lượng sản phẩm hiện có.");
+                        return;
+                    }
+                    
+                    if (newQuantity <= currentQuantity) {
+                        int soLuongConLai = currentQuantity - newQuantity;
+                        srGH.updateHDCT(idHD, newQuantity, idSPCT);
+                        srBH.increaseSoLuong(soLuongConLai, idSPCT);
+
                         listGH = srGH.getAll(idHD);
                         showDataGH();
-                    } else if (newQuantity > 0) {
+                    } else if (newQuantity == 0) { // Kiểm tra xem số lượng mới có hợp lệ không
+                        int soLuongConLai = currentQuantity - newQuantity;
+                        srGH.deleteHDCT(idHD, newQuantity, idSPCT);
+                        srBH.increaseSoLuong(soLuongConLai, idSPCT);
+
+                        listGH = srGH.getAll(idHD);
+                        showDataGH();
+                    } else if (newQuantity > currentQuantity) {
+                        int soLuongConLai = newQuantity - currentQuantity;
                         srGH.updateHDCT(idHD, newQuantity, idSPCT);
+                        srBH.decreaseSoLuong(soLuongConLai, idSPCT);
+
                         listGH = srGH.getAll(idHD);
                         showDataGH();
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Vui lòng nhập một số nguyên dương."); // Thông báo lỗi nếu không thể chuyển đổi số lượng mới sang số nguyên
                 }
+
             }
         }
     }//GEN-LAST:event_tblGHMouseClicked

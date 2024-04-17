@@ -24,24 +24,33 @@ public class BanHangService {
     public List<BHSPViewModel> getSP() {
         return repo.getSP();
     }
-    
-    public boolean updateSP(int idSPCT, int soLuongCL){
+
+    public boolean updateSP(int idSPCT, int soLuongCL) {
         return repo.updateSP(idSPCT, soLuongCL);
     }
-    
-    public List<BHSPViewModel> searchSP(String tuKhoa){
+
+    public List<BHSPViewModel> searchSP(String tuKhoa) {
         return repo.searchSP(tuKhoa);
     }
-    
-    public List<BHHDViewModel> searchHD(String tuKhoa){
+
+    public List<BHHDViewModel> searchHD(String tuKhoa) {
         return repo.searchHD(tuKhoa);
     }
-    
-    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, String gia){
+
+    public List<BHSPViewModel> searchCBBSP(String danhmuc, String xuatxu, String nsx, String gia) {
         return repo.searchCBBSP(danhmuc, xuatxu, nsx, gia);
     }
-    
-    public List<BHSPViewModel> getOneSP(int idSPCT){
+
+    public List<BHSPViewModel> getOneSP(int idSPCT) {
         return repo.getOneSP(idSPCT);
     }
+
+    public boolean increaseSoLuong(int soLuongMoi, int idCTSP) {
+        return repo.increaseSoLuong(soLuongMoi, idCTSP);
+    }
+
+    public boolean decreaseSoLuong(int soLuongMoi, int idCTSP){
+        return repo.decreaseSoLuong(soLuongMoi, idCTSP);
+    }
+    
 }

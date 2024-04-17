@@ -73,12 +73,14 @@ public class HDCTTKRepo {
         Map<LocalDate, BigDecimal> revenueByDate = new HashMap<>();
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement("""
-                                                     SELECT NgayThanhToan,
-                                                            SUM(SoLuong * GiaBan) AS TotalRevenue
-                                                     FROM HoaDonChiTiet HDCT
-                                                     INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
-                                                     WHERE HD.TrangThai = N'Đã Thanh Toán' AND NgayThanhToan BETWEEN ? AND ?
-                                                     GROUP BY NgayThanhToan;
+                                                     SELECT CAST(NgayThanhToan AS DATE) AS NgayThanhToan,
+                                                                                                                 SUM(SoLuong * GiaBan) AS TotalRevenue
+                                                                                                          FROM HoaDonChiTiet HDCT
+                                                                                                          INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
+                                                                                                          WHERE HD.TrangThai = N'Đã Thanh Toán' 
+                                                                                                                AND NgayThanhToan BETWEEN ? AND ?
+                                                                                                          GROUP BY CAST(NgayThanhToan AS DATE)
+                                                                                                          ORDER BY CAST(NgayThanhToan AS DATE);
                                                      """)) {
             ps.setDate(1, Date.valueOf(startDate));
             ps.setDate(2, Date.valueOf(endDate));
@@ -101,12 +103,14 @@ public class HDCTTKRepo {
         Map<LocalDate, BigDecimal> revenueByDate = new HashMap<>();
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement("""
-                                                     SELECT NgayThanhToan,
-                                                            SUM(SoLuong * GiaBan) AS TotalRevenue
-                                                     FROM HoaDonChiTiet HDCT
-                                                     INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
-                                                     WHERE HD.TrangThai = N'Đã Thanh Toán' AND NgayThanhToan BETWEEN ? AND ?
-                                                     GROUP BY NgayThanhToan;
+                                                     SELECT CAST(NgayThanhToan AS DATE) AS NgayThanhToan,
+                                                                                                                 SUM(SoLuong * GiaBan) AS TotalRevenue
+                                                                                                          FROM HoaDonChiTiet HDCT
+                                                                                                          INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
+                                                                                                          WHERE HD.TrangThai = N'Đã Thanh Toán' 
+                                                                                                                AND NgayThanhToan BETWEEN ? AND ?
+                                                                                                          GROUP BY CAST(NgayThanhToan AS DATE)
+                                                                                                          ORDER BY CAST(NgayThanhToan AS DATE);
                                                      """)) {
             ps.setDate(1, Date.valueOf(startDate));
             ps.setDate(2, Date.valueOf(endDate));

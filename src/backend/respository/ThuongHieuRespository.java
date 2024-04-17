@@ -78,38 +78,50 @@ public class ThuongHieuRespository {
     }
 
     public boolean update(ThuongHieu thuongHieu, String id) {
-        int check = 0;
-        String sqlCheckName = "SELECT COUNT(*) FROM ThuongHieu WHERE TenThuongHieu = ?";
-        String sqlUpdate = "UPDATE [dbo].[ThuongHieu] SET [TenThuongHieu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    int check = 0;
+    String sqlCheckName = "SELECT COUNT(*) FROM ThuongHieu WHERE TenThuongHieu = ?";
+    String sqlUpdateThuongHieu = "UPDATE [dbo].[ThuongHieu] SET [TenThuongHieu] = ?, [Updated_at] = CURRENT_TIMESTAMP WHERE ID = ?";
+    String sqlUpdateChiTietSanPham = "UPDATE [dbo].[ChiTietSanPham] SET [IDThuongHieu] = (select top 1 id from ThuongHieu where TenThuongHieu = ?) WHERE IDSanPham = ?";
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);  PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement psCheckName = con.prepareStatement(sqlCheckName);
+         PreparedStatement psUpdateThuongHieu = con.prepareStatement(sqlUpdateThuongHieu);
+         PreparedStatement psUpdateChiTietSanPham = con.prepareStatement(sqlUpdateChiTietSanPham)) {
 
-            // Kiểm tra xem tên Thương Hiệu đã tồn tại hay chưa
-            psCheckName.setString(1, thuongHieu.getTenThuongHieu());
-            ResultSet rsName = psCheckName.executeQuery();
-            if (rsName.next() && rsName.getInt(1) > 0) {
-                // Tên Thương Hiệu đã tồn tại, không thể cập nhật
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
-                return false;
-            }
-
-            // Cập nhật thông tin Thương Hiệu vào cơ sở dữ liệu
-            psUpdate.setObject(1, thuongHieu.getTenThuongHieu());
-            psUpdate.setObject(2, id);
-            check = psUpdate.executeUpdate();
-
-            if (check > 0) {
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
-            } else {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
+        // Kiểm tra xem tên ThuongHieu đã tồn tại hay chưa
+        psCheckName.setString(1, thuongHieu.getTenThuongHieu());
+        ResultSet rsName = psCheckName.executeQuery();
+        if (rsName.next() && rsName.getInt(1) > 0) {
+            // Tên ThuongHieu đã tồn tại, không thể cập nhật
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên thuộc tính đã tồn tại");
+            return false;
         }
 
-        return check > 0;
+        // Cập nhật thông tin ThuongHieu vào cơ sở dữ liệu
+        psUpdateThuongHieu.setObject(1, thuongHieu.getTenThuongHieu());
+        psUpdateThuongHieu.setObject(2, id);
+        check = psUpdateThuongHieu.executeUpdate();
+
+        // Cập nhật tên ThuongHieu trong bảng ChiTietSanPham
+        if (check > 0) {
+            psUpdateChiTietSanPham.setObject(1, thuongHieu.getTenThuongHieu());
+            psUpdateChiTietSanPham.setObject(2, id);
+            psUpdateChiTietSanPham.executeUpdate();
+        }
+
+        if (check > 0) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Đã xảy ra lỗi khi cập nhật");
     }
+
+    return check > 0;
+}
+
 
     public boolean delete(String id) {
         int check = 0;

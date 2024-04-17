@@ -18,19 +18,18 @@ public class ThongKeRepository {
     public List<ThongKe> getAll() {
         List<ThongKe> lists = new ArrayList<>();
         String sql = """
-                                          SELECT 
-                                              HD.MaHoaDon, 
-                                              HD.NgayTao, 
-                                              SUM(HDCT.SoLuong * HDCT.GiaBan) AS TongTien
-                                          FROM 
-                                              HoaDon HD
-                                          INNER JOIN 
-                                              HoaDonChiTiet HDCT ON HD.ID = HDCT.IDHoaDon
-                                          WHERE HD.TrangThai = N'Đã Thanh Toán'
-                                          GROUP BY 
-                                              HD.MaHoaDon, 
-                                              HD.NgayTao,
-                                              HD.TrangThai
+                     SELECT 
+                         HD.MaHoaDon, 
+                         HD.NgayTao, 
+                         SUM(HDCT.SoLuong * HDCT.GiaBan) AS TongTien
+                     FROM 
+                         HoaDon HD
+                     INNER JOIN 
+                         HoaDonChiTiet HDCT ON HD.ID = HDCT.IDHoaDon
+                         WHERE HD.TrangThai = N'Đã Thanh Toán' AND HD.Deleted = 0
+                     GROUP BY 
+                         HD.MaHoaDon, 
+                         HD.NgayTao
                      """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
