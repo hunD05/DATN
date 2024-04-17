@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
 import raven.cell.TableActionEvent;
+import raven.toast.Notifications;
 
 /**
  *
@@ -173,20 +174,60 @@ public class NhanVien extends javax.swing.JPanel {
         }
     }
 
+    public boolean check() {
+        if (txtTen.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên nhân viên trống");
+            return false;
+        }
+
+        if (txtSDT.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại trống");
+            return false;
+        }
+
+        if (txtCCCD.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "CCCD trống");
+            return false;
+        }
+
+        if (txtEmail.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email trống");
+            return false;
+        }
+
+        Date ngaySinh = jdcNgaySinh.getDate();
+
+        if (ngaySinh == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày sinh trống");
+            return false;
+        }
+
+        if (cbbTrangThai.getSelectedItem() == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Trạng thái làm việc chưa được chọn!");
+            return false;
+        }
+
+        if (cbbChucVu.getSelectedItem() == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Chức vụ chưa được chọn");
+            return false;
+        }
+
+        if (!rdoNam.isSelected() && !rdoNu.isSelected()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Giới tính chưa được chọn!");
+            return false;
+        }
+        return true;
+    }
+
     public nhanVien getFormData() {
 
-        String tenNV = txtTen.getText();
-        String sdt = txtSDT.getText();
-        String cccd = txtCCCD.getText();
-        String email = txtEmail.getText();
-        Date ngaySinh = txtNgaySinh.getDate();
+        String tenNV = txtTen.getText().trim();
+        String sdt = txtSDT.getText().trim();
+        String cccd = txtCCCD.getText().trim();
+        String email = txtEmail.getText().trim();
+        Date ngaySinh = jdcNgaySinh.getDate();
         String trangThai = (String) cbbTrangThai.getSelectedItem();
         boolean gioiTinh = rdoNam.isSelected();
-
-        if (tenNV.isEmpty() || sdt.isEmpty() || cccd.isEmpty() || email.isEmpty() || ngaySinh == null) {
-            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
 
         // Chuyển đổi chuỗi ngày tháng sang java.sql.Date (assumption: yyyy-MM-dd)
         // Tạo đối tượng nhanVien từ dữ liệu nhập vào
@@ -234,7 +275,7 @@ public class NhanVien extends javax.swing.JPanel {
         btnSua = new javax.swing.JButton();
         btnThem = new javax.swing.JButton();
         cbbChucVu = new combobox.Combobox();
-        txtNgaySinh = new com.toedter.calendar.JDateChooser();
+        jdcNgaySinh = new com.toedter.calendar.JDateChooser();
 
         setOpaque(false);
 
@@ -374,7 +415,7 @@ public class NhanVien extends javax.swing.JPanel {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                     .addComponent(txtCCCD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(txtNgaySinh, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)))
+                                                    .addComponent(jdcNgaySinh, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)))
                                             .addGroup(roundPanel2Layout.createSequentialGroup()
                                                 .addGap(57, 57, 57)
                                                 .addComponent(btnSua, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -397,7 +438,7 @@ public class NhanVien extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(rdoNghi))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1298, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE))))
+                        .addGap(0, 18, Short.MAX_VALUE))))
         );
         roundPanel2Layout.setVerticalGroup(
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -415,7 +456,7 @@ public class NhanVien extends javax.swing.JPanel {
                         .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(txtNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jdcNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cbbChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -488,7 +529,7 @@ public class NhanVien extends javax.swing.JPanel {
         txtSDT.setText(NV.getSDT() + "");
         txtCCCD.setText(NV.getCCCD());
         txtEmail.setText(NV.getEmail());
-        txtNgaySinh.setDate(NV.getNgaySinh());
+        jdcNgaySinh.setDate(NV.getNgaySinh());
         cbbTrangThai.setSelectedItem(NV.getTrangThai());
 
         boolean gt;
@@ -506,16 +547,21 @@ public class NhanVien extends javax.swing.JPanel {
         // TODO add your handling code here:
         nhanVien formData = getFormData();
         String tenChucVu = (String) cbbChucVu.getSelectedItem();
-
-        if (formData != null) {
+        String cccd = txtCCCD.getText().trim();
+        if (check()) {
+            if (service.isCCCDExisted(cccd)) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "CCCD đã tồn tại. Vui lòng nhập cccd khác!");
+                return;
+            }
             int option = JOptionPane.showConfirmDialog(btnThem, "Bạn có muốn thêm hay không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-
             if (option == JOptionPane.YES_OPTION) {
                 service.add(formData, tenChucVu);
                 lists = service.getAll();
                 showDataTable(lists);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm thành công nhân viên mới!");
             }
         }
+
 
     }//GEN-LAST:event_btnThemActionPerformed
 
@@ -525,14 +571,21 @@ public class NhanVien extends javax.swing.JPanel {
         String tenChucVu = (String) cbbChucVu.getSelectedItem();
         if (selectedRow != -1) {
             nhanVien formData = getFormData();
-            if (formData != null) {
-                int option = JOptionPane.showConfirmDialog(btnSua, "Bạn có muốn sửa hay không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (check()) {
+                String cccd = txtCCCD.getText().trim();
+                int selectedEmployesId = Integer.valueOf(lists.get(selectedRow).getId());
 
+                if (service.isCCCDExistedForAnotherEmployess(cccd, selectedEmployesId)) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "CCCD đã tồn tại cho một nhân viên khác. Vui lòng nhập số CCCD khác!");
+                    return;
+                }
+                int option = JOptionPane.showConfirmDialog(btnSua, "Bạn có muốn sửa hay không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
                     nhanVienViewModel NV = lists.get(selectedRow);
                     service.Update(formData, NV.getId(), tenChucVu);
                     lists = service.getAll();
                     showDataTable(lists);
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Sửa thông tin nhân viên thành công!");
                 }
             }
         } else {
@@ -552,6 +605,7 @@ public class NhanVien extends javax.swing.JPanel {
                 service.Delete(NV.getId());
                 lists = service.getAll();
                 showDataTable(lists);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã xóa nhân viên!");
             }
         } else {
             JOptionPane.showMessageDialog(btnXoa, "Vui lòng chọn một dòng để xóa.", "Lưu ý", JOptionPane.WARNING_MESSAGE);
@@ -578,6 +632,7 @@ public class NhanVien extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
+    private com.toedter.calendar.JDateChooser jdcNgaySinh;
     private javax.swing.JRadioButton rdoAll;
     private javax.swing.JRadioButton rdoDang;
     private javax.swing.JRadioButton rdoNam;
@@ -590,7 +645,6 @@ public class NhanVien extends javax.swing.JPanel {
     private javax.swing.JTextField txtCreateby;
     private javax.swing.JTextField txtCreatedat;
     private textfield.TextField txtEmail;
-    private com.toedter.calendar.JDateChooser txtNgaySinh;
     private textfield.TextField txtSDT;
     private textfield.TextField txtTen;
     private textfield.TextField txtTimKiem;

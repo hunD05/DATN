@@ -59,8 +59,6 @@ public class ThemKhachHang extends javax.swing.JPanel {
     public String getDiaChiChon() {
         return diaChiChon;
     }
-    
-    
 
     /**
      * Creates new form ThemKhachHang
@@ -88,8 +86,8 @@ public class ThemKhachHang extends javax.swing.JPanel {
             }
         });
     }
-    
-    public void searchKH(){
+
+    public void searchKH() {
         listKH = srKH.Tim(txtSearch.getText().trim());
         showDataTable(listKH);
     }
@@ -368,6 +366,11 @@ public class ThemKhachHang extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         if (check()) {
+            String sdt = txtSDT.getText().trim();
+            if (srKH.isSDTExisted(sdt)) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại. Vui lòng nhập số khác!");
+                return;
+            }
             int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm?", "Xác nhận", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 srKH.Add(getFormData());

@@ -38,4 +38,12 @@ public class nhanVienService {
     public List<nhanVienViewModel> trangThai(String tuKhoa) {
          return rep.getCbb(tuKhoa);
      }
+    
+    public boolean isCCCDExisted(String cccd){
+        return rep.isCCCDExisted(cccd);
+    }
+    
+    public boolean isCCCDExistedForAnotherEmployess(String cccd, int currentEmployesId){
+        return rep.isCCCDExistedForAnotherEmployess(cccd, currentEmployesId);
+    }
 }

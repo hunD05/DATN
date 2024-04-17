@@ -28,11 +28,11 @@ public class nhanVienRepository {
                                       dbo.ChucVu ON dbo.NhanVien.IDChucVu = dbo.ChucVu.ID
                     				  where dbo.NhanVien.Deleted = 0 order by dbo.NhanVien.Created_at DESC
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 nhanVienViewModel NV = new nhanVienViewModel();
-                
+
                 NV.setId(rs.getString(1));
                 NV.setMaNV(rs.getString(2));
                 NV.setTenNV(rs.getString(3));
@@ -51,8 +51,8 @@ public class nhanVienRepository {
         }
         return lists;
     }
-    
-    public List<nhanVienViewModel> search( String ten) {
+
+    public List<nhanVienViewModel> search(String ten) {
         List<nhanVienViewModel> lists = new ArrayList<>();
         String sql = """
                     SELECT dbo.NhanVien.ID, dbo.NhanVien.MaNhanVien, dbo.NhanVien.TenNhanVien, dbo.NhanVien.GioiTinh, dbo.NhanVien.SoDienThoai, dbo.NhanVien.CCCD, dbo.ChucVu.TenChucVu, dbo.NhanVien.Email, dbo.NhanVien.NgaySinh, 
@@ -61,7 +61,7 @@ public class nhanVienRepository {
                                                                                                  dbo.ChucVu ON dbo.NhanVien.IDChucVu = dbo.ChucVu.ID
                                         where dbo.NhanVien.TenNhanVien like ? OR dbo.NhanVien.MaNhanVien like ? OR dbo.NhanVien.Email like ?
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, '%' + ten + '%');
             ps.setObject(2, '%' + ten + '%');
             ps.setObject(3, '%' + ten + '%');
@@ -103,7 +103,7 @@ public class nhanVienRepository {
                          VALUES
                                (?,?,?,?,@idcv,?,?,?)
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, tenChucVu);
             ps.setObject(2, NV.getTenNV());
             ps.setObject(3, NV.isGioiTinh());
@@ -135,7 +135,7 @@ public class nhanVienRepository {
                           ,[TrangThai] = ?
                      WHERE [ID] = ?
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, tenChucVu);
             ps.setObject(2, NV.getTenNV());
             ps.setObject(3, NV.isGioiTinh());
@@ -159,7 +159,7 @@ public class nhanVienRepository {
                        SET Deleted = 1
                      WHERE ID = ?
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, ma);
             check = ps.executeUpdate();
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class nhanVienRepository {
         }
         return check > 0;
     }
-    
+
     public List<nhanVienViewModel> getCbb(String tuKhoa) {
         List<nhanVienViewModel> lists = new ArrayList<>();
         String sql = """
@@ -177,7 +177,7 @@ public class nhanVienRepository {
                                                                                                  dbo.ChucVu ON dbo.NhanVien.IDChucVu = dbo.ChucVu.ID
                                         where dbo.NhanVien.TrangThai LIKE ?
                      """;
-        try ( Connection ct = DBConnect.getConnection();  PreparedStatement ps = ct.prepareStatement(sql)) {
+        try (Connection ct = DBConnect.getConnection(); PreparedStatement ps = ct.prepareStatement(sql)) {
             ps.setObject(1, '%' + tuKhoa + '%');
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -198,5 +198,36 @@ public class nhanVienRepository {
             e.printStackTrace();
         }
         return lists;
+    }
+
+    public boolean isCCCDExisted(String cccd) {
+        String sql = "SELECT COUNT(*) FROM dbo.NhanVien WHERE CCCD = ?";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cccd);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isCCCDExistedForAnotherEmployess(String cccd, int currentEmployesId) {
+        String sql = "SELECT COUNT(*) FROM dbo.NhanVien WHERE CCCD = ? AND ID != ?";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cccd);
+            ps.setInt(2, currentEmployesId); // Loại trừ khách hàng đang được sửa
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

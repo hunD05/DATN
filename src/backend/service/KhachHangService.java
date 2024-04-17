@@ -46,6 +46,10 @@ public class KhachHangService {
         return repo.isSDTExisted(sdt);
     }
     
+    public boolean isSDTExistedForAnotherCustomer(String sdt, int currentCustomerId){
+        return repo.isSDTExistedForAnotherCustomer(sdt, currentCustomerId);
+    }
+    
 //    public List<KhachHangEntity> getMT(int idKH){
 //        return repo.getMT(idKH);
 //    }

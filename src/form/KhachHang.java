@@ -339,6 +339,7 @@ public class KhachHang extends javax.swing.JPanel {
             sv.Add(getFormData());
             list = sv.getAll();
             showDataTable(list);
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");
         }
     }//GEN-LAST:event_btnThemActionPerformed
 
@@ -353,12 +354,13 @@ public class KhachHang extends javax.swing.JPanel {
             return;
         }
 
-//        String sdt = txtSDT.getText().trim();
-//
-//        if (sv.isSDTExisted(sdt)) {
-//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại. Vui lòng nhập số khác!");
-//            return;
-//        }
+        String sdt = txtSDT.getText().trim();
+        int selectedCustomerId = Integer.valueOf(list.get(row).getId());
+
+        if (sv.isSDTExistedForAnotherCustomer(sdt, selectedCustomerId)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại cho một khách hàng khác. Vui lòng nhập số khác!");
+            return;
+        }
 
         int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn sửa thông tin khách hàng này?", "Xác nhận sửa", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
@@ -366,8 +368,8 @@ public class KhachHang extends javax.swing.JPanel {
             sv.Update(getFormData(), kh.getId());
             list = sv.getAll();
             showDataTable(list);
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã sửa khách hàng thành công!");
         }
-
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
@@ -383,6 +385,7 @@ public class KhachHang extends javax.swing.JPanel {
             sv.Delete(kh.getId());
             list = sv.getAll();
             showDataTable(list);
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã xóa khách hàng thành công!");
         }
     }//GEN-LAST:event_btnXoaActionPerformed
 

@@ -106,7 +106,7 @@
                                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                                           <Component id="txtCCCD" max="32767" attributes="0"/>
-                                                          <Component id="txtNgaySinh" pref="426" max="32767" attributes="0"/>
+                                                          <Component id="jdcNgaySinh" pref="426" max="32767" attributes="0"/>
                                                       </Group>
                                                   </Group>
                                                   <Group type="102" alignment="0" attributes="0">
@@ -141,7 +141,7 @@
                                   </Group>
                                   <Component id="jScrollPane2" alignment="0" min="-2" pref="1298" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="18" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -166,7 +166,7 @@
                                   <Component id="txtEmail" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="txtNgaySinh" min="-2" pref="46" max="-2" attributes="0"/>
+                          <Component id="jdcNgaySinh" min="-2" pref="46" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="cbbChucVu" min="-2" max="-2" attributes="0"/>
@@ -473,7 +473,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbbChucVuActionPerformed"/>
               </Events>
             </Component>
-            <Component class="com.toedter.calendar.JDateChooser" name="txtNgaySinh">
+            <Component class="com.toedter.calendar.JDateChooser" name="jdcNgaySinh">
             </Component>
           </SubComponents>
         </Container>

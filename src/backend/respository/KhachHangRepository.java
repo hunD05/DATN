@@ -82,7 +82,7 @@ public class KhachHangRepository {
         int check = 0;
         String sql = """
                         UPDATE [dbo].[KhachHang]
-                      SET [[TenKhachHang] = ?
+                      SET [TenKhachHang] = ?
                          ,[GioiTinh] = ?
                          ,[SoDienThoai] = ?
                          ,[DiaChi] = ?
@@ -161,6 +161,22 @@ public class KhachHangRepository {
         String sql = "SELECT COUNT(*) FROM dbo.KhachHang WHERE SoDienThoai = ?";
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, sdt);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isSDTExistedForAnotherCustomer(String sdt, int currentCustomerId) {
+        String sql = "SELECT COUNT(*) FROM dbo.KhachHang WHERE SoDienThoai = ? AND ID != ?";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, sdt);
+            ps.setInt(2, currentCustomerId); // Loại trừ khách hàng đang được sửa
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt(1);
