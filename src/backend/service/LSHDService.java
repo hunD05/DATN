@@ -23,4 +23,8 @@ public class LSHDService {
     public boolean addLSHD(String hanhDong){
         return repo.addLSHD(hanhDong);
     }
+    
+    public boolean addLSHD2(int idHD, String hanhDong){
+        return repo.addLSHD2(idHD, hanhDong);
+    }
 }

@@ -65,4 +65,26 @@ public class LSHDViewModelRepo {
         }
         return check > 0;
     }
+    
+        public boolean addLSHD2(int idHD, String hanhDong){
+        int check = 0;
+        String sql = """
+                     INSERT INTO [dbo].[LichSuHoaDon]
+                                ([IDHoaDon]
+                                ,[IDNhanVien]
+                                ,[Gio]
+                                ,[HanhDong]
+                                )
+                          VALUES
+                                (?,1,CURRENT_TIMESTAMP,?)
+                     """;
+        try(Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, idHD);
+            ps.setObject(2,hanhDong);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
 }

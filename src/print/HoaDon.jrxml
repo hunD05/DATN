@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5fede4ed-1d83-471c-9272-dfe0ee86b093">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.9487171000000014"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="117"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -149,7 +149,7 @@
 				<imageExpression><![CDATA[$P{qrcode}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="21" y="214" width="276" height="20" uuid="8a823359-4377-4789-b14a-16d3457f8ee7"/>
+				<reportElement x="21" y="214" width="276" height="20" forecolor="#000000" uuid="8a823359-4377-4789-b14a-16d3457f8ee7"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -286,19 +286,46 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="171" splitType="Stretch">
 			<staticText>
-				<reportElement x="21" y="0" width="100" height="20" uuid="ef682e96-a7ff-4393-99b3-10fbdcea8068"/>
+				<reportElement x="21" y="0" width="100" height="20" forecolor="#000000" uuid="ef682e96-a7ff-4393-99b3-10fbdcea8068"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tổng hóa đơn:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="121" y="0" width="100" height="20" uuid="a7b10c4b-1f80-431e-8a6d-49ec95029a6b"/>
-				<textElement verticalAlignment="Middle"/>
+				<reportElement x="121" y="0" width="100" height="20" forecolor="#000000" uuid="a7b10c4b-1f80-431e-8a6d-49ec95029a6b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{tongtien}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="47" width="555" height="28" uuid="4a0bbcc0-6cfd-4a50-8e01-ea78006f93f6"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[[1] Hãy kiểm tra kỹ thông tin trên hóa đơn trước khi rời khỏi cửa hàng. Nếu có bất kỳ sai sót nào, vui lòng thông báo cho nhân viên của chúng tôi để được hỗ trợ.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="75" width="555" height="17" uuid="d062dbb2-0e2f-4afd-beb8-b1d5d70a2e5b"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[[2] Nếu gặp bất kỳ vấn đề gì sau khi mua hàng, vui lòng liên hệ với chúng tôi qua số điện thoại hỗ trợ: 0345.512.856]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="92" width="555" height="20" uuid="8e8d639a-ec03-4cb1-ba8f-9e4661c6b819"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[[3] Xin vui lòng không chia sẻ thông tin thanh toán và thông tin cá nhân với bất kỳ ai trừ nhân viên chính thức của cửa hàng.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="112" width="555" height="20" uuid="bc623e65-fd66-44e7-b2d8-b6f0c8fdbe80"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[[4] Quý khách có thể liên hệ tư vấn và đặt hàng qua số điện thoại: 0345.512.856]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="132" width="555" height="27" uuid="b6f71d1d-2e9c-42e0-b85c-2b3ea66f691b"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Cảm ơn quý khách đã lựa chọn mua hàng tại cửa hàng chúng tôi. Chúng tôi cam kết mang đến cho bạn sản phẩm chất lượng và dịch vụ tốt nhất!]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>

@@ -820,7 +820,9 @@ public class HoaDon extends javax.swing.JPanel {
         if (result == JOptionPane.YES_OPTION) {
             printHD();
             String hanhDong = "In hóa đơn";
-            srLSHD.addLSHD(hanhDong);
+            srLSHD.addLSHD2(Integer.valueOf(selectedInvoiceId), hanhDong);
+            listLSHD = srLSHD.getAll(Integer.valueOf(selectedInvoiceId));
+            showDataTable3(listLSHD);
         }
     }//GEN-LAST:event_btnPrintActionPerformed
 
