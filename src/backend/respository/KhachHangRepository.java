@@ -157,6 +157,21 @@ public class KhachHangRepository {
         return listkhachhang;
     }
 
+    public boolean isSDTExisted(String sdt) {
+        String sql = "SELECT COUNT(*) FROM dbo.KhachHang WHERE SoDienThoai = ?";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, sdt);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         List<KhachHangEntity> khachhang = new KhachHangRepository().getAll();
         for (KhachHangEntity khachHangEntity : khachhang) {

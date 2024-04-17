@@ -15,35 +15,38 @@ import java.util.List;
  * @author leanb
  */
 public class SanPhamService {
-    
+
     SanPhamRespository spr = new SanPhamRespository();
-    public List<SanPhamViewModel> getAll(){
+
+    public List<SanPhamViewModel> getAll() {
         return spr.getAll();
     }
-    
-    public boolean add(SanPham sanPham){
+
+    public boolean add(SanPham sanPham) {
         return spr.add(sanPham);
     }
-    
-    public boolean delete(String maSP){
+
+    public boolean delete(String maSP) {
         return spr.delete(maSP);
     }
-    
-    public boolean update(SanPham sanPham,String ID){
+
+    public boolean update(SanPham sanPham, String ID) {
         return spr.update(sanPham, ID);
     }
+
     public List<SanPhamViewModel> search(String keyword) {
         return spr.search(keyword);
     }
-    
+
     public boolean checkMaSanPhamExists(String maSP) {
         return spr.checkMaSanPhamExists(maSP);
     }
-    
+
     public List<SanPhamViewModel> searchByStatus(String status) {
         return spr.searchByStatus(status);
     }
-public boolean isTenSanPhamExisted(String tenSanPham) {
+
+    public boolean isTenSanPhamExisted(String tenSanPham) {
         return spr.isTenSanPhamExisted(tenSanPham);
     }
 }

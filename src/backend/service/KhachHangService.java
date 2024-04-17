@@ -42,6 +42,10 @@ public class KhachHangService {
         return repo.Tim(ten);
     }
     
+    public boolean isSDTExisted(String sdt){
+        return repo.isSDTExisted(sdt);
+    }
+    
 //    public List<KhachHangEntity> getMT(int idKH){
 //        return repo.getMT(idKH);
 //    }

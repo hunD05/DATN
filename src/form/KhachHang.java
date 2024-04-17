@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
 import raven.cell.TableActionEvent;
+import raven.toast.Notifications;
 
 /**
  *
@@ -98,11 +99,10 @@ public class KhachHang extends javax.swing.JPanel {
 
     private boolean isFormDataValid() {
         // Kiểm tra trống các trường dữ liệu
-        if (txtMa.getText().isEmpty() || txtTen.getText().isEmpty() || txtDiaChi.getText().isEmpty() || txtSDT.getText().isEmpty()) {
+        if (txtTen.getText().trim().isEmpty() || txtDiaChi.getText().trim().isEmpty() || txtSDT.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
         return true;
     }
 
@@ -119,7 +119,6 @@ public class KhachHang extends javax.swing.JPanel {
         roundPanel1 = new swing.RoundPanel();
         jLabel1 = new javax.swing.JLabel();
         roundPanel4 = new swing.RoundPanel();
-        txtMa = new textfield.TextField();
         txtSDT = new textfield.TextField();
         txtTen = new textfield.TextField();
         txtDiaChi = new textfield.TextField();
@@ -144,9 +143,6 @@ public class KhachHang extends javax.swing.JPanel {
         jLabel1.setText("Khách hàng");
 
         roundPanel4.setLayout(new java.awt.GridLayout(2, 10, 10, 10));
-
-        txtMa.setLabelText("Mã khách hàng");
-        roundPanel4.add(txtMa);
 
         txtSDT.setLabelText("SDT");
         roundPanel4.add(txtSDT);
@@ -214,7 +210,7 @@ public class KhachHang extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "STT", "Ma khach hang", "Ten khach hang", "Gioi tinh", "So dien thoai", "Dia chi", "Hanh dong"
+                "STT", "Mã KH", "Tên KH", "Giới tính", "SDT", "Địa chỉ", "Hành động"
             }
         ));
         tblBang.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -223,6 +219,9 @@ public class KhachHang extends javax.swing.JPanel {
             }
         });
         jScrollPane2.setViewportView(tblBang);
+        if (tblBang.getColumnModel().getColumnCount() > 0) {
+            tblBang.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
         javax.swing.GroupLayout roundPanel8Layout = new javax.swing.GroupLayout(roundPanel8);
         roundPanel8.setLayout(roundPanel8Layout);
@@ -328,6 +327,13 @@ public class KhachHang extends javax.swing.JPanel {
             return;
         }
 
+        String sdt = txtSDT.getText().trim();
+
+        if (sv.isSDTExisted(sdt)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại. Vui lòng nhập số khác!");
+            return;
+        }
+
         int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn thêm khách hàng này?", "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             sv.Add(getFormData());
@@ -343,9 +349,16 @@ public class KhachHang extends javax.swing.JPanel {
 
         int row = tblBang.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng để sửa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một sản phẩm");
             return;
         }
+
+//        String sdt = txtSDT.getText().trim();
+//
+//        if (sv.isSDTExisted(sdt)) {
+//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại. Vui lòng nhập số khác!");
+//            return;
+//        }
 
         int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn sửa thông tin khách hàng này?", "Xác nhận sửa", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
@@ -377,9 +390,8 @@ public class KhachHang extends javax.swing.JPanel {
         // TODO add your handling code here:
         int row = tblBang.getSelectedRow();
         KhachHangEntity kh = list.get(row);
-        txtMa.setText(kh.getMaKhachHang());
         txtTen.setText(kh.getTenKhachHang());
-        txtDiaChi.setText(kh.getDiaChi()+ "");
+        txtDiaChi.setText(kh.getDiaChi() + "");
         txtSDT.setText(kh.getSoDienThoai());
         if (kh.isGioiTinh()) {
             rdoNam.setSelected(true);
@@ -412,7 +424,6 @@ public class KhachHang extends javax.swing.JPanel {
     private swing.RoundPanel roundPanel8;
     private javax.swing.JTable tblBang;
     private textfield.TextField txtDiaChi;
-    private textfield.TextField txtMa;
     private textfield.TextField txtSDT;
     private textfield.TextField txtTen;
     private textfield.TextField txttim;
