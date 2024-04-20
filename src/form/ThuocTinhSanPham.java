@@ -317,10 +317,6 @@ public class ThuocTinhSanPham extends javax.swing.JPanel {
 
             }
 
-            @Override
-            public void onView(int row) {
-                System.out.println("View row : " + row);
-            }
         };
         tblThuocTinh.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         tblThuocTinh.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));

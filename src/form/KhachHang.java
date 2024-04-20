@@ -37,8 +37,20 @@ public class KhachHang extends javax.swing.JPanel {
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
+                if (!isFormDataValid()) {
+                    return;
+                }
+
                 if (row == -1) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng để sửa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một sản phẩm");
+                    return;
+                }
+
+                String sdt = txtSDT.getText().trim();
+                int selectedCustomerId = Integer.valueOf(list.get(row).getId());
+
+                if (sv.isSDTExistedForAnotherCustomer(sdt, selectedCustomerId)) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại cho một khách hàng khác. Vui lòng nhập số khác!");
                     return;
                 }
 
@@ -48,7 +60,9 @@ public class KhachHang extends javax.swing.JPanel {
                     sv.Update(getFormData(), kh.getId());
                     list = sv.getAll();
                     showDataTable(list);
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã sửa khách hàng thành công!");
                 }
+                System.out.println(row);
             }
 
             @Override
@@ -57,6 +71,7 @@ public class KhachHang extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng để xóa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                System.out.println(row);
 
                 int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa khách hàng này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -65,11 +80,6 @@ public class KhachHang extends javax.swing.JPanel {
                     list = sv.getAll();
                     showDataTable(list);
                 }
-            }
-
-            @Override
-            public void onView(int row) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
 
         };
@@ -339,7 +349,8 @@ public class KhachHang extends javax.swing.JPanel {
             sv.Add(getFormData());
             list = sv.getAll();
             showDataTable(list);
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thêm khách hàng mới");
         }
     }//GEN-LAST:event_btnThemActionPerformed
 

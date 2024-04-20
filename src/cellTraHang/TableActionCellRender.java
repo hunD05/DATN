@@ -1,6 +1,8 @@
-package raven.cell;
+package cellTraHang;
 
-import raven.cell.PanelAction;
+import cellHD.*;
+import raven.cell.*;
+import cellTraHang.PanelAction;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;

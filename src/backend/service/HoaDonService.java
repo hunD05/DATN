@@ -7,7 +7,6 @@ package backend.service;
 import backend.respository.HDRepository;
 import backend.respository.HDViewModelRepo;
 import backend.viewmodel.HoaDonViewModel;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -49,8 +48,8 @@ public class HoaDonService {
         return repoHD.updateHD(idHD, maNV, soDT, maGG);
     }
     
-    public boolean giaoHang(int idHD, String maNV, String soDT, String maGG, Date ngayNhan){
-        return repoHD.giaoHang(idHD, maNV, soDT, maGG, ngayNhan);
+    public boolean giaoHang(int idHD, String maNV, String soDT, String maGG, Date ngayNhan, String trangThai){
+        return repoHD.giaoHang(idHD, maNV, soDT, maGG, ngayNhan, trangThai);
     }
     
    public boolean updateHDKH(int idHD, String soDT, String diaChi, String tenKH){
@@ -63,5 +62,17 @@ public class HoaDonService {
 
    public boolean updateHDDG(int idHD){
        return repoHD.updateHDDG(idHD);
+   }
+   
+   public boolean huyGiao(String trangThai, int idHD){
+       return repoHD.huyGiao(trangThai, idHD);
+   }
+   
+   public boolean traHang(int idHD){
+       return repoHD.traHang(idHD);
+   }
+   
+   public boolean capNhatNgaythanhToan(Date ngayNhan, int idHD){
+       return repoHD.capNhatNgaythanhToan(ngayNhan, idHD);
    }
 }

@@ -27,4 +27,8 @@ public class LSHDService {
     public boolean addLSHD2(int idHD, String hanhDong){
         return repo.addLSHD2(idHD, hanhDong);
     }
+    
+    public boolean isInvoiceIdValid(int invoiceId){
+        return repo.isInvoiceIdValid(invoiceId);
+    }
 }

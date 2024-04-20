@@ -96,7 +96,7 @@ public class HDRepository {
         return check > 0;
     }
 
-    public boolean giaoHang(int idHD, String maNV, String soDT, String maGG, Date ngayNhan) {
+    public boolean giaoHang(int idHD, String maNV, String soDT, String maGG, Date ngayNhan, String trangThai) {
         int check = 0;
         String sql = """
                      UPDATE [dbo].[HoaDon]
@@ -106,7 +106,7 @@ public class HDRepository {
                            ,[IDPhieuGG] = (SElECT TOP 1 ID FROM PhieuGiamGia WHERE TenGiamGia LIKE ?)
                            ,[DiaChi] = (SElECT TOP 1 DiaChi FROM KhachHang WHERE SoDienThoai LIKE ?)
                            ,[SoDienThoai] = (SElECT TOP 1 SoDienThoai FROM KhachHang WHERE SoDienThoai LIKE ?)
-                     	  ,[TrangThai] = N'Đang Giao'
+                     	  ,[TrangThai] = ?
                      	  ,[Updated_at] = CURRENT_TIMESTAMP
                       WHERE ID = ?
                      """;
@@ -117,7 +117,8 @@ public class HDRepository {
             ps.setObject(4, maGG);
             ps.setObject(5, soDT);
             ps.setObject(6, soDT);
-            ps.setObject(7, idHD);
+            ps.setObject(7, trangThai);
+            ps.setObject(8, idHD);
             check = ps.executeUpdate();
         } catch (Exception e) {
 
@@ -158,6 +159,60 @@ public class HDRepository {
              """;
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
+    public boolean huyGiao(String trangThai, int idHD) {
+        int check = 0;
+        String sql = """
+             UPDATE [dbo].[HoaDon]
+             SET [TrangThai] = ?
+                 ,[Updated_at] = CURRENT_TIMESTAMP
+             WHERE ID = ?
+             """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, trangThai);
+            ps.setObject(2, idHD);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+
+    public boolean traHang(int idHD) {
+        int check = 0;
+        String sql = """
+             UPDATE [dbo].[HoaDon]
+             SET  Deleted = 1
+                 ,TrangThai = N'Hủy Giao'
+                 ,[Updated_at] = CURRENT_TIMESTAMP
+             WHERE ID = ?
+             """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, idHD);
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
+    }
+    
+    public boolean capNhatNgaythanhToan(Date ngayNhan, int idHD) {
+        int check = 0;
+        String sql = """
+             UPDATE [dbo].[HoaDon]
+             SET  NgayThanhToan = ?
+                 ,[Updated_at] = CURRENT_TIMESTAMP
+             WHERE ID = ?
+             """;
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, ngayNhan);
+            ps.setObject(2, idHD);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

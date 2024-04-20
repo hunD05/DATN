@@ -25,7 +25,7 @@ public class HDTKRepo {
                  FROM 
                      HoaDon where deleted = 0
                  """;
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 HoaDon hoaDon = new HoaDon();
@@ -59,21 +59,25 @@ public class HDTKRepo {
     public int countPaidHoaDon() {
         return countHoaDonByTrangThai("Đã Thanh Toán");
     }
-    
+
     public int countUnppaidHoaDonCG() {
-        return countHoaDonByTrangThai("Chờ Giao");
+        return countHoaDonByTrangThai("Chờ Giao%");
     }
-    
+
     public int countUnpaidHoaDonDG() {
-        return countHoaDonByTrangThai("Đang Giao");
+        return countHoaDonByTrangThai("Đang Giao%");
+    }
+
+    public int countUnpaidHoaDonHG() {
+        return countHoaDonByTrangThai("Hủy Giao");
     }
 
     private int countHoaDonByTrangThai(String trangThai) {
         int count = 0;
         String sql = "SELECT COUNT(*) FROM HoaDon WHERE TrangThai = ?";
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, trangThai);
-            try ( ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     count = rs.getInt(1);
                 }
@@ -87,7 +91,7 @@ public class HDTKRepo {
     public int countUniqueKhachHangInHoaDon() {
         int count = 0;
         String sql = "SELECT COUNT(DISTINCT IDKhachHang) FROM HoaDon WHERE IDKhachHang IS NOT NULL";
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 count = rs.getInt(1);
             }

@@ -5,6 +5,7 @@
 package form;
 
 import backend.entity.DanhMuc;
+import backend.entity.HinhThucThanhToan;
 import backend.entity.KhachHangEntity;
 import backend.entity.NSX;
 import backend.entity.PhuongThucThanhToan;
@@ -23,6 +24,7 @@ import backend.service.NSXService;
 import backend.service.PhieuGiamGiaService;
 import backend.service.PhuongThucThanhToanService;
 import backend.service.QLHDService;
+import backend.service.ThanhToanVMService;
 import backend.service.XuatXuService;
 import backend.viewmodel.BHHDViewModel;
 import backend.viewmodel.BHSPViewModel;
@@ -30,6 +32,7 @@ import backend.viewmodel.HDCTViewModel;
 import backend.viewmodel.HoaDonViewModel;
 import backend.viewmodel.PhieuGiamGiaViewModel;
 import backend.viewmodel.SanPhamChiTietViewModel;
+import backend.viewmodel.ThanhToanViewModel;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -59,13 +62,11 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import print.ReportManager;
 import print.model.FieldReportPayment;
 import print.model.ParameterReportPayment;
@@ -131,6 +132,9 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     private List<HoaDonViewModel> listHDVM = new ArrayList<>();
 
     private HinhThucThanhToanService srHTTT = new HinhThucThanhToanService();
+
+    private List<ThanhToanViewModel> listTTVM = new ArrayList<>();
+    private ThanhToanVMService srTTVM = new ThanhToanVMService();
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
 
@@ -482,94 +486,105 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }
 
     public void showDetailHD(int index) {
-        LocalDateTime now = LocalDateTime.now();
-        if (index >= 0) { // Kiểm tra index hợp lệ
-            BHHDViewModel hd1 = listHD.get(index);
+        String trangThai = listHD.get(index).getTrangThai();
+        if (trangThai.equals("Chưa Thanh Toán")) {
+            LocalDateTime now = LocalDateTime.now();
+            if (index >= 0) { // Kiểm tra index hợp lệ
+                BHHDViewModel hd1 = listHD.get(index);
 
-            // Truy xuất thông tin khách hàng từ hóa đơn
-            if (hd1.getSoDT() != null && hd1.getTenKH() != null) {
-                txtSoDT.setText(hd1.getSoDT());
-                txtTenKH.setText(hd1.getTenKH());
-                txtTenKH2.setText(hd1.getTenKH());
-            } else {
-                txtSoDT.setText("");
-                txtTenKH.setText("Khách lẻ");
-                txtTenKH2.setText("Khách lẻ");
-            }
+                // Truy xuất thông tin khách hàng từ hóa đơn
+                if (hd1.getSoDT() != null && hd1.getTenKH() != null) {
+                    txtSoDT.setText(hd1.getSoDT());
+                    txtTenKH.setText(hd1.getTenKH());
+                    txtTenKH2.setText(hd1.getTenKH());
+                } else {
+                    txtSoDT.setText("");
+                    txtTenKH.setText("Khách lẻ");
+                    txtTenKH2.setText("Khách lẻ");
+                }
 
-            // Hiển thị thông tin hóa đơn
-            txtMaHD.setText(hd1.getMaHD());
-            txtNTao.setText(hd1.getNgayTao().format(formatter));
-            txtNTToan.setText(now.format(formatter));
-            txtMaNV.setText(hd1.getMaNV());
-            txtTongTien.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
-            lbTong.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
-            // ComboBox của Phương thức thanh toán
-            Object selectedTT = hd1.getPhuongThucThanhToan() != null ? hd1.getPhuongThucThanhToan().toString() : null;
-            cbbTT.setSelectedItem(selectedTT);
+                // Hiển thị thông tin hóa đơn
+                txtMaHD.setText(hd1.getMaHD());
+                txtNTao.setText(hd1.getNgayTao().format(formatter));
+                txtNTToan.setText(now.format(formatter));
+                txtMaNV.setText(hd1.getMaNV());
+                txtTongTien.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
+                lbTong.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
+                // ComboBox của Phương thức thanh toán
+                Object selectedTT = hd1.getPhuongThucThanhToan() != null ? hd1.getPhuongThucThanhToan().toString() : null;
+                cbbTT.setSelectedItem(selectedTT);
 
 // Hiển thị phiếu giảm giá hợp lệ nếu cbbPGG chưa được chọn
-            if (!isCbbPGGSelected1 && cbbPGG.getSelectedItem() == null) {
-                double tongTien = hd1.getTongTien();
-                hienThiPhieuGiamGiaHopLe(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
-            }
+                if (!isCbbPGGSelected1 && cbbPGG.getSelectedItem() == null) {
+                    double tongTien = hd1.getTongTien();
+                    hienThiPhieuGiamGiaHopLe(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
+                }
 
+            } else {
+                // Reset các trường thông tin nếu index không hợp lệ
+                txtSoDT.setText("");
+                txtTenKH.setText("");
+                txtTenKH2.setText("");
+                cbbPGG.setSelectedItem(null);
+                txtMaHD.setText("");
+                txtNTao.setText("");
+                txtNTToan.setText("");
+                txtMaNV.setText("");
+                txtTongTien.setText("");
+                lbTong.setText("");
+                cbbTT.setSelectedIndex(0);
+            }
         } else {
-            // Reset các trường thông tin nếu index không hợp lệ
-            txtSoDT.setText("");
-            txtTenKH.setText("");
-            txtTenKH2.setText("");
-            cbbPGG.setSelectedItem(null);
-            txtMaHD.setText("");
-            txtNTao.setText("");
-            txtNTToan.setText("");
-            txtMaNV.setText("");
-            txtTongTien.setText("");
-            lbTong.setText("");
-            cbbTT.setSelectedIndex(0);
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Đặt Hàng để hiển thị thông tin!");
         }
+
     }
 
     public void showDetailHDGH(int index) {
-        if (index >= 0) { // Kiểm tra index hợp lệ
-            BHHDViewModel hd1 = listHD.get(index);
+        String trangThai = listHD.get(index).getTrangThai();
+        if (trangThai.equals("Chờ Giao") || trangThai.equals("Chờ Giao 2") || trangThai.equals("Chờ Giao 3")) {
+            if (index >= 0) { // Kiểm tra index hợp lệ
+                BHHDViewModel hd1 = listHD.get(index);
 
-            // Truy xuất thông tin khách hàng từ hóa đơn
-            if (hd1.getSoDT() != null && hd1.getTenKH() != null && hd1.getDiaChi() != null) {
-                txtSoDTDH.setText(hd1.getSoDT());
-                txtTenKHDH.setText(hd1.getTenKH());
-                txtDiaChi.setText(hd1.getDiaChi());
-            } else {
-                txtSoDTDH.setText("");
-                txtTenKHDH.setText("");
-                txtDiaChi.setText("");
-            }
+                // Truy xuất thông tin khách hàng từ hóa đơn
+                if (hd1.getSoDT() != null && hd1.getTenKH() != null && hd1.getDiaChi() != null) {
+                    txtSoDTDH.setText(hd1.getSoDT());
+                    txtTenKHDH.setText(hd1.getTenKH());
+                    txtDiaChi.setText(hd1.getDiaChi());
+                } else {
+                    txtSoDTDH.setText("");
+                    txtTenKHDH.setText("");
+                    txtDiaChi.setText("");
+                }
 
-            // Hiển thị thông tin hóa đơn
-            txtMaHDDH.setText(hd1.getMaHD());
-            txtMaNVDH.setText(hd1.getMaNV());
-            txtTongTienDH.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
-            lbTongDH.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
-            // ComboBox của Phương thức thanh toán
-            Object selectedTT = hd1.getPhuongThucThanhToan() != null ? hd1.getPhuongThucThanhToan().toString() : null;
-            cbbTTDH.setSelectedItem(selectedTT);
+                // Hiển thị thông tin hóa đơn
+                txtMaHDDH.setText(hd1.getMaHD());
+                txtMaNVDH.setText(hd1.getMaNV());
+                txtTongTienDH.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
+                lbTongDH.setText(String.valueOf(currencyFormat.format(hd1.getTongTien())));
+                // ComboBox của Phương thức thanh toán
+                Object selectedTT = hd1.getPhuongThucThanhToan() != null ? hd1.getPhuongThucThanhToan().toString() : null;
+                cbbTTDH.setSelectedItem(selectedTT);
 
 // Hiển thị phiếu giảm giá hợp lệ nếu cbbPGG chưa được chọn
-            if (!isCbbPGGSelected2 && cbbPGG2.getSelectedItem() == null) {
-                double tongTien = hd1.getTongTien();
-                hienThiPhieuGiamGiaHopLe2(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
-            }
+                if (!isCbbPGGSelected2 && cbbPGG2.getSelectedItem() == null) {
+                    double tongTien = hd1.getTongTien();
+                    hienThiPhieuGiamGiaHopLe2(tongTien); // Hiển thị các phiếu giảm giá hợp lệ cho hóa đơn
+                }
 
+            } else {
+                // Reset các trường thông tin nếu index không hợp lệ
+                txtSoDTDH.setText("");
+                txtTenKHDH.setText("");
+                cbbPGG2.setSelectedItem(null);
+                txtMaHDDH.setText("");
+                txtMaNVDH.setText("");
+                txtTongTienDH.setText("");
+                lbTongDH.setText("");
+                cbbTTDH.setSelectedIndex(0);
+            }
         } else {
-            // Reset các trường thông tin nếu index không hợp lệ
-            txtSoDTDH.setText("");
-            txtTenKHDH.setText("");
-            cbbPGG2.setSelectedItem(null);
-            txtMaHDDH.setText("");
-            txtMaNVDH.setText("");
-            txtTongTienDH.setText("");
-            lbTongDH.setText("");
-            cbbTTDH.setSelectedIndex(0);
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Bán Hàng để hiển thị thông tin!");
         }
     }
 
@@ -1070,59 +1085,64 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }
 
     private void ttTaiQuay() {
-        if (checkKHHD()) {
-            int rowIndexHD = selectedRowIndex;
-            if (rowIndexHD >= 0) {
-                BHHDViewModel hd = listHD.get(rowIndexHD);
-                int idHD = hd.getId();
-                String maNV = txtMaNV.getText().trim();
-                String soDT = txtSoDT.getText().trim();
-                String maGG = cbbPGG.getSelectedItem() != null ? cbbPGG.getSelectedItem().toString() : null;
-                String tenKH = txtTenKH.getText().trim();
-                String tenKTT = "";
-                double chuyenKhoan = 0.0;
-                double tienMat = 0.0;
+        String trangThai = listHD.get(selectedRowIndex).getTrangThai();
+        if (trangThai.equals("Chưa Thanh Toán")) {
+            if (checkKHHD()) {
+                int rowIndexHD = selectedRowIndex;
+                if (rowIndexHD >= 0) {
+                    BHHDViewModel hd = listHD.get(rowIndexHD);
+                    int idHD = hd.getId();
+                    String maNV = txtMaNV.getText().trim();
+                    String soDT = txtSoDT.getText().trim();
+                    String maGG = cbbPGG.getSelectedItem() != null ? cbbPGG.getSelectedItem().toString() : null;
+                    String tenKH = txtTenKH.getText().trim();
+                    String tenKTT = "";
+                    double chuyenKhoan = 0.0;
+                    double tienMat = 0.0;
 
-                if (cbbTT.getSelectedItem() != null) {
-                    tenKTT = cbbTT.getSelectedItem().toString();
-                }
-
-                try {
-                    if (!txtTienCK.getText().isEmpty()) {
-                        chuyenKhoan = Double.parseDouble(txtTienCK.getText().trim());
-                    }
-                    if (!txtTienDua.getText().isEmpty()) {
-                        tienMat = Double.parseDouble(txtTienDua.getText().trim());
+                    if (cbbTT.getSelectedItem() != null) {
+                        tenKTT = cbbTT.getSelectedItem().toString();
                     }
 
-                    if (tienKhachThua >= 0) {
-                        int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thanh toán không?", "Xác nhận thanh toán", JOptionPane.YES_NO_OPTION);
-                        if (choice == JOptionPane.YES_OPTION) {
-                            if (soDT.isEmpty()) {
-                                // Sử dụng tên khách hàng thay vì số điện thoại
-                                srHD.updateHDKL(idHD, maNV, tenKH, maGG);
-                            } else {
-                                srHD.updateHD(idHD, maNV, soDT, maGG);
-                            }
-
-                            listHD = srBH.getHD();
-                            showDataHD(listHD);
-                            dtmHDCT = (DefaultTableModel) tblGH.getModel();
-                            dtmHDCT.setRowCount(0);
-
-                            srGG.updateAfter(maGG);
-
-                            srHTTT.addHTTT(idHD, tenKTT, chuyenKhoan, tienMat);
-                            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thanh toán thành công");
-                            reset();
+                    try {
+                        if (!txtTienCK.getText().isEmpty()) {
+                            chuyenKhoan = Double.parseDouble(txtTienCK.getText().trim());
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        if (!txtTienDua.getText().isEmpty()) {
+                            tienMat = Double.parseDouble(txtTienDua.getText().trim());
+                        }
+
+                        if (tienKhachThua >= 0) {
+                            int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thanh toán không?", "Xác nhận thanh toán", JOptionPane.YES_NO_OPTION);
+                            if (choice == JOptionPane.YES_OPTION) {
+                                if (soDT.isEmpty()) {
+                                    // Sử dụng tên khách hàng thay vì số điện thoại
+                                    srHD.updateHDKL(idHD, maNV, tenKH, maGG);
+                                } else {
+                                    srHD.updateHD(idHD, maNV, soDT, maGG);
+                                }
+
+                                listHD = srBH.getHD();
+                                showDataHD(listHD);
+                                dtmHDCT = (DefaultTableModel) tblGH.getModel();
+                                dtmHDCT.setRowCount(0);
+
+                                srGG.updateAfter(maGG);
+
+                                srHTTT.addHTTT(idHD, tenKTT, chuyenKhoan, tienMat);
+                                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã thanh toán thành công");
+                                reset();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Vui lòng nhập vào một số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Vui lòng nhập vào một số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Đặt Hàng để thực hiện thanh toán!");
         }
     }
 
@@ -1193,6 +1213,75 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
 
     private void setCurrentHoaDon(BHHDViewModel hoaDon) {
         this.currentHoaDon = hoaDon;
+    }
+
+    private void ttDatHang() {
+        String trangThai = listHD.get(selectedRowIndex).getTrangThai();
+        if (trangThai.equals("Chờ Giao") || trangThai.equals("Chờ Giao 2") || trangThai.equals("Chờ Giao 3")) {
+            if (checkKHDH()) {
+                if (selectedRowIndex >= 0) {
+                    currentHoaDon = listHD.get(selectedRowIndex); // Lưu trữ hóa đơn hiện tại
+                    String maNV = txtMaNVDH.getText().trim();
+                    String soDT = txtSoDTDH.getText().trim();
+                    String maGG = cbbPGG2.getSelectedItem() != null ? cbbPGG2.getSelectedItem().toString() : null;
+                    Date ngayNhan = jdcNgayNhan.getDate();
+                    String trangThaiMoi = "";
+
+                    String tenKTT = "";
+                    double chuyenKhoan = 0.0;
+                    double tienMat = 0.0;
+                    if (cbbTTDH.getSelectedItem() != null) {
+                        tenKTT = cbbTTDH.getSelectedItem().toString();
+                    }
+                    if (!txtTienCKDH.getText().isEmpty()) {
+                        chuyenKhoan = Double.parseDouble(txtTienCKDH.getText().trim());
+                    }
+                    if (!txtTienDuaDH.getText().isEmpty()) {
+                        tienMat = Double.parseDouble(txtTienDuaDH.getText().trim());
+                    }
+
+                    // Kiểm tra xem tiền thừa có lớn hơn hoặc bằng 0 không
+                    if (tienKhachThua >= 0) {
+                        if (trangThai.equals("Chờ Giao")) {
+                            trangThaiMoi = "Đang Giao";
+                            srHD.giaoHang(currentHoaDon.getId(), maNV, soDT, maGG, ngayNhan, trangThaiMoi); // Thanh toán hóa đơn
+                            srHTTT.addHTTT(currentHoaDon.getId(), tenKTT, chuyenKhoan, tienMat); // Thêm thông tin thanh toán
+                        } else if (trangThai.equals("Chờ Giao 2")) {
+                            trangThaiMoi = "Đang Giao 2";
+                            srHD.giaoHang(currentHoaDon.getId(), maNV, soDT, maGG, ngayNhan, trangThaiMoi); // Thanh toán hóa đơn
+                            srHTTT.updateHTTT(currentHoaDon.getId(), tenKTT, tienMat, tienMat);
+                            srHD.capNhatNgaythanhToan(ngayNhan, currentHoaDon.getId());
+                        } else {
+                            trangThaiMoi = "Đang Giao 3";
+                            srHD.giaoHang(currentHoaDon.getId(), maNV, soDT, maGG, ngayNhan, trangThaiMoi); // Thanh toán hóa đơn
+                            srHTTT.updateHTTT(currentHoaDon.getId(), tenKTT, tienMat, tienMat);
+                            srHD.capNhatNgaythanhToan(ngayNhan, currentHoaDon.getId());
+                        }
+                        listHD = srBH.getHD();
+                        showDataHD(listHD);
+                        dtmHDCT = (DefaultTableModel) tblGH.getModel();
+                        dtmHDCT.setRowCount(0); // Xóa dữ liệu trong bảng giỏ hàng
+
+                        // Hiển thị thông báo và in hóa đơn
+                        int result = JOptionPane.showConfirmDialog(this, "Thanh toán thành công. Bạn có muốn in hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            printHD(); // In hóa đơn
+                            String hanhDong = "In hóa đơn";
+                            srLSHD.addLSHD(hanhDong);
+                        }
+
+                        resetDH();
+                    } else {
+                        // Hiển thị thông báo lỗi nếu tiền thừa là số âm
+                        JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để thanh toán.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Bán Hàng để thực hiện thanh toán!");
+        }
     }
 
     /**
@@ -2298,16 +2387,26 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }//GEN-LAST:event_btnTToanActionPerformed
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-
         int index = selectedRowIndex;
         if (index >= 0) {
             BHHDViewModel hd = listHD.get(index);
+            listHDCT = srHDCT.getAll(hd.getId());
+            for (HDCTViewModel hdct : listHDCT) {
+                // Lấy thông tin sản phẩm chi tiết
+                int idSanPham = hdct.getMaSPCT();
+                int soLuong = hdct.getSoLuong();
+                srBH.increaseSoLuong(soLuong, idSanPham);
+                System.out.println("ID Sản phẩm: " + idSanPham + ", Số lượng: " + soLuong);
+            }
             srQLHD.deleteHD(hd.getId());
             listHD = srBH.getHD();
             showDataHD(listHD);
 
             dtmHDCT = (DefaultTableModel) tblGH.getModel();
             dtmHDCT.setRowCount(0);
+            
+            listSP = srBH.getSP();
+            showDataSP(listSP);
 
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã hủy thành công");
             reset();
@@ -2319,108 +2418,89 @@ public class BanHang extends javax.swing.JPanel implements ThemKhachHang.KhachHa
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnChonKhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChonKhActionPerformed
-        ThemKhachHang panel = new ThemKhachHang();
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        if (selectedRowIndex >= 0 && selectedRowIndex < listHD.size()) {
+            String trangThai = listHD.get(selectedRowIndex).getTrangThai();
+            if (trangThai.equals("Chưa Thanh Toán")) {
+                ThemKhachHang panel = new ThemKhachHang();
+                JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
-        panel.addKhachHangSelectedListener(this);
+                // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
+                panel.addKhachHangSelectedListener(this);
 
-        frame.add(panel);
+                frame.add(panel);
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Đặt Hàng để thực hiện thanh toán!");
+            }
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chọn một hóa đơn để thực hiện thao tác!");
+        }
     }//GEN-LAST:event_btnChonKhActionPerformed
 
     private void btnChonKHDHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChonKHDHActionPerformed
-        ThemKhachHang panel = new ThemKhachHang();
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        if (selectedRowIndex >= 0 && selectedRowIndex < listHD.size()) {
+            String trangThai = listHD.get(selectedRowIndex).getTrangThai();
+            if (trangThai.equals("Chờ Giao") || trangThai.equals("Chờ Giao 2") || trangThai.equals("Chờ Giao 3")) {
+                ThemKhachHang panel = new ThemKhachHang();
+                JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
-        panel.addKhachHangSelectedListener(this);
+                // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
+                panel.addKhachHangSelectedListener(this);
 
-        frame.add(panel);
+                frame.add(panel);
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Bán Hàng để thực hiện thanh toán!");
+            }
+        } else {
+            // Xử lý logic khi không có hàng nào được chọn hoặc chỉ mục không hợp lệ
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chọn một hóa đơn để thực hiện thao tác!");
+        }
     }//GEN-LAST:event_btnChonKHDHActionPerformed
 
     private void btnTToanDHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTToanDHActionPerformed
-        if (selectedRowIndex >= 0) {
-            currentHoaDon = listHD.get(selectedRowIndex); // Lưu trữ hóa đơn hiện tại
-            String maNV = txtMaNVDH.getText().trim();
-            String soDT = txtSoDTDH.getText().trim();
-            String maGG = cbbPGG2.getSelectedItem() != null ? cbbPGG2.getSelectedItem().toString() : null;
-            Date ngayNhan = jdcNgayNhan.getDate();
-
-            String tenKTT = "";
-            double chuyenKhoan = 0.0;
-            double tienMat = 0.0;
-            if (cbbTTDH.getSelectedItem() != null) {
-                tenKTT = cbbTTDH.getSelectedItem().toString();
-            }
-            if (!txtTienCKDH.getText().isEmpty()) {
-                chuyenKhoan = Double.parseDouble(txtTienCKDH.getText().trim());
-            }
-            if (!txtTienDuaDH.getText().isEmpty()) {
-                tienMat = Double.parseDouble(txtTienDuaDH.getText().trim());
-            }
-
-            // Kiểm tra xem tiền thừa có lớn hơn hoặc bằng 0 không
-            if (tienKhachThua >= 0) {
-                srHD.giaoHang(currentHoaDon.getId(), maNV, soDT, maGG, ngayNhan); // Thanh toán hóa đơn
-                listHD = srBH.getHD();
-                showDataHD(listHD);
-                dtmHDCT = (DefaultTableModel) tblGH.getModel();
-                dtmHDCT.setRowCount(0); // Xóa dữ liệu trong bảng giỏ hàng
-
-                srHTTT.addHTTT(currentHoaDon.getId(), tenKTT, chuyenKhoan, tienMat); // Thêm thông tin thanh toán
-
-                // Hiển thị thông báo và in hóa đơn
-                int result = JOptionPane.showConfirmDialog(this, "Thanh toán thành công. Bạn có muốn in hóa đơn không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) {
-                    printHD(); // In hóa đơn
-                    String hanhDong = "In hóa đơn";
-                    srLSHD.addLSHD(hanhDong);
-                }
-
-                resetDH();
-            } else {
-                // Hiển thị thông báo lỗi nếu tiền thừa là số âm
-                JOptionPane.showMessageDialog(this, "Tiền thừa không đủ để thanh toán.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để thanh toán.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        }
+        ttDatHang();
     }//GEN-LAST:event_btnTToanDHActionPerformed
 
     private void btnChonNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChonNVActionPerformed
-        ChonNVVanChuyen panel = new ChonNVVanChuyen();
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        if (selectedRowIndex >= 0 && selectedRowIndex < listHD.size()) {
+            String trangThai = listHD.get(selectedRowIndex).getTrangThai();
+            if (trangThai.equals("Chờ Giao") || trangThai.equals("Chờ Giao 2") || trangThai.equals("Chờ Giao 3")) {
+                ChonNVVanChuyen panel = new ChonNVVanChuyen();
+                JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
-        panel.addNhanVienSelectedListener(this);
+                // Đăng ký lắng nghe sự kiện chọn khách hàng từ ThemKhachHang
+                panel.addNhanVienSelectedListener(this);
 
-        frame.add(panel);
+                frame.add(panel);
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chuyển tab Bán Hàng để thực hiện thanh toán!");
+            }
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng chọn một hóa đơn để thực hiện thao tác!");
+        }
     }//GEN-LAST:event_btnChonNVActionPerformed
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
         if (jTabbedPane1.getSelectedIndex() == 1) { // Kiểm tra xem tab hiện tại có phải là tab đặt hàng không
             trangThai = "Chờ Giao"; // Cập nhật trạng thái
             indexTab = 1;
-            selectedRowIndex = -1;
         } else if (jTabbedPane1.getSelectedIndex() == 0) {
             trangThai = "Chưa Thanh Toán";
             indexTab = 0;
-            selectedRowIndex = -1;
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
 

@@ -2,26 +2,31 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package backend.entity;
+package backend.viewmodel;
 
 /**
  *
  * @author VHC
  */
-public class HinhThucThanhToan {
+public class ThanhToanViewModel {
+
     private int idHD;
-    private int idPTTT;
+    private int idHTTT;
     private double tienMat;
     private double tienTK;
+    private int idPTTT;
+    private String tenKieuThanhToan;
 
-    public HinhThucThanhToan() {
+    public ThanhToanViewModel() {
     }
 
-    public HinhThucThanhToan(int idHD, int idPTTT, double tienMat, double tienTK) {
+    public ThanhToanViewModel(int idHD, int idHTTT, double tienMat, double tienTK, int idPTTT, String tenKieuThanhToan) {
         this.idHD = idHD;
-        this.idPTTT = idPTTT;
+        this.idHTTT = idHTTT;
         this.tienMat = tienMat;
         this.tienTK = tienTK;
+        this.idPTTT = idPTTT;
+        this.tenKieuThanhToan = tenKieuThanhToan;
     }
 
     public int getIdHD() {
@@ -33,11 +38,11 @@ public class HinhThucThanhToan {
     }
 
     public int getIdHTTT() {
-        return idPTTT;
+        return idHTTT;
     }
 
     public void setIdHTTT(int idHTTT) {
-        this.idPTTT = idHTTT;
+        this.idHTTT = idHTTT;
     }
 
     public double getTienMat() {
@@ -54,6 +59,22 @@ public class HinhThucThanhToan {
 
     public void setTienTK(double tienTK) {
         this.tienTK = tienTK;
+    }
+
+    public int getIdPTTT() {
+        return idPTTT;
+    }
+
+    public void setIdPTTT(int idPTTT) {
+        this.idPTTT = idPTTT;
+    }
+
+    public String getTenKieuThanhToan() {
+        return tenKieuThanhToan;
+    }
+
+    public void setTenKieuThanhToan(String tenKieuThanhToan) {
+        this.tenKieuThanhToan = tenKieuThanhToan;
     }
     
     

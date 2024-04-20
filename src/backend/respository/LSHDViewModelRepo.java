@@ -16,6 +16,7 @@ import java.util.List;
  * @author VHC
  */
 public class LSHDViewModelRepo {
+
     public List<LSHDViewModel> getAll(int idHD) {
         List<LSHDViewModel> listLSHD = new ArrayList<>();
         String sql = """
@@ -42,8 +43,8 @@ public class LSHDViewModelRepo {
         }
         return listLSHD;
     }
-    
-    public boolean addLSHD(String hanhDong){
+
+    public boolean addLSHD(String hanhDong) {
         int check = 0;
         String sql = """
                      DECLARE @idHD int
@@ -57,16 +58,16 @@ public class LSHDViewModelRepo {
                           VALUES
                                 (@idHD,1,CURRENT_TIMESTAMP,?)
                      """;
-        try(Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
-            ps.setObject(1,hanhDong);
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+            ps.setObject(1, hanhDong);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return check > 0;
     }
-    
-        public boolean addLSHD2(int idHD, String hanhDong){
+
+    public boolean addLSHD2(int idHD, String hanhDong) {
         int check = 0;
         String sql = """
                      INSERT INTO [dbo].[LichSuHoaDon]
@@ -78,13 +79,29 @@ public class LSHDViewModelRepo {
                           VALUES
                                 (?,1,CURRENT_TIMESTAMP,?)
                      """;
-        try(Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)) {
             ps.setObject(1, idHD);
-            ps.setObject(2,hanhDong);
+            ps.setObject(2, hanhDong);
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return check > 0;
     }
+
+    public boolean isInvoiceIdValid(int invoiceId) {
+        String sql = "SELECT COUNT(*) FROM dbo.HoaDon WHERE ID = ?";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, invoiceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0; // Trả về true nếu ID hóa đơn tồn tại trong cơ sở dữ liệu
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Trả về false nếu có lỗi xảy ra hoặc ID hóa đơn không tồn tại
+    }
+
 }

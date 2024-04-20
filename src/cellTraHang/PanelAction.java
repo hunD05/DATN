@@ -1,6 +1,7 @@
-package raven.cell;
+package cellTraHang;
 
-import raven.cell.TableActionEvent;
+import cellHD.*;
+import cellTraHang.TableActionEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,16 +19,10 @@ public class PanelAction extends javax.swing.JPanel {
     }
 
     public void initEvent(TableActionEvent event, int row) {
-        cmdEdit.addActionListener(new ActionListener() {
+        cmdTH.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                event.onEdit(row);
-            }
-        });
-        cmdDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                event.onDelete(row);
+                event.onTH(row);
             }
         });
 //        cmdView.addActionListener(new ActionListener() {
@@ -47,38 +42,39 @@ public class PanelAction extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cmdEdit = new raven.cell.ActionButton();
-        cmdDelete = new raven.cell.ActionButton();
+        cmdTH = new raven.cell.ActionButton();
 
-        cmdEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/cell/edit.png"))); // NOI18N
-
-        cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/cell/delete.png"))); // NOI18N
+        cmdTH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cellTraHang/exchange.png"))); // NOI18N
+        cmdTH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdTHActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(cmdTH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(cmdTH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmdTHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTHActionPerformed
+        System.out.println("Nút TT đã được nhấp!");
+    }//GEN-LAST:event_cmdTHActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private raven.cell.ActionButton cmdDelete;
-    private raven.cell.ActionButton cmdEdit;
+    private raven.cell.ActionButton cmdTH;
     // End of variables declaration//GEN-END:variables
 }

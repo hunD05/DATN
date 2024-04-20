@@ -38,7 +38,7 @@ public class BanHangRepo {
                 LEFT JOIN dbo.HoaDonChiTiet ON dbo.HoaDon.ID = dbo.HoaDonChiTiet.IDHoaDon
                 LEFT JOIN dbo.HinhThucThanhToan ON dbo.HoaDon.ID = dbo.HinhThucThanhToan.IDHoaDon
                 LEFT JOIN dbo.PhuongThucThanhToan ON dbo.HinhThucThanhToan.IDPhuongThucThanhToan = dbo.PhuongThucThanhToan.ID
-                WHERE (dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' OR dbo.HoaDon.TrangThai LIKE N'Chờ giao') AND dbo.HoaDon.Deleted = 0
+                WHERE (dbo.HoaDon.TrangThai LIKE N'Chưa Thanh Toán' OR dbo.HoaDon.TrangThai LIKE N'Chờ giao%') AND dbo.HoaDon.Deleted = 0
                 GROUP BY dbo.HoaDon.MaHoaDon, dbo.HoaDon.NgayTao, dbo.NhanVien.MaNhanVien, dbo.HoaDon.TrangThai, dbo.HoaDon.ID, dbo.KhachHang.SoDienThoai, dbo.KhachHang.TenKhachHang, dbo.PhuongThucThanhToan.TenKieuThanhToan, dbo.KhachHang.DiaChi
                 ORDER BY dbo.HoaDon.NgayTao DESC;
                  """;

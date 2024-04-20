@@ -7,7 +7,6 @@ package form;
 import backend.entity.PhieuGiamGia;
 import backend.service.PhieuGiamGiaService;
 import backend.viewmodel.PhieuGiamGiaViewModel;
-import java.awt.Component;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -20,18 +19,12 @@ import raven.toast.Notifications;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.management.Notification;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import ravenn.cell.TableActionCellEditor;
-import ravenn.cell.TableActionCellRender;
-import ravenn.cell.TableActionEvent;
+import raven.cell.TableActionCellEditor;
+import raven.cell.TableActionCellRender;
+import raven.cell.TableActionEvent;
 
 /**
  *
@@ -94,10 +87,6 @@ public class ViewPhieuGiamGia extends javax.swing.JPanel {
 
             }
 
-            @Override
-            public void onView(int row) {
-                System.out.println("View row : " + row);
-            }
         };
         tblHienThi.getColumnModel().getColumn(10).setCellRenderer(new TableActionCellRender());
         tblHienThi.getColumnModel().getColumn(10).setCellEditor(new TableActionCellEditor(event));
