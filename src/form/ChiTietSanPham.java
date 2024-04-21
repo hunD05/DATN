@@ -540,7 +540,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
 
     public void exportToExcel(List<SanPhamChiTietViewModel> chiTietSanPhams, String filePath) {
 
-        try ( Workbook workbook = new XSSFWorkbook()) {
+        try (Workbook workbook = new XSSFWorkbook()) {
 
             Sheet sheet = workbook.createSheet("Chi tiết sản phẩm");
 
@@ -575,7 +575,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
             }
 
             // Lưu file Excel
-            try ( FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
                 workbook.write(fileOut);
                 System.out.println("File Excel đã được tạo thành công!");
             }
@@ -932,6 +932,11 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
         txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTimKiemActionPerformed(evt);
+            }
+        });
+        txtTimKiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTimKiemKeyReleased(evt);
             }
         });
 
@@ -1378,8 +1383,7 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
-        chitietsanpham = chiTietSanPhamService.Search(txtTimKiem.getText());
-        showDataTable(chitietsanpham);
+
     }//GEN-LAST:event_btnTimActionPerformed
 
     private void cbbDanhMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbDanhMucActionPerformed
@@ -1620,56 +1624,59 @@ public class ChiTietSanPham extends javax.swing.JPanel implements qrcode.QRCodeL
     private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTimKiemActionPerformed
+
+    private void txtTimKiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTimKiemKeyReleased
+        chitietsanpham = chiTietSanPhamService.Search(txtTimKiem.getText());
+        showDataTable(chitietsanpham);
+    }//GEN-LAST:event_txtTimKiemKeyReleased
     private boolean validateFormData() {
-    try {
-        // Kiểm tra các ô nhập liệu có trống không
-        if (cbbSanPham.getSelectedItem() == null || cbbDanhMucz.getSelectedItem() == null
-                || cbbNSXz.getSelectedItem() == null || cbbXuatXuZ.getSelectedItem() == null
-                || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
-                || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
-                || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
-                || cbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
-                || txtSoLuong.getText().isEmpty() || txtGiaBan.getText().isEmpty()
-                || txtMoTa.getText().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
-            return false;
-        }
-
-        // Kiểm tra các ô nhập số
         try {
-            int soLuong = Integer.parseInt(txtSoLuong.getText());
-            if (soLuong <= 0) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số dương");
+            // Kiểm tra các ô nhập liệu có trống không
+            if (cbbSanPham.getSelectedItem() == null || cbbDanhMucz.getSelectedItem() == null
+                    || cbbNSXz.getSelectedItem() == null || cbbXuatXuZ.getSelectedItem() == null
+                    || cbbMauSac.getSelectedItem() == null || cbbSize.getSelectedItem() == null
+                    || cbbThuongHieu.getSelectedItem() == null || cbbChatLieu.getSelectedItem() == null
+                    || cbbCoAo.getSelectedItem() == null || cbbDuoiAo.getSelectedItem() == null
+                    || cbbTayAo.getSelectedItem() == null || cbbDangAo.getSelectedItem() == null
+                    || txtSoLuong.getText().isEmpty() || txtGiaBan.getText().isEmpty()
+                    || txtMoTa.getText().isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin");
                 return false;
             }
-        } catch (NumberFormatException e) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số nguyên");
-            return false;
-        }
 
-        try {
-            String giaText = txtGiaBan.getText().replaceAll("[^\\d.]", "");
-            BigDecimal gia = new BigDecimal(giaText);
-            if (gia.compareTo(BigDecimal.ZERO) <= 0) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số dương");
+            // Kiểm tra các ô nhập số
+            try {
+                int soLuong = Integer.parseInt(txtSoLuong.getText());
+                if (soLuong <= 0) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số dương");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập số lượng là số nguyên");
                 return false;
             }
-        } catch (NumberFormatException e) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số");
+
+            try {
+                String giaText = txtGiaBan.getText().replaceAll("[^\\d.]", "");
+                BigDecimal gia = new BigDecimal(giaText);
+                if (gia.compareTo(BigDecimal.ZERO) <= 0) {
+                    Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số dương");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập giá là số");
+                return false;
+            }
+
+            // Kiểm tra ô trạng thái
+            // (Bạn cần thêm kiểm tra ô trạng thái ở đây nếu cần)
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi kiểm tra dữ liệu");
             return false;
         }
-
-        // Kiểm tra ô trạng thái
-        // (Bạn cần thêm kiểm tra ô trạng thái ở đây nếu cần)
-
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi kiểm tra dữ liệu");
-        return false;
+        return true;
     }
-    return true;
-}
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

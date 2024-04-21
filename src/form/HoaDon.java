@@ -77,7 +77,7 @@ public class HoaDon extends javax.swing.JPanel {
 
     private QLHDService srQLHD = new QLHDService();
 
-    private int selectedInvoiceId;
+    private int selectedInvoiceId = 0;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
 
@@ -407,6 +407,9 @@ public class HoaDon extends javax.swing.JPanel {
         String selectedChatLieu = (String) cbbChatLieu.getSelectedItem();
         String selectedGia = (String) cbbGiaTien.getSelectedItem();
         String selectedThuongHieu = (String) cbbThuongHieu.getSelectedItem();
+        
+        System.out.println(selectedChatLieu + selectedMau + selectedSize + selectedThuongHieu );
+        System.out.println(idHD);
         if ("Giá từ thấp đến cao".equals((String) cbbGiaTien.getSelectedItem())) {
             selectedGia = "GiaBan ASC";
         } else if ("Giá từ cao đến thấp".equals((String) cbbGiaTien.getSelectedItem())) {
@@ -921,7 +924,8 @@ public class HoaDon extends javax.swing.JPanel {
     private void tblHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHDMouseClicked
         int rowIndex = tblHD.getSelectedRow();
         if (rowIndex >= 0 && rowIndex < listHD.size()) {
-            int selectedInvoiceId = listHD.get(rowIndex).getId();
+            selectedInvoiceId = listHD.get(rowIndex).getId();
+            System.out.println(selectedInvoiceId);
             showCbbHDCT();
 
             dtmHDCT = (DefaultTableModel) tblHDCT.getModel();
