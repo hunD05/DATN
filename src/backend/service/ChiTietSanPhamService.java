@@ -23,6 +23,11 @@ public class ChiTietSanPhamService {
         return respository.getAll();
     }
 
+
+    public List<SanPhamChiTietViewModel> tongSoLuongSanPham() {
+        return respository.tongSoLuongSanPham();
+    }
+
     public SanPhamChiTietViewModel getById(long id) {
         return respository.getById(id);
     }
@@ -67,7 +72,7 @@ public class ChiTietSanPhamService {
         List<SanPhamChiTietViewModel> sanPhamHetHang = new ArrayList<>();
         // Thực hiện truy vấn hoặc xử lý để lấy danh sách các sản phẩm có số lượng hàng dưới 10
         // Ví dụ:
-        List<SanPhamChiTietViewModel> allSanPham = getAll(); // Sử dụng phương thức getAll() của bạn hoặc tương tự
+        List<SanPhamChiTietViewModel> allSanPham = tongSoLuongSanPham(); // Sử dụng phương thức getAll() của bạn hoặc tương tự
         for (SanPhamChiTietViewModel sp : allSanPham) {
             if (sp.getSoLuong() < 10) {
                 sanPhamHetHang.add(sp);

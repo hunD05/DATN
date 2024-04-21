@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,18 +45,28 @@ public class ThongKe extends javax.swing.JPanel {
         dtm = (DefaultTableModel) table3.getModel();
         list = sr.getAll();
         showDataTable(list);
+        // Set ngày bắt đầu là 00:00:00 của ngày 1 tháng 1
+        // Set ngày bắt đầu là 00:00:00 của ngày 1 tháng 1
+        // Set ngày bắt đầu là 00:00:00 của ngày 1 tháng 1
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.set(Calendar.MONTH, Calendar.JANUARY);
         startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        startCalendar.set(Calendar.YEAR, LocalDate.now().getYear()); // Năm 1
+        startCalendar.set(Calendar.YEAR, LocalDate.now().getYear());
+        startCalendar.set(Calendar.HOUR_OF_DAY, 0);  // Giờ
+        startCalendar.set(Calendar.MINUTE, 0);        // Phút
+        startCalendar.set(Calendar.SECOND, 0);        // Giây
         DateChooserStart.setCalendar(startCalendar);
 
-// Set ngày cuối là ngày 31 tháng 12 năm 9999
+// Set ngày cuối là 23:59:59 của ngày hôm sau
         Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.MONTH, Calendar.DECEMBER);
-        endCalendar.set(Calendar.DAY_OF_MONTH, 31);
-        endCalendar.set(Calendar.YEAR, LocalDate.now().getYear()); // Năm 9999
+        endCalendar.set(Calendar.MONTH, LocalDate.now().getMonthValue() - 1); // Trừ 1 vì tháng trong Calendar bắt đầu từ 0
+        endCalendar.set(Calendar.DAY_OF_MONTH, LocalDate.now().getDayOfMonth() + 1); // Thêm 1 ngày
+        endCalendar.set(Calendar.YEAR, LocalDate.now().getYear());
+        endCalendar.set(Calendar.HOUR_OF_DAY, 23);     // Giờ
+        endCalendar.set(Calendar.MINUTE, 59);           // Phút
+        endCalendar.set(Calendar.SECOND, 59);           // Giây
         DateChooserEnd.setCalendar(endCalendar);
+
         chsYear.setYear(LocalDate.now().getYear());
 
 // Set ngày bắt đầu là ngày hiện tại
@@ -104,21 +115,28 @@ public class ThongKe extends javax.swing.JPanel {
     private void init() {
         chart.addLegend("Tổng doanh thu", new Color(12, 84, 175), new Color(0, 108, 247));
 
-        LocalDate startDate = LocalDate.of(2024, Month.JANUARY, 1);
+        LocalDate startDate = LocalDate.of(LocalDate.now().getYear(), Month.JANUARY, 1);
         LocalDate endDate = LocalDate.now();
 
         Map<LocalDate, BigDecimal> revenueByDate = sr.getTotalRevenueByDate(startDate, endDate);
 
-        TreeMap<LocalDate, BigDecimal> sortedRevenueByDate = new TreeMap<>(revenueByDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        sortedRevenueByDate.forEach((date, revenue) -> {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            String formattedDate = formatter.format(java.sql.Date.valueOf(date));
-            chart.addData(new ModelChart(formattedDate, new double[]{revenue.doubleValue()}));
-            System.out.println(revenue);
-            chart.start();
+// Tạo một danh sách để lưu trữ các cặp key-value
+        List<Map.Entry<LocalDate, BigDecimal>> sortedEntries = new ArrayList<>(revenueByDate.entrySet());
+
+        // Sắp xếp danh sách theo thứ tự tăng dần của ngày
+        sortedEntries.sort(Map.Entry.comparingByKey());
+
+        // Duyệt qua danh sách đã sắp xếp và thêm vào biểu đồ
+        sortedEntries.forEach(entry -> {
+            String formattedDate = entry.getKey().format(formatter);
+            chart.addData(new ModelChart(formattedDate, new double[]{entry.getValue().doubleValue()}));
+            System.out.println(entry.getValue());
         });
-        
+
+        chart.start();
+
         chsYear.addPropertyChangeListener("year", evt -> {
             // Khi người dùng chọn một năm mới, lấy giá trị năm
             int selectedYear = chsYear.getYear();
@@ -140,10 +158,10 @@ public class ThongKe extends javax.swing.JPanel {
 
         chartSanPhamHetHang.addLegend("Sản phẩm sắp hết hàng", new Color(220, 20, 60), new Color(255, 100, 100));
 
-        List<SanPhamChiTietViewModel> sanPhamHetHang = chiTietSanPhamService.getSanPhamHetHang();
+        List<SanPhamChiTietViewModel> tongSoLuongSanPham = chiTietSanPhamService.getSanPhamHetHang();
 
-        // Thêm dữ liệu vào biểu đồ
-        sanPhamHetHang.forEach(sp -> {
+// Thêm dữ liệu vào biểu đồ
+        tongSoLuongSanPham.forEach(sp -> {
             chartSanPhamHetHang.addData(new ModelChart(sp.getTenSanPham(), new double[]{sp.getSoLuong()}));
         });
 
@@ -154,8 +172,7 @@ public class ThongKe extends javax.swing.JPanel {
 // Sắp xếp danh sách sản phẩm theo số lượng bán hàng giảm dần (hoặc theo tiêu chí bạn muốn)
         Collections.sort(topProducts, Comparator.comparingInt(SanPhamChiTietViewModel::getSoLuong).reversed());
 
-        chartSanPhamBanChay.addLegend("Sản phẩm chạy", new Color(75, 0, 130), new Color(148, 0, 211));
-
+        chartSanPhamBanChay.addLegend("Sản phẩm bán chạy", new Color(75, 0, 130), new Color(148, 0, 211));
 
 // Thêm dữ liệu của các sản phẩm vào biểu đồ
         for (SanPhamChiTietViewModel product : topProducts) {
@@ -214,7 +231,7 @@ public class ThongKe extends javax.swing.JPanel {
     }
 
     public Map<LocalDate, BigDecimal> getTotalRevenueByDate(LocalDate startDate, LocalDate endDate) {
-        Map<LocalDate, BigDecimal> revenueByDate = new HashMap<>();
+        Map<LocalDate, BigDecimal> revenueByDate = new TreeMap<>();
 
         // Lấy toàn bộ dữ liệu từ cơ sở dữ liệu
         Map<LocalDate, BigDecimal> allRevenueByDate = getAllRevenueByDate();
@@ -229,10 +246,11 @@ public class ThongKe extends javax.swing.JPanel {
         return revenueByDate;
     }
 
-    private Map<LocalDate, BigDecimal> getAllRevenueByDate() {
-        Map<LocalDate, BigDecimal> allRevenueByDate = new HashMap<>();
+    private TreeMap<LocalDate, BigDecimal> getAllRevenueByDate() {
+        TreeMap<LocalDate, BigDecimal> allRevenueByDate = new TreeMap<>();
 
         try ( Connection con = DBConnect.getConnection();  Statement stmt = con.createStatement();  ResultSet rs = stmt.executeQuery("SELECT NgayThanhToan, SUM(SoLuong * GiaBan) AS TotalRevenue FROM HoaDonChiTiet HDCT INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID WHERE HD.TrangThai = N'Đã Thanh Toán' GROUP BY NgayThanhToan")) {
+
             while (rs.next()) {
                 LocalDate date = rs.getDate("NgayThanhToan").toLocalDate();
                 BigDecimal totalRevenue = rs.getBigDecimal("TotalRevenue");
@@ -447,16 +465,18 @@ public class ThongKe extends javax.swing.JPanel {
 
         card4.setColor1(new java.awt.Color(51, 255, 204));
         card4.setColor2(new java.awt.Color(0, 153, 153));
+        card4.setIcon(javaswingdev.GoogleMaterialDesignIcon.ACCOUNT_BOX);
         roundPanel1.add(card4);
 
         card2.setColor1(new java.awt.Color(255, 255, 153));
         card2.setColor2(new java.awt.Color(153, 153, 0));
         card2.setEnabled(false);
-        card2.setIcon(javaswingdev.GoogleMaterialDesignIcon.KEYBOARD_TAB);
+        card2.setIcon(javaswingdev.GoogleMaterialDesignIcon.SHOPPING_BASKET);
         roundPanel1.add(card2);
 
         card3.setColor1(new java.awt.Color(102, 102, 255));
         card3.setColor2(new java.awt.Color(0, 0, 255));
+        card3.setIcon(javaswingdev.GoogleMaterialDesignIcon.SHOPPING_CART);
         roundPanel1.add(card3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -487,19 +507,28 @@ public class ThongKe extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResetBoLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetBoLocActionPerformed
+// Set ngày bắt đầu là 00:00:00 của ngày 1 tháng 1
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.set(Calendar.MONTH, Calendar.JANUARY);
         startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        startCalendar.set(Calendar.YEAR, LocalDate.now().getYear()); // Năm 1
+        startCalendar.set(Calendar.YEAR, LocalDate.now().getYear());
+        startCalendar.set(Calendar.HOUR_OF_DAY, 0);  // Giờ
+        startCalendar.set(Calendar.MINUTE, 0);        // Phút
+        startCalendar.set(Calendar.SECOND, 0);        // Giây
         DateChooserStart.setCalendar(startCalendar);
 
-// Set ngày cuối là ngày 31 tháng 12 năm 9999
+// Set ngày cuối là 23:59:59 của ngày hôm sau
         Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.MONTH, Calendar.DECEMBER);
-        endCalendar.set(Calendar.DAY_OF_MONTH, 31);
-        endCalendar.set(Calendar.YEAR, LocalDate.now().getYear()); // Năm 9999
+        endCalendar.set(Calendar.MONTH, LocalDate.now().getMonthValue() - 1); // Trừ 1 vì tháng trong Calendar bắt đầu từ 0
+        endCalendar.set(Calendar.DAY_OF_MONTH, LocalDate.now().getDayOfMonth() + 1); // Thêm 1 ngày
+        endCalendar.set(Calendar.YEAR, LocalDate.now().getYear());
+        endCalendar.set(Calendar.HOUR_OF_DAY, 23);     // Giờ
+        endCalendar.set(Calendar.MINUTE, 59);           // Phút
+        endCalendar.set(Calendar.SECOND, 59);           // Giây
         DateChooserEnd.setCalendar(endCalendar);
+
         chsYear.setYear(LocalDate.now().getYear());
+
     }//GEN-LAST:event_btnResetBoLocActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

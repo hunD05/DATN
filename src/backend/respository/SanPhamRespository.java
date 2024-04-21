@@ -13,6 +13,7 @@ import java.util.List;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,9 +31,9 @@ public class SanPhamRespository {
                 s.TenSanPham,
                 s.Created_at,
                 s.Updated_at,
-                COUNT(c.IDSanPham) AS SoLuong,
+                SUM(CASE WHEN c.Deleted = 0 THEN 1 ELSE 0 END) AS SoLuong,
                 CASE
-                    WHEN COUNT(c.IDSanPham) = 0 THEN N'Hết hàng'
+                    WHEN SUM(CASE WHEN c.Deleted = 0 THEN 1 ELSE 0 END) = 0 THEN N'Hết hàng'
                     ELSE N'Còn hàng'
                 END AS TrangThai
             FROM 
@@ -45,7 +46,7 @@ public class SanPhamRespository {
                 s.ID, s.MaSanPham, s.TenSanPham, s.Created_at, s.Updated_at
             ORDER BY 
                 s.Updated_at DESC;
-         """;
+    """;
 
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -170,39 +171,36 @@ public class SanPhamRespository {
 //        return check > 0;
 //    }
     public boolean update(SanPham sanPham, String ID) {
-    int check = 0;
-    String sqlUpdateSanPham = "UPDATE [dbo].[SanPham] SET [TenSanPham] = ?, Updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
-    String sqlUpdateChiTiet = "UPDATE [dbo].[ChiTietSanPham] SET [IDSanPham] = (SELECT TOP 1 ID FROM [dbo].[SanPham] WHERE [TenSanPham] = ?), Updated_at = CURRENT_TIMESTAMP WHERE IDSanPham = ?";
+        int check = 0;
+        String sqlUpdateSanPham = "UPDATE [dbo].[SanPham] SET [TenSanPham] = ?, Updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
+        String sqlUpdateChiTiet = "UPDATE [dbo].[ChiTietSanPham] SET [IDSanPham] = (SELECT TOP 1 ID FROM [dbo].[SanPham] WHERE [TenSanPham] = ?), Updated_at = CURRENT_TIMESTAMP WHERE IDSanPham = ?";
 
-    try (Connection con = DBConnect.getConnection(); 
-         PreparedStatement psUpdateSanPham = con.prepareStatement(sqlUpdateSanPham);  
-         PreparedStatement psUpdateChiTiet = con.prepareStatement(sqlUpdateChiTiet)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement psUpdateSanPham = con.prepareStatement(sqlUpdateSanPham);  PreparedStatement psUpdateChiTiet = con.prepareStatement(sqlUpdateChiTiet)) {
 
-        con.setAutoCommit(false); // Tắt chế độ tự động commit
+            con.setAutoCommit(false); // Tắt chế độ tự động commit
 
-        // Thực hiện cập nhật tên sản phẩm trong bảng SanPham
-        psUpdateSanPham.setObject(1, sanPham.getTenSanPham());
-        psUpdateSanPham.setObject(2, ID);
-        check = psUpdateSanPham.executeUpdate();
+            // Thực hiện cập nhật tên sản phẩm trong bảng SanPham
+            psUpdateSanPham.setObject(1, sanPham.getTenSanPham());
+            psUpdateSanPham.setObject(2, ID);
+            check = psUpdateSanPham.executeUpdate();
 
-        // Thực hiện cập nhật ID sản phẩm trong bảng ChiTietSanPham
-        psUpdateChiTiet.setObject(1, sanPham.getTenSanPham());
-        psUpdateChiTiet.setObject(2, ID);
-        psUpdateChiTiet.executeUpdate();
+            // Thực hiện cập nhật ID sản phẩm trong bảng ChiTietSanPham
+            psUpdateChiTiet.setObject(1, sanPham.getTenSanPham());
+            psUpdateChiTiet.setObject(2, ID);
+            psUpdateChiTiet.executeUpdate();
 
-        con.commit(); // Commit thay đổi
-    } catch (Exception e) {
-        e.printStackTrace();
-        try {
-            Connection con = DBConnect.getConnection();
-            con.rollback(); // Rollback nếu có lỗi
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            con.commit(); // Commit thay đổi
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                Connection con = DBConnect.getConnection();
+                con.rollback(); // Rollback nếu có lỗi
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+        return check > 0;
     }
-    return check > 0;
-}
-
 
     public boolean isTenSanPhamExisted(String tenSanPham) {
         String sql = "SELECT COUNT(*) FROM dbo.SanPham WHERE TenSanPham = ?";
@@ -229,11 +227,11 @@ public class SanPhamRespository {
                             s.TenSanPham,
                             s.Created_at,
                             s.Updated_at,
-                            COUNT(c.IDSanPham) AS SoLuong,
-                            CASE
-                                WHEN COUNT(c.IDSanPham) = 0 THEN N'Hết hàng'
-                                ELSE N'Còn hàng'
-                            END AS TrangThai
+                            SUM(CASE WHEN c.Deleted = 0 THEN 1 ELSE 0 END) AS SoLuong,
+                                            CASE
+                                                WHEN SUM(CASE WHEN c.Deleted = 0 THEN 1 ELSE 0 END) = 0 THEN N'Hết hàng'
+                                                ELSE N'Còn hàng'
+                                            END AS TrangThai
                         FROM 
                             dbo.SanPham s
                         LEFT JOIN
@@ -270,54 +268,56 @@ public class SanPhamRespository {
     }
 
     public List<SanPhamViewModel> searchByStatus(String status) {
-        List<SanPhamViewModel> spList = new ArrayList<>();
-        String sql = """
-         SELECT 
-                ROW_NUMBER() OVER (ORDER BY s.Created_at DESC) AS STT,
-                s.ID,
-                s.MaSanPham,
-                s.TenSanPham,
-                s.Created_at,
-                s.Updated_at,
-                COUNT(c.IDSanPham) AS SoLuong,
-                CASE
-                    WHEN COUNT(c.IDSanPham) = 0 THEN N'Hết hàng'
-                    ELSE N'Còn hàng'
-                END AS TrangThai
-            FROM 
-                dbo.SanPham s
-            LEFT JOIN
-                dbo.ChiTietSanPham c ON c.IDSanPham = s.ID
-            WHERE 
-                s.Deleted = 0
-            GROUP BY 
-                s.ID, s.MaSanPham, s.TenSanPham, s.Created_at, s.Updated_at
-            HAVING
-                ((? = N'Còn hàng' AND COUNT(c.IDSanPham) > 0) OR (? = N'Hết hàng' AND COUNT(c.IDSanPham) = 0))
-            ORDER BY 
-                s.Updated_at DESC;
-         """;
+    List<SanPhamViewModel> spList = new ArrayList<>();
+    String sql = """
+        SELECT 
+            s.ID,
+            s.MaSanPham,
+            s.TenSanPham,
+            s.Created_at,
+            s.Updated_at,
+            COUNT(CASE WHEN c.Deleted = 0 THEN c.IDSanPham ELSE NULL END) AS SoLuong
+        FROM 
+            dbo.SanPham s
+        LEFT JOIN
+            dbo.ChiTietSanPham c ON c.IDSanPham = s.ID
+        WHERE 
+            s.Deleted = 0
+        GROUP BY 
+            s.ID, s.MaSanPham, s.TenSanPham, s.Created_at, s.Updated_at
+        ORDER BY 
+            s.Updated_at DESC;
+    """;
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, status);
-            ps.setString(2, status);
-            ResultSet rs = ps.executeQuery();
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                SanPhamViewModel sanPham = new SanPhamViewModel();
-                sanPham.setStt(rs.getInt("STT"));
-                sanPham.setId(rs.getString("ID"));
-                sanPham.setMaSanPham(rs.getString("MaSanPham"));
-                sanPham.setTenSanPham(rs.getString("TenSanPham"));
-                sanPham.setCreatedAt(rs.getTimestamp("Created_at"));
-                sanPham.setSoLuong(rs.getLong("SoLuong"));
-                sanPham.setTrangThai(rs.getString("TrangThai"));
-                spList.add(sanPham);
+                int soLuong = rs.getInt("SoLuong");
+                String trangThai = soLuong > 0 ? "Còn hàng" : "Hết hàng";
+                
+                if (status.equals(trangThai)) {
+                    SanPhamViewModel sanPham = new SanPhamViewModel();
+                    sanPham.setId(rs.getString("ID"));
+                    sanPham.setMaSanPham(rs.getString("MaSanPham"));
+                    sanPham.setTenSanPham(rs.getString("TenSanPham"));
+                    sanPham.setCreatedAt(rs.getTimestamp("Created_at"));
+                    sanPham.setSoLuong((long) soLuong);
+                    sanPham.setTrangThai(trangThai);
+                    spList.add(sanPham);
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        return spList;
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Lỗi khi tìm kiếm sản phẩm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
+
+    return spList;
+}
+
+
 
 }

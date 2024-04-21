@@ -407,8 +407,8 @@ public class HoaDon extends javax.swing.JPanel {
         String selectedChatLieu = (String) cbbChatLieu.getSelectedItem();
         String selectedGia = (String) cbbGiaTien.getSelectedItem();
         String selectedThuongHieu = (String) cbbThuongHieu.getSelectedItem();
-        
-        System.out.println(selectedChatLieu + selectedMau + selectedSize + selectedThuongHieu );
+
+        System.out.println(selectedChatLieu + selectedMau + selectedSize + selectedThuongHieu);
         System.out.println(idHD);
         if ("Giá từ thấp đến cao".equals((String) cbbGiaTien.getSelectedItem())) {
             selectedGia = "GiaBan ASC";
@@ -736,6 +736,11 @@ public class HoaDon extends javax.swing.JPanel {
         });
 
         txtSearch1.setLabelText("Tìm kiếm hóa đơn");
+        txtSearch1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearch1KeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
         roundPanel2.setLayout(roundPanel2Layout);
@@ -1161,6 +1166,11 @@ public class HoaDon extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không có hóa đơn nào đang ở trạng thái 'Hủy Giao'!");
         }
     }//GEN-LAST:event_btnTT6ActionPerformed
+
+    private void txtSearch1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearch1KeyReleased
+        listHDCT = srHDCT.searchTheoTT(selectedInvoiceId,txtSearch1.getText());
+        showDataTable2(listHDCT);
+    }//GEN-LAST:event_txtSearch1KeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

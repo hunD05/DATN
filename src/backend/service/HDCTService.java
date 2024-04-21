@@ -41,5 +41,9 @@ public class HDCTService {
     public boolean deleteHDCT(int idHD, int soLuong, int idCTSP) {
         return repoHDCT.deleteHDCT(idHD, soLuong, idCTSP);
     }
+    
+    public List<HDCTViewModel> searchTheoTT(int idHD, String tuKhoa){
+        return repo.searchTheoTT(idHD, tuKhoa);
+    }
 
 }

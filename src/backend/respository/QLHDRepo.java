@@ -47,6 +47,7 @@ public class QLHDRepo {
                         dbo.KhachHang ON dbo.HoaDon.IDKhachHang = dbo.KhachHang.ID 
                     INNER JOIN 
                         dbo.NhanVien ON dbo.HoaDon.IDNhanVien = dbo.NhanVien.ID 
+                    WHERE dbo.HoaDon.Trang LIKE 'Đã Thanh Toán'
                     GROUP BY 
                         dbo.HoaDon.ID, 
                         dbo.HoaDon.MaHoaDon, 

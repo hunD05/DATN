@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -70,32 +71,33 @@ public class HDCTTKRepo {
     }
 
     public Map<LocalDate, BigDecimal> getTotalRevenueByDate(LocalDate startDate, LocalDate endDate) {
-        Map<LocalDate, BigDecimal> revenueByDate = new HashMap<>();
+    TreeMap<LocalDate, BigDecimal> revenueByDate = new TreeMap<>();
 
-        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement("""
-                                                     SELECT CAST(NgayThanhToan AS DATE) AS NgayThanhToan,
-                                                                                                                 SUM(SoLuong * GiaBan) AS TotalRevenue
-                                                                                                          FROM HoaDonChiTiet HDCT
-                                                                                                          INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
-                                                                                                          WHERE HD.TrangThai = N'Đã Thanh Toán' 
-                                                                                                                AND NgayThanhToan BETWEEN ? AND ?
-                                                                                                          GROUP BY CAST(NgayThanhToan AS DATE)
-                                                                                                          ORDER BY CAST(NgayThanhToan AS DATE);
-                                                     """)) {
-            ps.setDate(1, Date.valueOf(startDate));
-            ps.setDate(2, Date.valueOf(endDate));
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                LocalDate date = rs.getDate("NgayThanhToan").toLocalDate();
-                BigDecimal totalRevenue = rs.getBigDecimal("TotalRevenue");
-                revenueByDate.put(date, totalRevenue);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement("""
+            SELECT CAST(NgayThanhToan AS DATE) AS NgayThanhToan,
+                   SUM(SoLuong * GiaBan) AS TotalRevenue
+            FROM HoaDonChiTiet HDCT
+            INNER JOIN HoaDon HD ON HDCT.IDHoaDon = HD.ID
+            WHERE HD.TrangThai = N'Đã Thanh Toán' 
+                  AND NgayThanhToan BETWEEN ? AND ?
+            GROUP BY CAST(NgayThanhToan AS DATE)
+            ORDER BY CAST(NgayThanhToan AS DATE);
+            """)) {
+        ps.setDate(1, Date.valueOf(startDate));
+        ps.setDate(2, Date.valueOf(endDate));
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            LocalDate date = rs.getDate("NgayThanhToan").toLocalDate();
+            BigDecimal totalRevenue = rs.getBigDecimal("TotalRevenue");
+            revenueByDate.put(date, totalRevenue);
         }
-
-        return revenueByDate;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return revenueByDate;
+}
+
     
     
     

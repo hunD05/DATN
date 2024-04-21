@@ -64,7 +64,7 @@ public class ChiTietSanPhamRespository {
             sql += " AND xx.TenXuatXu = N'" + xuatXu + "'";
         }
         if (danhMuc != null && !danhMuc.isEmpty()) {
-            sql += " AND dm.TenDanhMuc = '" + danhMuc + "'";
+            sql += " AND dm.TenDanhMuc = N'" + danhMuc + "'";
         }
         if (nsx != null && !nsx.isEmpty()) {
             sql += " AND nsx.TenNSX = '" + nsx + "'";
@@ -180,6 +180,36 @@ public class ChiTietSanPhamRespository {
                 sanPhamChiTietViewModel.setId(rs.getString("ID"));
                 sanPhamChiTietViewModel.setMota(rs.getString("MoTa"));
                 sanPhamChiTietViewModel.setTrangThai(rs.getString("TrangThai"));
+                sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sanPhamChiTietViewModels;
+    }
+
+    public List<SanPhamChiTietViewModel> tongSoLuongSanPham() {
+        List<SanPhamChiTietViewModel> sanPhamChiTietViewModels = new ArrayList<>();
+        String sql = """
+        SELECT 
+            sp.TenSanPham, 
+            SUM(ctsp.SoLuong) AS TongSoLuong
+        FROM 
+            dbo.ChiTietSanPham ctsp 
+        INNER JOIN dbo.SanPham sp ON ctsp.IDSanPham = sp.ID 
+        WHERE 
+            ctsp.Deleted = 0
+        GROUP BY 
+            sp.TenSanPham
+        ORDER BY 
+            sp.TenSanPham ASC;
+    """;
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                SanPhamChiTietViewModel sanPhamChiTietViewModel = new SanPhamChiTietViewModel();
+                sanPhamChiTietViewModel.setTenSanPham(rs.getString("TenSanPham"));
+                sanPhamChiTietViewModel.setSoLuong(rs.getInt("TongSoLuong"));
                 sanPhamChiTietViewModels.add(sanPhamChiTietViewModel);
             }
         } catch (Exception e) {
@@ -770,7 +800,6 @@ public class ChiTietSanPhamRespository {
                  							(select top 1 id from DangAo where TenDangAo = ?),
                  							?)
                  """;
-
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             if (chiTietSanPham != null) {
                 ps.setObject(1, chiTietSanPham.getIdSanPham());
